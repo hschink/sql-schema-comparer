@@ -56,16 +56,14 @@ public class SqlColumnReachableChecker implements
 					target = ((ITableHasColumnEdge) edge).getColumn();
 				} else if (edge instanceof IForeignKeyRelationEdge) {
 					source = ((IForeignKeyRelationEdge) edge).getReferencingColumn();
-					target = ((IForeignKeyRelationEdge) edge).getReferencingColumn();
+					target = ((IForeignKeyRelationEdge) edge).getForeignKeyColumn();
 				}
 				
-				if (source != null && target != null) {
-					if (!path.contains(source))
-						path.add(source);
-					
-					if (!path.contains(target))
-						path.add(target);
-				}
+				if (!path.contains(source))
+					path.add(source);
+
+				if (!path.contains(target))
+					path.add(target);
 			}
 		}
 	}
