@@ -1,5 +1,9 @@
 package org.iti.sqlSchemaComparison;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
 
@@ -46,6 +50,19 @@ public class SqlSchemaComparisonResult {
 	public SqlColumnVertex getAddedColumn() {
 		return addedColumn;
 	}
+	
+	private Map<ISqlElement, SqlSchemaColumnComparisonResult> columnComparisonResults = new HashMap<>();
+	
+	public Map<ISqlElement, SqlSchemaColumnComparisonResult> getColumnComparisonResults() {
+		return columnComparisonResults;
+	}
+
+	public void setColumnComparisonResults(
+			Map<ISqlElement, SqlSchemaColumnComparisonResult> columnComparisonResults) {
+		this.columnComparisonResults = columnComparisonResults;
+	}
+
+	public SqlSchemaComparisonResult() {}
 	
 	public SqlSchemaComparisonResult(SqlTableVertex renamedTable, 
 			SqlTableVertex removedTable,

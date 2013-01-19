@@ -31,6 +31,10 @@ public class SqlColumnVertex implements ISqlElement {
 		return constraints;
 	}
 
+	public void setConstraints(List<IColumnConstraint> constraints) {
+		this.constraints = constraints;
+	}
+
 	public SqlColumnVertex(String id, String type, List<IColumnConstraint> constraints) {
 		this.id = id;
 		this.type = type;

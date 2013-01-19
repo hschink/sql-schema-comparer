@@ -2,7 +2,9 @@ package org.iti.sqlSchemaComparison;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.iti.sqlSchemaComparison.edge.ITableHasColumnEdge;
@@ -11,6 +13,7 @@ import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlElementType;
 import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
+import org.iti.sqlSchemaComparison.vertex.sqlColumn.ColumnConstraintHelper;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphMapping;
 import org.jgrapht.experimental.equivalence.EquivalenceComparator;
@@ -48,6 +51,8 @@ public class SqlSchemaComparer {
 		
 		if (!isIsomorphic())
 			computeGraphMatching();
+		
+		computeColumnTypeAndConstraintChanges();
 	}
 
 	private void computeIsomorphism() {
@@ -223,4 +228,36 @@ public class SqlSchemaComparer {
 			Collection<?> vertices2) {
 		return vertices1.size() > vertices2.size();
 	}
+
+	private void computeColumnTypeAndConstraintChanges() {
+		Map<ISqlElement, SqlSchemaColumnComparisonResult> columnComparisonResults = new HashMap<>();
+		
+		for (ISqlElement vertex1 : SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet())) {
+			ISqlElement vertex2 = getMatchingVertex(vertex1, true);
+			
+			if (vertex2 != null)
+				columnComparisonResults.put(vertex2, ColumnConstraintHelper.compare(vertex1, vertex2));
+		}
+		
+		for (ISqlElement vertex2 : SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet())) {
+			ISqlElement vertex1 = getMatchingVertex(vertex2, false);
+			
+			if (vertex1 != null)
+				columnComparisonResults.put(vertex1, ColumnConstraintHelper.compare(vertex1, vertex2));
+		}
+		
+		if (comparisonResult == null)
+			comparisonResult = new SqlSchemaComparisonResult();
+		
+		comparisonResult.setColumnComparisonResults(columnComparisonResults);
+	}
+
+	private ISqlElement getMatchingVertex(ISqlElement vertex1, boolean forward) {
+
+		if (isIsomorphic())
+			return isomorphisms.get(0).getVertexCorrespondence(vertex1, forward);
+		
+		return matching.getVertexCorrespondence(vertex1, forward);
+	}
+	
 }
