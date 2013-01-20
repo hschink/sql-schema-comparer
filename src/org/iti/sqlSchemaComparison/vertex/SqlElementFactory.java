@@ -68,6 +68,25 @@ public abstract class SqlElementFactory {
 		return null;
 	}
 	
+	public static ISqlElement getMatchingSqlElement(SqlElementType type, String id, Collection<ISqlElement> vertices) {
+		
+		for (ISqlElement v : vertices)
+			if (v.getSqlElementType().equals(type)) {
+				if (type == SqlElementType.Column) {
+					String otherTable = ((SqlColumnVertex) v).getTable();
+					String otherId = otherTable + "." + v.getSqlElementId();
+					
+					if (otherId.equals(id))
+						return v;
+					
+					continue;
+				} else if (v.getSqlElementId().equals(id))
+					return v;
+			}
+		
+		return null;
+	}
+	
 	public static ISqlElement getMatchingSqlColumn(SqlColumnVertex column1, Set<ISqlElement> vertices) {
 		
 		for (ISqlElement v : SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, vertices)) {
@@ -79,4 +98,5 @@ public abstract class SqlElementFactory {
 		
 		return null;
 	}
+
 }
