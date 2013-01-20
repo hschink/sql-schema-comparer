@@ -5,6 +5,7 @@ import junit.framework.Assert;
 import org.iti.sqlSchemaComparison.reachability.ISqlElementReachabilityChecker;
 import org.iti.sqlSchemaComparison.reachability.SqlColumnReachableChecker;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
+import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlElementType;
 import org.jgrapht.Graph;
@@ -28,11 +29,11 @@ public class SqlColumnReachableCheckerTest {
 	private static ISqlElement t2 = SqlElementFactory.createSqlElement(SqlElementType.Table, "t2");
 	private static ISqlElement t3 = SqlElementFactory.createSqlElement(SqlElementType.Table, "t3");
 	
-	private static ISqlElement c1 = SqlElementFactory.createSqlElement(SqlElementType.Column, "c1");
-	private static ISqlElement c2 = SqlElementFactory.createSqlElement(SqlElementType.Column, "c2");
-	private static ISqlElement c3 = SqlElementFactory.createSqlElement(SqlElementType.Column, "c121");
-	private static ISqlElement c4 = SqlElementFactory.createSqlElement(SqlElementType.Column, "c3");
-	private static ISqlElement c5 = SqlElementFactory.createSqlElement(SqlElementType.Column, "c231");
+	private static ISqlElement c1 = new SqlColumnVertex("c1", "", t1.getSqlElementId());
+	private static ISqlElement c2 = new SqlColumnVertex("c2", "", t1.getSqlElementId());
+	private static ISqlElement c3 = new SqlColumnVertex("c121", "", t1.getSqlElementId());
+	private static ISqlElement c4 = new SqlColumnVertex("c3", "", t1.getSqlElementId());
+	private static ISqlElement c5 = new SqlColumnVertex("c231", "", t1.getSqlElementId());
 	
 	@BeforeClass
 	public static void Init() throws Exception {

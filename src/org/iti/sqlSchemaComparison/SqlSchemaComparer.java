@@ -148,11 +148,7 @@ public class SqlSchemaComparer {
 				
 				vertices1.add(column1);
 				vertices2.add(column2);
-				
-				if (!isTableMatching(column1, column2, schema1, schema2)) {
-					movedColumn = (SqlColumnVertex)column1;
-				}
-			} else {
+			} else {				
 				verticesWithNoMatch.add(column1);
 			}
 		}
@@ -167,12 +163,20 @@ public class SqlSchemaComparer {
 			if (verticesWithNoMatch.size() > 2)
 				throw new IllegalArgumentException("More than one column changed!");
 			
-			if (isSetRetained(columns1, columns2)) { // column renamed
+			if (isSetRetained(columns1, columns2)) { // column renamed or moved
 				
 				if (verticesWithNoMatch.size() != 2)
 					throw new IllegalArgumentException("Illegal number of columns without match!");
 
-				renamedColumn = (SqlColumnVertex) verticesWithNoMatch.get(0);
+				SqlColumnVertex column1 = (SqlColumnVertex) verticesWithNoMatch.get(0);
+				SqlColumnVertex column2 = (SqlColumnVertex) verticesWithNoMatch.get(1);
+				
+				if (column1.getSqlElementId().equals(column2.getSqlElementId())
+						&& !isTableMatching(column1, column2, schema1, schema2)) {
+					movedColumn = (SqlColumnVertex)column1;
+				} else {
+					renamedColumn = (SqlColumnVertex) verticesWithNoMatch.get(0);
+				}
 				
 				vertices1.add(verticesWithNoMatch.get(0));
 				vertices2.add(verticesWithNoMatch.get(1));

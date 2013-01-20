@@ -24,6 +24,16 @@ public class SqlColumnVertex implements ISqlElement {
 	public String getType() {
 		return type;
 	}
+	
+	private String table = "";
+
+	public String getTable() {
+		return table;
+	}
+
+	public void setTable(String table) {
+		this.table = table;
+	}
 
 	private List<IColumnConstraint> constraints = new ArrayList<>();
 
@@ -35,15 +45,15 @@ public class SqlColumnVertex implements ISqlElement {
 		this.constraints = constraints;
 	}
 
-	public SqlColumnVertex(String id, String type, List<IColumnConstraint> constraints) {
+	public SqlColumnVertex(String id, String type, String table) {
 		this.id = id;
 		this.type = type;
-		this.constraints = constraints;
+		this.table = table;
 	}
 	
 	@Override
 	public String toString() {
-		return "[" + getSqlElementType() + "] " + getSqlElementId();
+		return "[" + getSqlElementType() + "] " + table + "." + getSqlElementId();
 	}
 
 	@Override

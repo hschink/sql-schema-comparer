@@ -44,14 +44,15 @@ public class SqlSchemaComparerTest {
 	private static ISqlElement t1 = SqlElementFactory.createSqlElement(SqlElementType.Table, "t1");
 	private static ISqlElement t2 = SqlElementFactory.createSqlElement(SqlElementType.Table, "t2");
 	
-	private static ISqlElement c1 = SqlElementFactory.createSqlElement(SqlElementType.Column, "c1");
-	private static ISqlElement c12 = SqlElementFactory.createSqlElement(SqlElementType.Column, "c12");
-	private static ISqlElement c2 = SqlElementFactory.createSqlElement(SqlElementType.Column, "c2");
-	private static ISqlElement c22 = SqlElementFactory.createSqlElement(SqlElementType.Column, "c22");
+	private static ISqlElement c1 = new SqlColumnVertex("c1", "", t1.getSqlElementId());
+	private static ISqlElement c12 = new SqlColumnVertex("c12", "", t1.getSqlElementId());
+	private static ISqlElement c2 = new SqlColumnVertex("c2", "", t2.getSqlElementId());
+	private static ISqlElement c22 = new SqlColumnVertex("c22", "", t2.getSqlElementId());
+	private static ISqlElement c3 = new SqlColumnVertex("c1", "", t2.getSqlElementId());
 	
-	private static ISqlElement c111 = new SqlColumnVertex("c1", "INTEGER", null);
-	private static ISqlElement c112 = new SqlColumnVertex("c1", "FLOAT", null);
-	private static ISqlElement c113 = new SqlColumnVertex("c1", "INTEGER", new ArrayList<IColumnConstraint>());
+	private static ISqlElement c111 = new SqlColumnVertex("c1", "INTEGER", t1.getSqlElementId());
+	private static ISqlElement c112 = new SqlColumnVertex("c1", "FLOAT", t1.getSqlElementId());
+	private static ISqlElement c113 = new SqlColumnVertex("c1", "INTEGER", t1.getSqlElementId());
 	
 	private static IColumnConstraint constraint1 = new DefaultColumnConstraint("1", c111);
 	private static IColumnConstraint constraint2 = new NotNullColumnConstraint("", c112);
@@ -85,8 +86,8 @@ public class SqlSchemaComparerTest {
 		schema3.addVertex(c22);
 		schema4.addVertex(c1);
 		schema4.addVertex(c2);
-		schema5.addVertex(c1);
 		schema5.addVertex(c2);
+		schema5.addVertex(c3);
 		schema6.addVertex(c2);
 		schema9.addVertex(c1);
 		schema11.addVertex(c111);
@@ -108,7 +109,7 @@ public class SqlSchemaComparerTest {
 		schema4.addEdge(t1, c1, new TableHasColumnEdge(t1, c1));
 		schema4.addEdge(t2, c2, new TableHasColumnEdge(t2, c2));
 		
-		schema5.addEdge(t2, c1, new TableHasColumnEdge(t2, c1));
+		schema5.addEdge(t2, c3, new TableHasColumnEdge(t2, c3));
 		schema5.addEdge(t2, c2, new TableHasColumnEdge(t2, c2));
 		
 		schema6.addEdge(t1, c2, new TableHasColumnEdge(t1, c2));

@@ -1,18 +1,15 @@
 package org.iti.sqlSchemaComparison.vertex;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
 
 public abstract class SqlElementFactory {
 
 	public static ISqlElement createSqlElement(SqlElementType type, String id) {
 		switch (type) {
 			case Column:
-				return new SqlColumnVertex(id, "", new ArrayList<IColumnConstraint>());
+				return null;
 				
 			case Type:
 				return new SqlTypeVertex(id);
@@ -26,11 +23,25 @@ public abstract class SqlElementFactory {
 		if (o instanceof ISqlElement) {
 			ISqlElement e = (ISqlElement)o;
 			
-			return t.getSqlElementId().equals(e.getSqlElementId())
-					&& t.getSqlElementType().equals(e.getSqlElementType());
+			return equals(t.getSqlElementId(), e.getSqlElementId(), t.getSqlElementType(), e.getSqlElementType());
 		}
 		
 		return false;
+	}
+
+	public static boolean equals(SqlColumnVertex t, Object o) {
+		if (o instanceof SqlColumnVertex) {
+			SqlColumnVertex e = (SqlColumnVertex)o;
+			
+			return equals(t.getSqlElementId(), e.getSqlElementId(), t.getSqlElementType(), e.getSqlElementType())
+					&& t.getTable().equals(e.getTable());
+		}
+		
+		return false;
+	}
+
+	private static boolean equals(String id, String otherId, SqlElementType type, SqlElementType otherType) {
+		return id.equals(otherId) && type.equals(otherType);
 	}
 	
 	public static int hashCode(ISqlElement t) {
@@ -53,6 +64,18 @@ public abstract class SqlElementFactory {
 		for (ISqlElement v : vertices)
 			if (v.equals(vertex))
 				return v;
+		
+		return null;
+	}
+	
+	public static ISqlElement getMatchingSqlColumn(SqlColumnVertex column1, Set<ISqlElement> vertices) {
+		
+		for (ISqlElement v : SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, vertices)) {
+			SqlColumnVertex c = (SqlColumnVertex) v;
+			
+			if (c.getSqlElementId().equals(column1.getSqlElementId()))
+				return c;
+		}
 		
 		return null;
 	}

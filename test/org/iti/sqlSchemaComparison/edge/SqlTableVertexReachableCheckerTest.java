@@ -5,6 +5,7 @@ import junit.framework.Assert;
 import org.iti.sqlSchemaComparison.reachability.ISqlElementReachabilityChecker;
 import org.iti.sqlSchemaComparison.reachability.SqlTableVertexReachableChecker;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
+import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlElementType;
 import org.jgrapht.Graph;
@@ -25,8 +26,8 @@ public class SqlTableVertexReachableCheckerTest {
 	private static ISqlElement t1 = SqlElementFactory.createSqlElement(SqlElementType.Table, "t1");
 	private static ISqlElement t2 = SqlElementFactory.createSqlElement(SqlElementType.Table, "t2");
 	
-	private static ISqlElement c1 = SqlElementFactory.createSqlElement(SqlElementType.Column, "c1");
-	private static ISqlElement c12 = SqlElementFactory.createSqlElement(SqlElementType.Column, "c12");
+	private static ISqlElement c1 = new SqlColumnVertex("c1", "", t1.getSqlElementId());
+	private static ISqlElement c12 = new SqlColumnVertex("c12", "", t2.getSqlElementId());
 	
 	@BeforeClass
 	public static void Init() throws Exception {
