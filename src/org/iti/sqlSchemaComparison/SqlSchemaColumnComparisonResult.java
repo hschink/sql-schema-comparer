@@ -47,7 +47,15 @@ public class SqlSchemaColumnComparisonResult {
 	
 	private String oldColumnType;
 	
+	public String getOldColumnType() {
+		return oldColumnType;
+	}
+
 	private String currentColumnType;
+
+	public String getCurrentColumnType() {
+		return currentColumnType;
+	}
 	
 	public boolean hasColumnTypeChanged() {
 		return oldColumnType != currentColumnType;
