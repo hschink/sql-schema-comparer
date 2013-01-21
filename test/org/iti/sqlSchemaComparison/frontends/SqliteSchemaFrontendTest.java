@@ -28,8 +28,10 @@ public class SqliteSchemaFrontendTest {
 
 	private static final String DATABASE_FILE_PATH = "test\\databases\\hrm.sqlite";
 	private static final String DROPPED_COLUMN_DATABASE_FILE_PATH = "test\\databases\\refactored\\hrm_DropColumn.sqlite";
+	private static final String DROPPED_TABLE_DATABASE_FILE_PATH = "test\\databases\\refactored\\hrm_DropTable.sqlite";
 	
 	private static final String DROPPED_COLUMN_NAME = "boss";
+	private static final String DROPPED_TABLE_NAME = "external_staff";
 	
 	@Before
 	public void setUp() { }
@@ -89,6 +91,21 @@ public class SqliteSchemaFrontendTest {
 		Assert.assertEquals(30, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
 		Assert.assertNotNull(result.getRemovedColumn());
 		Assert.assertEquals(DROPPED_COLUMN_NAME, result.getRemovedColumn().getSqlElementId());
+	}
+	
+	@Test
+	public void DroppedTableDetectedCorrectly() {
+		ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
+		ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(DROPPED_TABLE_DATABASE_FILE_PATH);
+		Graph<ISqlElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
+		Graph<ISqlElement, DefaultEdge> schema2 = frontend2.createSqlSchema();
+		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
+		SqlSchemaComparisonResult result = comparer.comparisonResult;
+		
+		Assert.assertEquals(8, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema1.vertexSet()).size());
+		Assert.assertEquals(7, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema2.vertexSet()).size());
+		Assert.assertNotNull(result.getRemovedTable());
+		Assert.assertEquals(DROPPED_TABLE_NAME, result.getRemovedTable().getSqlElementId());
 	}
 
 	@After
