@@ -24,7 +24,7 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class SqliteSchemaFrontendTest {
 
-	private static final String DATABASE_FILE_PATH = "test\\hrm.sqlite";
+	private static final String DATABASE_FILE_PATH = "test\\databases\\hrm.sqlite";
 	
 	@Before
 	public void setUp() { }
