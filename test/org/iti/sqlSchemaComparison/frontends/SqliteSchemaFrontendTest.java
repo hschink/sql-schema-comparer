@@ -30,10 +30,12 @@ public class SqliteSchemaFrontendTest {
 	private static final String DROPPED_COLUMN_DATABASE_FILE_PATH = "test\\databases\\refactored\\hrm_DropColumn.sqlite";
 	private static final String DROPPED_TABLE_DATABASE_FILE_PATH = "test\\databases\\refactored\\hrm_DropTable.sqlite";
 	private static final String MOVE_COLUMN_DATABASE_FILE_PATH = "test\\databases\\refactored\\hrm_MoveColumn.sqlite";
+	private static final String RENAME_COLUMN_DATABASE_FILE_PATH = "test\\databases\\refactored\\hrm_RenameColumn.sqlite";
 	
 	private static final String DROPPED_COLUMN_NAME = "boss";
 	private static final String DROPPED_TABLE_NAME = "external_staff";
 	private static final String MOVE_COLUMN_NAME = "account";
+	private static final String RENAME_COLUMN_NAME = "telephone";
 	
 	@Before
 	public void setUp() { }
@@ -123,6 +125,21 @@ public class SqliteSchemaFrontendTest {
 		Assert.assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
 		Assert.assertNotNull(result.getMovedColumn());
 		Assert.assertEquals(MOVE_COLUMN_NAME, result.getMovedColumn().getSqlElementId());
+	}
+	
+	@Test
+	public void RenameColumnDetectedCorrectly() {
+		ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
+		ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(RENAME_COLUMN_DATABASE_FILE_PATH);
+		Graph<ISqlElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
+		Graph<ISqlElement, DefaultEdge> schema2 = frontend2.createSqlSchema();
+		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
+		SqlSchemaComparisonResult result = comparer.comparisonResult;
+		
+		Assert.assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
+		Assert.assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
+		Assert.assertNotNull(result.getRenamedColumn());
+		Assert.assertEquals(RENAME_COLUMN_NAME, result.getRenamedColumn().getSqlElementId());
 	}
 
 	@After
