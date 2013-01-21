@@ -6,6 +6,7 @@ import java.util.Set;
 
 import junit.framework.Assert;
 
+import org.iti.sqlSchemaComparison.SqlSchemaColumnComparisonResult;
 import org.iti.sqlSchemaComparison.SqlSchemaComparer;
 import org.iti.sqlSchemaComparison.SqlSchemaComparisonResult;
 import org.iti.sqlSchemaComparison.edge.ForeignKeyRelationEdge;
@@ -32,12 +33,15 @@ public class SqliteSchemaFrontendTest {
 	private static final String MOVE_COLUMN_DATABASE_FILE_PATH = "test\\databases\\refactored\\hrm_MoveColumn.sqlite";
 	private static final String RENAME_COLUMN_DATABASE_FILE_PATH = "test\\databases\\refactored\\hrm_RenameColumn.sqlite";
 	private static final String RENAME_TABLE_DATABASE_FILE_PATH = "test\\databases\\refactored\\hrm_RenameTable.sqlite";
+	private static final String REPLACE_COLUMN_DATABASE_FILE_PATH = "test\\databases\\refactored\\hrm_ReplaceColumn.sqlite";
 	
 	private static final String DROPPED_COLUMN_NAME = "boss";
 	private static final String DROPPED_TABLE_NAME = "external_staff";
 	private static final String MOVE_COLUMN_NAME = "account";
 	private static final String RENAME_COLUMN_NAME = "telephone";
 	private static final String RENAME_TABLE_NAME = "external_staff";
+	private static final String REPLACE_COLUMN_NAME = "company_name";
+	private static final String REPLACE_COLUMN_TYPE = "TEXT";
 	
 	@Before
 	public void setUp() { }
@@ -157,6 +161,24 @@ public class SqliteSchemaFrontendTest {
 		Assert.assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
 		Assert.assertNotNull(result.getRenamedTable());
 		Assert.assertEquals(RENAME_TABLE_NAME, result.getRenamedTable().getSqlElementId());
+	}
+	
+	@Test
+	public void ReplaceColumnDetectedCorrectly() {
+		ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
+		ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(REPLACE_COLUMN_DATABASE_FILE_PATH);
+		Graph<ISqlElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
+		Graph<ISqlElement, DefaultEdge> schema2 = frontend2.createSqlSchema();
+		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
+		SqlSchemaComparisonResult result = comparer.comparisonResult;
+		SqlSchemaColumnComparisonResult column = result.getColumnComparisonResults().values().iterator().next();
+		
+		Assert.assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
+		Assert.assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
+		Assert.assertNotNull(result.getRenamedColumn());
+		Assert.assertEquals(REPLACE_COLUMN_NAME, result.getRenamedColumn().getSqlElementId());
+		Assert.assertTrue(column.hasColumnTypeChanged());
+		Assert.assertEquals(REPLACE_COLUMN_TYPE, column.getCurrentColumnType());
 	}
 
 	@After
