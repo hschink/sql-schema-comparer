@@ -301,6 +301,36 @@ public class SqlSchemaComparerTest {
 		Assert.assertTrue(cccr.getRemovedConstraints().contains(constraint1));
 	}
 	
+	@Test
+	public void NoChangeInForeignKeyRelationsDetectedCorrectly() {
+		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema31, schema31);
+		SqlSchemaComparisonResult result = comparer1.comparisonResult;
+		
+		Assert.assertNotNull(result);
+		Assert.assertEquals(0, result.getAddedForeignKeyRelations().size());
+		Assert.assertEquals(0, result.getRemovedForeignKeyRelations().size());
+	}
+	
+	@Test
+	public void AddedForeignKeyRelationDetectedCorrectly() {
+		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema3, schema31);
+		SqlSchemaComparisonResult result = comparer1.comparisonResult;
+		
+		Assert.assertNotNull(result);
+		Assert.assertEquals(1, result.getAddedForeignKeyRelations().size());
+		Assert.assertEquals(0, result.getRemovedForeignKeyRelations().size());
+	}
+	
+	@Test
+	public void RemovedForeignKeyRelationDetectedCorrectly() {
+		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema31, schema3);
+		SqlSchemaComparisonResult result = comparer1.comparisonResult;
+		
+		Assert.assertNotNull(result);
+		Assert.assertEquals(0, result.getAddedForeignKeyRelations().size());
+		Assert.assertEquals(1, result.getRemovedForeignKeyRelations().size());
+	}
+	
 	@After
 	public void tearDown() {
 		
