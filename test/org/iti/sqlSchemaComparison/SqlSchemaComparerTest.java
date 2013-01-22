@@ -5,6 +5,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.iti.sqlSchemaComparison.edge.ForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.edge.TableHasColumnEdge;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
@@ -41,6 +42,8 @@ public class SqlSchemaComparerTest {
 	private static Graph<ISqlElement, DefaultEdge> schema12 = new SimpleGraph<ISqlElement, DefaultEdge>(DefaultEdge.class);
 	private static Graph<ISqlElement, DefaultEdge> schema13 = new SimpleGraph<ISqlElement, DefaultEdge>(DefaultEdge.class);
 	
+	private static Graph<ISqlElement, DefaultEdge> schema31 = new SimpleGraph<ISqlElement, DefaultEdge>(DefaultEdge.class);
+	
 	private static ISqlElement t1 = SqlElementFactory.createSqlElement(SqlElementType.Table, "t1");
 	private static ISqlElement t2 = SqlElementFactory.createSqlElement(SqlElementType.Table, "t2");
 	
@@ -74,6 +77,8 @@ public class SqlSchemaComparerTest {
 		schema11.addVertex(t1);
 		schema12.addVertex(t1);
 		schema13.addVertex(t1);
+		schema31.addVertex(t1);
+		schema31.addVertex(t2);
 		
 		schema1.addVertex(c1);
 		schema2.addVertex(c1);
@@ -93,6 +98,10 @@ public class SqlSchemaComparerTest {
 		schema11.addVertex(c111);
 		schema12.addVertex(c112);
 		schema13.addVertex(c113);
+		schema31.addVertex(c1);
+		schema31.addVertex(c12);
+		schema31.addVertex(c2);
+		schema31.addVertex(c22);
 		
 		schema1.addEdge(t1, c1, new TableHasColumnEdge(t1, c1));
 		
@@ -132,6 +141,12 @@ public class SqlSchemaComparerTest {
 		
 		((SqlColumnVertex) c111).setConstraints(constraints11);
 		((SqlColumnVertex) c112).setConstraints(constraints12);
+		
+		schema31.addEdge(t1, c1, new TableHasColumnEdge(t1, c1));
+		schema31.addEdge(t1, c12, new TableHasColumnEdge(t1, c12));
+		schema31.addEdge(t2, c2, new TableHasColumnEdge(t2, c2));
+		schema31.addEdge(t2, c22, new TableHasColumnEdge(t2, c22));
+		schema31.addEdge(c12, c2, new ForeignKeyRelationEdge(c12, t2, c2));
 	}
 	
 	@Before
