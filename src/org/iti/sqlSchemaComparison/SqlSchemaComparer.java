@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.iti.sqlSchemaComparison.edge.IForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.edge.ITableHasColumnEdge;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
@@ -53,6 +54,8 @@ public class SqlSchemaComparer {
 			computeGraphMatching();
 		
 		computeColumnTypeAndConstraintChanges();
+		
+		computeForeignKeyChanges();
 	}
 
 	private void computeIsomorphism() {
@@ -239,14 +242,14 @@ public class SqlSchemaComparer {
 		for (ISqlElement vertex1 : SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet())) {
 			ISqlElement vertex2 = getMatchingVertex(vertex1, true);
 			
-			if (vertex2 != null)
+			if (vertex2 != null && !columnComparisonResults.containsKey(vertex2))
 				columnComparisonResults.put(vertex2, ColumnConstraintHelper.compare(vertex1, vertex2));
 		}
 		
 		for (ISqlElement vertex2 : SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet())) {
 			ISqlElement vertex1 = getMatchingVertex(vertex2, false);
 			
-			if (vertex1 != null)
+			if (vertex1 != null && !columnComparisonResults.containsKey(vertex1))
 				columnComparisonResults.put(vertex1, ColumnConstraintHelper.compare(vertex1, vertex2));
 		}
 		
@@ -262,6 +265,31 @@ public class SqlSchemaComparer {
 			return isomorphisms.get(0).getVertexCorrespondence(vertex1, forward);
 		
 		return matching.getVertexCorrespondence(vertex1, forward);
+	}
+	
+	private void computeForeignKeyChanges() {
+		List<IForeignKeyRelationEdge> allForeignKeyRelations = getForeignKeyRelations(schema1.edgeSet());
+		List<IForeignKeyRelationEdge> addedForeignKeyRelations = getForeignKeyRelations(schema2.edgeSet());
+		List<IForeignKeyRelationEdge> removedForeignKeyRelations = getForeignKeyRelations(schema1.edgeSet());
+		
+		removedForeignKeyRelations.removeAll(addedForeignKeyRelations);
+		addedForeignKeyRelations.removeAll(allForeignKeyRelations);
+		
+		if (comparisonResult == null)
+			comparisonResult = new SqlSchemaComparisonResult();
+		
+		comparisonResult.setAddedForeignKeyRelations(addedForeignKeyRelations);
+		comparisonResult.setRemovedForeignKeyRelations(removedForeignKeyRelations);
+	}
+
+	private List<IForeignKeyRelationEdge> getForeignKeyRelations(Set<DefaultEdge> edges) {
+		List<IForeignKeyRelationEdge> list = new ArrayList<>();
+		
+		for (DefaultEdge edge : edges)
+			if (edge instanceof IForeignKeyRelationEdge)
+				list.add((IForeignKeyRelationEdge) edge);
+		
+		return list;
 	}
 	
 }

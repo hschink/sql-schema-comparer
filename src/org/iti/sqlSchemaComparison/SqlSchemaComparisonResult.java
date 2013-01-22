@@ -1,8 +1,11 @@
 package org.iti.sqlSchemaComparison;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.iti.sqlSchemaComparison.edge.IForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
@@ -60,6 +63,28 @@ public class SqlSchemaComparisonResult {
 	public void setColumnComparisonResults(
 			Map<ISqlElement, SqlSchemaColumnComparisonResult> columnComparisonResults) {
 		this.columnComparisonResults = columnComparisonResults;
+	}
+	
+	private List<IForeignKeyRelationEdge> addedForeignKeyRelations = new ArrayList<>();
+	
+	public List<IForeignKeyRelationEdge> getAddedForeignKeyRelations() {
+		return addedForeignKeyRelations;
+	}
+
+	public void setAddedForeignKeyRelations(
+			List<IForeignKeyRelationEdge> addedForeignKeyRelations) {
+		this.addedForeignKeyRelations = addedForeignKeyRelations;
+	}
+
+	private List<IForeignKeyRelationEdge> removedForeignKeyRelations = new ArrayList<>();
+
+	public List<IForeignKeyRelationEdge> getRemovedForeignKeyRelations() {
+		return removedForeignKeyRelations;
+	}
+
+	public void setRemovedForeignKeyRelations(
+			List<IForeignKeyRelationEdge> removedForeignKeyRelations) {
+		this.removedForeignKeyRelations = removedForeignKeyRelations;
 	}
 
 	public SqlSchemaComparisonResult() {}
