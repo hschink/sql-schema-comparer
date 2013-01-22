@@ -27,5 +27,26 @@ public class TableHasColumnEdge extends DefaultEdge implements ITableHasColumnEd
 		this.table = (SqlTableVertex) table;
 		this.column = (SqlColumnVertex) column;
 	}
+	
+	@Override
+	public String toString() {
+		return table.getSqlElementId() + " (" + column.getSqlElementId() + ")";
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof ITableHasColumnEdge) {
+			ITableHasColumnEdge e = (ITableHasColumnEdge)o;
+			
+			return table.equals(e.getTable()) && column.equals(e.getColumn());
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return table.hashCode() + column.hashCode();
+	}
 
 }
