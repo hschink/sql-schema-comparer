@@ -171,7 +171,14 @@ public class SqliteSchemaFrontendTest {
 		Graph<ISqlElement, DefaultEdge> schema2 = frontend2.createSqlSchema();
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
 		SqlSchemaComparisonResult result = comparer.comparisonResult;
-		SqlSchemaColumnComparisonResult column = result.getColumnComparisonResults().values().iterator().next();
+		SqlSchemaColumnComparisonResult column = null;
+		
+		for (ISqlElement element : result.getColumnComparisonResults().keySet()) {
+			if (element.getSqlElementId().equals(REPLACE_COLUMN_NAME)) {
+				column = result.getColumnComparisonResults().get(element);
+				break;
+			}
+		}
 		
 		Assert.assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
 		Assert.assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
