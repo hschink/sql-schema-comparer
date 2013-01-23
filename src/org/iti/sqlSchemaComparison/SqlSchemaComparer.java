@@ -73,8 +73,7 @@ public class SqlSchemaComparer {
 		
 		computeTableMatching(vertices1, vertices2);
 		
-		if (comparisonResult == null)
-			computeColumnMatching(vertices1, vertices2);
+		computeColumnMatching(vertices1, vertices2);
 		
 		matching = new IsomorphismRelation<>(vertices1, vertices2, schema1, schema2);
 	}
@@ -103,6 +102,7 @@ public class SqlSchemaComparer {
 		
 		if (verticesWithNoMatch.size() > 0) {
 			SqlTableVertex renamedTable = null;
+			SqlTableVertex removedRenamedTable = null;
 			SqlTableVertex removedTable = null;
 			SqlTableVertex addedTable = null;
 			
@@ -119,6 +119,7 @@ public class SqlSchemaComparer {
 				vertices2.add(tablesNotMatched.get(0));
 				
 				renamedTable = (SqlTableVertex)verticesWithNoMatch.get(0);
+				removedRenamedTable = (SqlTableVertex)tablesNotMatched.get(0);
 			} else if (isSetReduced(tables1, tables2)) {
 				removedTable = (SqlTableVertex)verticesWithNoMatch.get(0);
 			} else {
@@ -129,7 +130,7 @@ public class SqlSchemaComparer {
 			verticesList2.addAll(vertices2);
 			
 			if (renamedTable != null || removedTable != null || addedTable != null)
-				comparisonResult = new SqlSchemaComparisonResult(renamedTable, removedTable, addedTable);
+				comparisonResult = new SqlSchemaComparisonResult(renamedTable, removedRenamedTable, removedTable, addedTable);
 		}
 	}
 
@@ -146,17 +147,26 @@ public class SqlSchemaComparer {
 		Set<ISqlElement> columns2 = SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet());
 		
 		for (ISqlElement column1 : columns1) {
-			if (columns2.contains(column1)) {
-				ISqlElement column2 = SqlElementFactory.getMatchingSqlElement(column1, columns2);
-				
-				vertices1.add(column1);
-				vertices2.add(column2);
-			} else {				
-				verticesWithNoMatch.add(column1);
+			if (!isColumnOfAddedTable(column1) && !isColumnOfRemovedTable(column1) && !isColumnOfRenamedTable(column1)) {	
+				if (columns2.contains(column1)) {
+					ISqlElement column2 = SqlElementFactory.getMatchingSqlElement(column1, columns2);
+					
+					vertices1.add(column1);
+					vertices2.add(column2);
+				} else {				
+					verticesWithNoMatch.add(column1);
+				}
 			}
 		}
 		
 		List<ISqlElement> missingColumns = new ArrayList<>(columns2);
+		List<ISqlElement> columnsOfChangedTables = new ArrayList<>();
+		
+		for (ISqlElement column : missingColumns)
+			if (isColumnOfAddedTable(column) || isColumnOfRemovedTable(column) || isColumnOfRenamedTable(column))
+				columnsOfChangedTables.add(column);
+		
+		missingColumns.removeAll(columnsOfChangedTables);
 		
 		missingColumns.removeAll(vertices2);
 		verticesWithNoMatch.addAll(missingColumns);
@@ -184,7 +194,7 @@ public class SqlSchemaComparer {
 				vertices1.add(verticesWithNoMatch.get(0));
 				vertices2.add(verticesWithNoMatch.get(1));
 					
-			} else if (isSetReduced(columns1, columns2)) {
+			} else if (columns1.contains(verticesWithNoMatch.get(0))) {
 				removedColumn = (SqlColumnVertex)verticesWithNoMatch.get(0);
 			} else {
 				addedColumn = (SqlColumnVertex)verticesWithNoMatch.get(0);
@@ -194,8 +204,39 @@ public class SqlSchemaComparer {
 		verticesList1.addAll(vertices1);
 		verticesList2.addAll(vertices2);
 		
-		if (renamedColumn != null || movedColumn != null || removedColumn != null || addedColumn != null)
-			comparisonResult = new SqlSchemaComparisonResult(renamedColumn, movedColumn, removedColumn, addedColumn);
+		if (comparisonResult == null)
+			comparisonResult = new SqlSchemaComparisonResult();
+		
+		if (renamedColumn != null)
+			comparisonResult.setRenamedColumn(renamedColumn);
+		
+		if (movedColumn != null) 
+			comparisonResult.setMovedColumn(movedColumn);
+			
+		if (removedColumn != null)
+			comparisonResult.setRemovedColumn(removedColumn);
+			
+		if (addedColumn != null)
+			comparisonResult.setAddedColumn(addedColumn);
+	}
+	
+	private boolean isColumnOfAddedTable(ISqlElement column) {
+		return comparisonResult != null && comparisonResult.getAddedTable() != null && isTableOfColumn(comparisonResult.getAddedTable(), ((SqlColumnVertex) column)); 
+	}
+	
+	private boolean isColumnOfRemovedTable(ISqlElement column) {
+		return comparisonResult != null && comparisonResult.getRemovedTable() != null && isTableOfColumn(comparisonResult.getRemovedTable(), ((SqlColumnVertex) column)); 
+	}
+	
+	private boolean isColumnOfRenamedTable(ISqlElement column) {
+		return comparisonResult != null 
+				&& comparisonResult.getRenamedTable() != null 
+				&& (isTableOfColumn(comparisonResult.getRenamedTable(), ((SqlColumnVertex) column))
+						|| isTableOfColumn(comparisonResult.getRemovedRenamedTable(), ((SqlColumnVertex) column))); 
+	}
+	
+	private boolean isTableOfColumn(SqlTableVertex table, SqlColumnVertex column) {
+		return table.getSqlElementId().equals(column.getTable());
 	}
 
 	private static boolean isTableMatching(ISqlElement column1, ISqlElement column2,
