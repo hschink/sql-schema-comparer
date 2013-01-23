@@ -34,6 +34,7 @@ public class SqliteSchemaFrontendTest {
 	private static final String RENAME_COLUMN_DATABASE_FILE_PATH = "test\\databases\\refactored\\hrm_RenameColumn.sqlite";
 	private static final String RENAME_TABLE_DATABASE_FILE_PATH = "test\\databases\\refactored\\hrm_RenameTable.sqlite";
 	private static final String REPLACE_COLUMN_DATABASE_FILE_PATH = "test\\databases\\refactored\\hrm_ReplaceColumn.sqlite";
+	private static final String REPLACE_LOB_WITH_TABLE_DATABASE_FILE_PATH = "test\\databases\\refactored\\hrm_ReplaceLobWithTable.sqlite";
 	
 	private static final String DROPPED_COLUMN_NAME = "boss";
 	private static final String DROPPED_TABLE_NAME = "external_staff";
@@ -42,6 +43,8 @@ public class SqliteSchemaFrontendTest {
 	private static final String RENAME_TABLE_NAME = "external_staff";
 	private static final String REPLACE_COLUMN_NAME = "company_name";
 	private static final String REPLACE_COLUMN_TYPE = "TEXT";
+	private static final String REPLACE_LOB_WITH_TABLE = "customer_address";
+	private static final String REPLACE_LOB_WITH_COLUMN = "address";
 	
 	@Before
 	public void setUp() { }
@@ -186,6 +189,22 @@ public class SqliteSchemaFrontendTest {
 		Assert.assertEquals(REPLACE_COLUMN_NAME, result.getRenamedColumn().getSqlElementId());
 		Assert.assertTrue(column.hasColumnTypeChanged());
 		Assert.assertEquals(REPLACE_COLUMN_TYPE, column.getCurrentColumnType());
+	}
+	
+	@Test
+	public void ReplaceLobWithTable() {
+		ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
+		ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(REPLACE_LOB_WITH_TABLE_DATABASE_FILE_PATH);
+		Graph<ISqlElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
+		Graph<ISqlElement, DefaultEdge> schema2 = frontend2.createSqlSchema();
+		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
+		SqlSchemaComparisonResult result = comparer.comparisonResult;
+		
+		Assert.assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
+		Assert.assertEquals(34, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
+		Assert.assertNotNull(result.getAddedTable());
+		Assert.assertEquals(REPLACE_LOB_WITH_TABLE, result.getAddedTable().getSqlElementId());
+		Assert.assertEquals(REPLACE_LOB_WITH_COLUMN, result.getRemovedColumn().getSqlElementId());
 	}
 
 	@After
