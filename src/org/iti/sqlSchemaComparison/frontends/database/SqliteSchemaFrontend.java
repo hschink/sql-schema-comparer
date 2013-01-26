@@ -1,4 +1,4 @@
-package org.iti.sqlSchemaComparison.frontends;
+package org.iti.sqlSchemaComparison.frontends.database;
 
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -15,6 +15,7 @@ import java.util.Set;
 
 import org.iti.sqlSchemaComparison.edge.ForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.edge.TableHasColumnEdge;
+import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
