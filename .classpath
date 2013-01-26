@@ -6,5 +6,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jgrapht-core"/>
 	<classpathentry kind="lib" path="Z:/workspace_graph/sql-schema-comparer/dependencies/sqlite-jdbc-3.7.15-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="dependencies/zql/classes"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
