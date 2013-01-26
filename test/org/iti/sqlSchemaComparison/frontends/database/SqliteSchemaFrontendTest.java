@@ -1,4 +1,4 @@
-package org.iti.sqlSchemaComparison.frontends;
+package org.iti.sqlSchemaComparison.frontends.database;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +10,7 @@ import org.iti.sqlSchemaComparison.SqlSchemaColumnComparisonResult;
 import org.iti.sqlSchemaComparison.SqlSchemaComparer;
 import org.iti.sqlSchemaComparison.SqlSchemaComparisonResult;
 import org.iti.sqlSchemaComparison.edge.ForeignKeyRelationEdge;
+import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
 import org.iti.sqlSchemaComparison.frontends.database.SqliteSchemaFrontend;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
