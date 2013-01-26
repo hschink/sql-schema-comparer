@@ -29,7 +29,8 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class SqliteSchemaFrontendTest {
 
-	private static final String DATABASE_FILE_PATH = "test\\databases\\hrm.sqlite";
+	public static final String DATABASE_FILE_PATH = "test\\databases\\hrm.sqlite";
+	
 	private static final String DROPPED_COLUMN_DATABASE_FILE_PATH = "test\\databases\\refactored\\hrm_DropColumn.sqlite";
 	private static final String DROPPED_TABLE_DATABASE_FILE_PATH = "test\\databases\\refactored\\hrm_DropTable.sqlite";
 	private static final String MOVE_COLUMN_DATABASE_FILE_PATH = "test\\databases\\refactored\\hrm_MoveColumn.sqlite";
