@@ -60,10 +60,15 @@ public class SqlSchemaComparer {
 
 	private void computeIsomorphism() {
 		EquivalenceComparator<ISqlElement, Graph<ISqlElement, DefaultEdge>> c = new SqlElementEquivalenceComparator();
+		
+		@SuppressWarnings("unchecked")
 		GraphIsomorphismInspector<Graph<ISqlElement, DefaultEdge>> inspector = AdaptiveIsomorphismInspectorFactory.createIsomorphismInspector(this.schema1, this.schema2, c, null);
 		
 		while (inspector.hasNext()) {
-			isomorphisms.add((IsomorphismRelation<ISqlElement, Graph<ISqlElement, DefaultEdge>>)inspector.next());
+			@SuppressWarnings("unchecked")
+			IsomorphismRelation<ISqlElement, Graph<ISqlElement, DefaultEdge>> isomorphism = (IsomorphismRelation<ISqlElement, Graph<ISqlElement, DefaultEdge>>)inspector.next();
+			
+			isomorphisms.add(isomorphism);
 		}
 	}
 	
