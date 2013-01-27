@@ -48,7 +48,7 @@ public class SqlTableVertexReachableCheckerTest {
 		ISqlElementReachabilityChecker checker = new SqlTableVertexReachableChecker(schema1, t1);
 		
 		Assert.assertTrue(checker.isReachable());
-		Assert.assertTrue(checker.getPath().size() == 1);
+		Assert.assertEquals(1, checker.getPath().size());
 		Assert.assertTrue(checker.getPath().contains(t1));
 	}
 	
@@ -57,7 +57,7 @@ public class SqlTableVertexReachableCheckerTest {
 		ISqlElementReachabilityChecker checker = new SqlTableVertexReachableChecker(schema1, t2);
 		
 		Assert.assertFalse(checker.isReachable());
-		Assert.assertTrue(checker.getPath().size() == 0);
+		Assert.assertEquals(0, checker.getPath().size());
 		Assert.assertFalse(checker.getPath().contains(t2));
 	}
 	
