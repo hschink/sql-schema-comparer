@@ -21,7 +21,7 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class SqlStatementFrontendTest {
 
-	private static final String SINGLE_TABLE_QUERY = "SELECT firstname, surname FROM customers;";
+	public static final String SINGLE_TABLE_QUERY = "SELECT firstname, surname FROM customers;";
 	private static final String JOIN_TABLE_QUERY = "SELECT firstname, surname, name FROM employees, departments;";
 	private static final String JOIN_TABLE_WITH_ALIAS_QUERY = "SELECT e.firstname, e.surname, d.name FROM employees e, departments d;";
 	private static final String JOIN_TABLE_WITH_TABLE_REFERENCE_QUERY = "SELECT employees.firstname, employees.surname, departments.name FROM employees, departments;";
