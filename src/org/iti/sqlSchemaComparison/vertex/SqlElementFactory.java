@@ -10,9 +10,6 @@ public abstract class SqlElementFactory {
 		switch (type) {
 			case Column:
 				return null;
-				
-			case Type:
-				return new SqlTypeVertex(id);
 		
 			default:
 				return new SqlTableVertex(id);
@@ -83,18 +80,6 @@ public abstract class SqlElementFactory {
 				} else if (v.getSqlElementId().equals(id))
 					return v;
 			}
-		
-		return null;
-	}
-	
-	public static ISqlElement getMatchingSqlColumn(SqlColumnVertex column1, Set<ISqlElement> vertices) {
-		
-		for (ISqlElement v : SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, vertices)) {
-			SqlColumnVertex c = (SqlColumnVertex) v;
-			
-			if (c.getSqlElementId().equals(column1.getSqlElementId()))
-				return c;
-		}
 		
 		return null;
 	}
