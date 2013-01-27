@@ -1,7 +1,9 @@
 package org.iti.sqlSchemaComparison.vertex;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public abstract class SqlElementFactory {
@@ -82,6 +84,21 @@ public abstract class SqlElementFactory {
 			}
 		
 		return null;
+	}
+	
+	public static List<ISqlElement> getMatchingSqlColumns(String id, Collection<ISqlElement> vertices, boolean matchColumnTable) {
+		Set<ISqlElement> columns = SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, vertices);
+		List<ISqlElement> matchingColumns = new ArrayList<>();
+		
+		for (ISqlElement column : columns) {
+			String otherTable =  (matchColumnTable) ? ((SqlColumnVertex) column).getTable() + "." : "";
+			String otherId = otherTable + column.getSqlElementId();
+			
+			if (otherId.equals(id))
+				matchingColumns.add(column);
+		}
+		
+		return matchingColumns;
 	}
 
 }
