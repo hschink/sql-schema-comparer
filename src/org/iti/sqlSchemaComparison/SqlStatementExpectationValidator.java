@@ -25,7 +25,7 @@ public class SqlStatementExpectationValidator {
 	public SqlStatementExpectationValidationResult computeGraphMatching(Graph<ISqlElement, DefaultEdge> expectedSchema) {		
 		List<ISqlElement> missingTables = getMissingTables(expectedSchema);
 		List<ISqlElement> missingColumns = getMissingColumns(expectedSchema);
-		Map<ISqlElement, List<ISqlElement>> missingButReachableColumns = getReachableColumns(expectedSchema, missingColumns);
+		Map<ISqlElement, List<List<ISqlElement>>> missingButReachableColumns = getReachableColumns(expectedSchema, missingColumns);
 		
 		missingColumns.removeAll(missingButReachableColumns.keySet());
 		
@@ -58,9 +58,9 @@ public class SqlStatementExpectationValidator {
 		return missingColumns;
 	}
 	
-	private Map<ISqlElement, List<ISqlElement>> getReachableColumns(Graph<ISqlElement, DefaultEdge> expectedSchema,
+	private Map<ISqlElement, List<List<ISqlElement>>> getReachableColumns(Graph<ISqlElement, DefaultEdge> expectedSchema,
 			List<ISqlElement> missingColumns) {
-		Map<ISqlElement, List<ISqlElement>> reachableColumns = new HashMap<>();
+		Map<ISqlElement, List<List<ISqlElement>>> reachableColumns = new HashMap<>();
 		Set<ISqlElement> expectedTables = SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, expectedSchema.vertexSet());
 		
 		for (ISqlElement column : missingColumns) {
@@ -75,9 +75,9 @@ public class SqlStatementExpectationValidator {
 						
 						if (checker.isReachable()) {
 							if (!reachableColumns.containsKey(column))
-								reachableColumns.put(column, new ArrayList<ISqlElement>());
+								reachableColumns.put(column, new ArrayList<List<ISqlElement>>());
 							
-							reachableColumns.get(column).add(checker.getPath().get(checker.getPath().size() - 1));
+							reachableColumns.get(column).add(checker.getPath());
 							break;
 						}
 					}

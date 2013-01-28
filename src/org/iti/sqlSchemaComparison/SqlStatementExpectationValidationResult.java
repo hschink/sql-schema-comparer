@@ -21,9 +21,9 @@ public class SqlStatementExpectationValidationResult {
 		return missingColumns;
 	}
 	
-	private Map<ISqlElement, List<ISqlElement>> missingButReachableColumns = new HashMap<>();
+	private Map<ISqlElement, List<List<ISqlElement>>> missingButReachableColumns = new HashMap<>();
 
-	public Map<ISqlElement, List<ISqlElement>> getMissingButReachableColumns() {
+	public Map<ISqlElement, List<List<ISqlElement>>> getMissingButReachableColumns() {
 		return missingButReachableColumns;
 	}
 	
@@ -33,7 +33,7 @@ public class SqlStatementExpectationValidationResult {
 	
 	public SqlStatementExpectationValidationResult(List<ISqlElement> missingTables,
 			List<ISqlElement> missingColumns,
-			Map<ISqlElement, List<ISqlElement>> missingButReachableColumns) {
+			Map<ISqlElement, List<List<ISqlElement>>> missingButReachableColumns) {
 		
 		if (missingTables != null)
 			this.missingTables = missingTables;
