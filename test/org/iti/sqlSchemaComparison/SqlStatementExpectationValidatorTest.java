@@ -20,8 +20,8 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class SqlStatementExpectationValidatorTest {
 
-	private static final String QUERY_WITH_MISSING_COLUMN = "SELECT firstname, surname, fee FROM customers;";
-	private static final String QUERY_WITH_FOREIGN_TABLE_REFERENCE = "SELECT firstname, surname, account FROM customers;";
+	public static final String QUERY_WITH_MISSING_COLUMN = "SELECT firstname, surname, fee FROM customers;";
+	public static final String QUERY_WITH_FOREIGN_TABLE_REFERENCE = "SELECT firstname, surname, account FROM customers;";
 	
 	private static Graph<ISqlElement, DefaultEdge> sqliteSchema;
 	

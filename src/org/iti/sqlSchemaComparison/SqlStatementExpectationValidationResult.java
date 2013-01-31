@@ -44,4 +44,35 @@ public class SqlStatementExpectationValidationResult {
 		if (missingButReachableColumns != null)
 			this.missingButReachableColumns = missingButReachableColumns;
 	}
+	
+	@Override
+	public String toString() {
+		String result = "";
+		
+		result += "Statement Comparison Result\n";
+		result += "---------------------------\n";
+		result += "\n";
+		result += "------------------\n";
+		result += "| MISSING TABLES |\n";
+		result += "------------------\n";
+		for (ISqlElement t : missingTables)
+			result += String.format("%s\n", t);
+		
+		result += "\n";
+		result += "-------------------\n";
+		result += "| MISSING COLUMNS |\n";
+		result += "-------------------\n";
+		for (ISqlElement c : missingColumns)
+			result += String.format("%s\n", c);
+		
+		result += "\n";
+		result += "---------------------------------\n";
+		result += "| MISSING BUT REACHABLE COLUMNS |\n";
+		result += "---------------------------------\n";
+		for (ISqlElement c : missingButReachableColumns.keySet())
+			for (List<ISqlElement> p : missingButReachableColumns.get(c))
+				result += String.format("%s: %s\n", c, p);
+		
+		return result;
+	}
 }

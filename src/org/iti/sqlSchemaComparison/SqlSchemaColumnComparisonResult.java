@@ -43,6 +43,27 @@ public class SqlSchemaColumnComparisonResult {
 			this.addedConstraints = addedConstraints;
 			this.removedConstraints = removedConstraints;
 		}
+		
+		@Override
+		public String toString() {
+			String result = "";
+			
+			if (addedConstraints.size() > 0) {
+				result += "\n";
+				result += "| CREATED CONSTRAINTS |\n";
+				for (IColumnConstraint c : addedConstraints)
+					result += String.format("%s\n", c);
+			}
+			
+			if (removedConstraints.size() > 0) {
+				result += "\n";
+				result += "| REMOVED CONSTRAINTS |\n";
+				for (IColumnConstraint c : removedConstraints)
+					result += String.format("%s\n", c);
+			}
+			
+			return result;
+		}
 	}
 	
 	private String oldColumnType;
@@ -58,7 +79,7 @@ public class SqlSchemaColumnComparisonResult {
 	}
 	
 	public boolean hasColumnTypeChanged() {
-		return oldColumnType != currentColumnType;
+		return !oldColumnType.equals(currentColumnType);
 	}
 	
 	private ColumnConstraintComparisonResult constraintComparisonResult;
@@ -74,5 +95,17 @@ public class SqlSchemaColumnComparisonResult {
 		this.oldColumnType = oldColumnType;
 		this.currentColumnType = currentColumnType;
 		this.constraintComparisonResult = constraintComparisonResult;
+	}
+	
+	@Override
+	public String toString() {
+		String result = "";
+		
+		if (hasColumnTypeChanged())
+			result += String.format("Type: %s -> %s\n", oldColumnType, currentColumnType);
+		
+		result += constraintComparisonResult.toString();
+		
+		return result;
 	}
 }

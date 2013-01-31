@@ -132,4 +132,78 @@ public class SqlSchemaComparisonResult {
 		this.removedColumn = removedColumn;
 		this.addedColumn = addedColumn;
 	}
+	
+	@Override
+	public String toString() {
+		String result = "";
+		
+		result += "Schema Comparison Result\n";
+		result += "------------------------\n";
+		result += "\n";
+		
+		if (renamedTable != null || removedRenamedTable != null || removedTable != null || addedTable != null) {
+			result += "-----------------------\n";
+			result += "| TABLE MODIFICATIONS |\n";
+			result += "-----------------------\n";
+			if (renamedTable != null)
+				result += String.format("Renamed Table | %s\n", renamedTable.getSqlElementId());
+			
+			if (removedRenamedTable != null)
+				result += String.format("Renamed Table | %s\n", removedRenamedTable.getSqlElementId());
+			
+			if (removedTable != null)
+				result += String.format("Removed Table | %s\n", removedTable.getSqlElementId());
+			
+			if (addedTable != null)
+				result += String.format("Created Table | %s\n", addedTable.getSqlElementId());
+			
+			result += "\n";
+		}
+		
+		if (renamedColumn != null || movedColumn != null || removedColumn != null || addedColumn != null) {
+			result += "------------------------\n";
+			result += "| COLUMN MODIFICATIONS |\n";
+			result += "------------------------\n";
+			
+			if (renamedColumn != null)
+				result += String.format("Renamed Column | %s\n", renamedColumn.getSqlElementId());
+			
+			if (movedColumn != null)
+				result += String.format("Moved Column   | %s\n", movedColumn.getSqlElementId());
+			
+			if (removedColumn != null)
+				result += String.format("Removed Column | %s\n", removedColumn.getSqlElementId());
+			
+			if (addedColumn != null)
+				result += String.format("Created Column | %s\n", addedColumn.getSqlElementId());
+			
+			result += "\n";
+		}
+		
+		result += "-----------------------------\n";
+		result += "| COLUMN COMPARISON RESULTS |\n";
+		result += "-----------------------------\n";
+		for (ISqlElement r : columnComparisonResults.keySet()) {
+			String columnComparisonResult = columnComparisonResults.get(r).toString();
+			
+			if (columnComparisonResult.length() != 0)
+				result += String.format("--- %s ---\n%s", r.toString(), columnComparisonResult);
+		}
+		
+		result += "\n";
+		result += "------------------------------\n";
+		result += "| CREATED FOREIGN REFERENCES |\n";
+		result += "------------------------------\n";
+		for (IForeignKeyRelationEdge r : addedForeignKeyRelations)
+			result += String.format("%s -> %s\n", r.getReferencingColumn(), r.getForeignKeyColumn());
+		
+		result += "\n";
+		result += "------------------------------\n";
+		result += "| REMOVED FOREIGN REFERENCES |\n";
+		result += "------------------------------\n";
+		for (IForeignKeyRelationEdge r : removedForeignKeyRelations)
+			result += String.format("%s -> %s\n", r.getReferencingColumn(), r.getForeignKeyColumn());
+		
+		return result;
+	}
 }
