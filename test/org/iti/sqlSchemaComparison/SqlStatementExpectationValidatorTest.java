@@ -32,6 +32,9 @@ public class SqlStatementExpectationValidatorTest {
 		sqliteSchema = sqliteFrontend.createSqlSchema();
 	}
 	
+	@Before
+	public void setUp() { }
+	
 	@Test
 	public void SingleTableQueryIsValid() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(SqlStatementFrontendTest.SINGLE_TABLE_QUERY, null);
@@ -71,9 +74,6 @@ public class SqlStatementExpectationValidatorTest {
 		Assert.assertEquals(2, result.getMissingButReachableColumns().get(key).size());
 		Assert.assertEquals("account", key.getSqlElementId());
 	}
-	
-	@Before
-	public void setUp() { }
 	
 	@After
 	public void tearDown() { }
