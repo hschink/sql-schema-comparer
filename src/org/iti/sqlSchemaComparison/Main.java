@@ -70,7 +70,7 @@ public class Main {
 		ISqlSchemaFrontend statementFrontend = new SqlStatementFrontend(statement, baseSchema);
 		Graph<ISqlElement, DefaultEdge> statementSchema = statementFrontend.createSqlSchema();
 		
-		compareDatabaseStatement(statementSchema, databases);
+		compareDatabaseStatement(statement, statementSchema, databases);
 	}
 
 	private static Graph<ISqlElement, DefaultEdge> getBaseSchema(
@@ -89,6 +89,7 @@ public class Main {
 	}
 
 	private static void compareDatabaseStatement(
+			String statement,
 			Graph<ISqlElement, DefaultEdge> statementSchema,
 			List<String> databases) {
 		if (databases.size() > 0) {
@@ -101,9 +102,10 @@ public class Main {
 			SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(schema);
 			SqlStatementExpectationValidationResult result = validator.computeGraphMatching(statementSchema);
 
+			System.out.println("> " + statement + "\n");
 			System.out.println(result.toString());
 			
-			compareDatabaseStatement(statementSchema, databases);
+			compareDatabaseStatement(statement, statementSchema, databases);
 		}
 	}
 

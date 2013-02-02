@@ -47,32 +47,53 @@ public class SqlStatementExpectationValidationResult {
 	
 	@Override
 	public String toString() {
+		String output = "";
 		String result = "";
 		
-		result += "Statement Comparison Result\n";
-		result += "---------------------------\n";
-		result += "\n";
-		result += "------------------\n";
-		result += "| MISSING TABLES |\n";
-		result += "------------------\n";
-		for (ISqlElement t : missingTables)
-			result += String.format("%s\n", t);
+		output += "Statement Comparison Result\n";
+		output += "---------------------------\n";
 		
-		result += "\n";
-		result += "-------------------\n";
-		result += "| MISSING COLUMNS |\n";
-		result += "-------------------\n";
-		for (ISqlElement c : missingColumns)
-			result += String.format("%s\n", c);
+		result += toResultString("MISSING TABLES", missingTables);
+		result += toResultString("MISSING COLUMNS", missingColumns);
+		result += toResultString("MISSING BUT REACHABLE COLUMNS", missingButReachableColumns);
 		
-		result += "\n";
-		result += "---------------------------------\n";
-		result += "| MISSING BUT REACHABLE COLUMNS |\n";
-		result += "---------------------------------\n";
-		for (ISqlElement c : missingButReachableColumns.keySet())
-			for (List<ISqlElement> p : missingButReachableColumns.get(c))
-				result += String.format("%s: %s\n", c, p);
+		if (result.length() == 0)
+			output += "Statement is valid!";
+		else
+			output += result;
+		
+		return output;
+	}
+
+	private String toResultString(String title, List<ISqlElement> elements) {
+		String result = "";
+		
+		if (!elements.isEmpty()) {
+			result += "\n";
+			result += "------------------\n";
+			result += "| " + title + " |\n";
+			result += "------------------\n";
+			for (ISqlElement t : elements)
+				result += String.format("%s\n", t);
+		}
 		
 		return result;
 	}
+	
+	private String toResultString(String title, Map<ISqlElement, List<List<ISqlElement>>> elements) {
+		String result = "";
+		
+		if (!elements.isEmpty()) {
+			result += "\n";
+			result += "---------------------------------\n";
+			result += "| " + title + " |\n";
+			result += "---------------------------------\n";
+			for (ISqlElement c : elements.keySet())
+				for (List<ISqlElement> p : elements.get(c))
+					result += String.format("%s: %s\n", c, p);
+		}
+		
+		return result;
+	}
+	
 }
