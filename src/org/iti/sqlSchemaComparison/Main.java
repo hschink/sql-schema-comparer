@@ -40,10 +40,15 @@ public class Main {
 		try {
 			parser.parseArgument(args);
 			
-			if ((option.statement != null && option.statement != "") && option.databases.size() == 0)
+			if (option.statement == null && option.databases == null)
+				throw new CmdLineException(parser, "No arguments passed!");
+			
+			if ((option.statement != null && option.statement != "")
+					&& (option.databases == null || option.databases.size() == 0))
 				throw new CmdLineException(parser, "Statement Validation: No database passed!");
 			
-			if ((option.statement == null || option.statement == "") && option.databases.size() <= 1)
+			if ((option.statement == null || option.statement == "")
+					&& (option.databases == null || option.databases.size() <= 1))
 				throw new CmdLineException(parser, "Schema Comparison: Not enough databases passed!");
 			
 		} catch (CmdLineException e) {
