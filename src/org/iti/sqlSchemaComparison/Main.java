@@ -122,10 +122,17 @@ public class Main {
 			
 			SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
 			
+			System.out.println(String.format("[%s] <=> [%s]", baseDatabaseFilePath, nextDatabaseFilePath));
+			System.out.println();
+			
 			if (comparer.isIsomorphic())
 				System.out.println(String.format("Schemas [%s] and [%s] are isomorphic!", baseDatabaseFilePath, nextDatabaseFilePath));
 			else
 				System.out.println(comparer.comparisonResult.toString());
+			
+			System.out.println();
+			System.out.println(new String(new char[80]).replace('\0', '='));
+			System.out.println();
 			
 			compareDatabaseSchemas(databases);
 		}

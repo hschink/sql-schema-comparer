@@ -135,75 +135,101 @@ public class SqlSchemaComparisonResult {
 	
 	@Override
 	public String toString() {
+		String output = "";
 		String result = "";
 		
-		result += "Schema Comparison Result\n";
-		result += "------------------------\n";
-		result += "\n";
+		output += "Schema Comparison Result\n";
+		output += "------------------------\n";
 		
 		if (renamedTable != null || removedRenamedTable != null || removedTable != null || addedTable != null) {
+			result += "\n";
 			result += "-----------------------\n";
 			result += "| TABLE MODIFICATIONS |\n";
-			result += "-----------------------\n";
+			result += "-----------------------";
 			if (renamedTable != null)
-				result += String.format("Renamed Table | %s\n", renamedTable.getSqlElementId());
+				result += String.format("\nRenamed Table | %s", renamedTable.getSqlElementId());
 			
 			if (removedRenamedTable != null)
-				result += String.format("Renamed Table | %s\n", removedRenamedTable.getSqlElementId());
+				result += String.format("\nRenamed Table | %s", removedRenamedTable.getSqlElementId());
 			
 			if (removedTable != null)
-				result += String.format("Removed Table | %s\n", removedTable.getSqlElementId());
+				result += String.format("\nRemoved Table | %s", removedTable.getSqlElementId());
 			
 			if (addedTable != null)
-				result += String.format("Created Table | %s\n", addedTable.getSqlElementId());
-			
-			result += "\n";
+				result += String.format("\nCreated Table | %s", addedTable.getSqlElementId());
 		}
 		
 		if (renamedColumn != null || movedColumn != null || removedColumn != null || addedColumn != null) {
+			result += "\n";
 			result += "------------------------\n";
 			result += "| COLUMN MODIFICATIONS |\n";
-			result += "------------------------\n";
+			result += "------------------------";
 			
 			if (renamedColumn != null)
-				result += String.format("Renamed Column | %s\n", renamedColumn.getSqlElementId());
+				result += String.format("\nRenamed Column | %s", renamedColumn.getSqlElementId());
 			
 			if (movedColumn != null)
-				result += String.format("Moved Column   | %s\n", movedColumn.getSqlElementId());
+				result += String.format("\nMoved Column   | %s", movedColumn.getSqlElementId());
 			
 			if (removedColumn != null)
-				result += String.format("Removed Column | %s\n", removedColumn.getSqlElementId());
+				result += String.format("\nRemoved Column | %s", removedColumn.getSqlElementId());
 			
 			if (addedColumn != null)
-				result += String.format("Created Column | %s\n", addedColumn.getSqlElementId());
-			
-			result += "\n";
+				result += String.format("\nCreated Column | %s", addedColumn.getSqlElementId());
 		}
 		
-		result += "-----------------------------\n";
-		result += "| COLUMN COMPARISON RESULTS |\n";
-		result += "-----------------------------\n";
-		for (ISqlElement r : columnComparisonResults.keySet()) {
-			String columnComparisonResult = columnComparisonResults.get(r).toString();
-			
-			if (columnComparisonResult.length() != 0)
-				result += String.format("--- %s ---\n%s", r.toString(), columnComparisonResult);
-		}
+		result += toResultString("COLUMN COMPARISON RESULTS", columnComparisonResults);
+		result += toResultString("CREATED FOREIGN REFERENCES", addedForeignKeyRelations);
+		result += toResultString("REMOVED FOREIGN REFERENCES", removedForeignKeyRelations);
 		
-		result += "\n";
-		result += "------------------------------\n";
-		result += "| CREATED FOREIGN REFERENCES |\n";
-		result += "------------------------------\n";
-		for (IForeignKeyRelationEdge r : addedForeignKeyRelations)
-			result += String.format("%s -> %s\n", r.getReferencingColumn(), r.getForeignKeyColumn());
+		if (result.length() == 0)
+			output += "Schemas are isomorphic!";
+		else
+			output += result;
 		
-		result += "\n";
-		result += "------------------------------\n";
-		result += "| REMOVED FOREIGN REFERENCES |\n";
-		result += "------------------------------\n";
-		for (IForeignKeyRelationEdge r : removedForeignKeyRelations)
-			result += String.format("%s -> %s\n", r.getReferencingColumn(), r.getForeignKeyColumn());
-		
-		return result;
+		return output;
 	}
+
+	private String toResultString(String title, Map<ISqlElement, SqlSchemaColumnComparisonResult> elements) {
+		String output = "";
+		String result = "";
+		
+		if (!elements.isEmpty()) {
+			for (ISqlElement r : elements.keySet()) {
+				String columnComparisonResult = elements.get(r).toString();
+				
+				if (columnComparisonResult.length() != 0)
+					result += String.format("--- %s ---\n%s", r.toString(), columnComparisonResult);
+			}
+		}
+		
+		if (result.length() > 0) {
+			output += "-----------------------------\n";
+			output += "| " + title + " |\n";
+			output += "-----------------------------\n";
+			output += result;
+		}
+		
+		return output;
+	}
+
+	private String toResultString(String title, List<IForeignKeyRelationEdge> elements) {
+		String output = "";
+		String result = "";
+		
+		if (!elements.isEmpty()) {
+			for (IForeignKeyRelationEdge r : elements)
+				result += String.format("\n%s -> %s", r.getReferencingColumn(), r.getForeignKeyColumn());
+		}
+		
+		if (result.length() > 0) {
+			output += "-----------------------------\n";
+			output += "| " + title + " |\n";
+			output += "-----------------------------";
+			output += result;
+		}
+		
+		return output;
+	}
+	
 }
