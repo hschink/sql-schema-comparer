@@ -19,6 +19,7 @@ public class MainTest {
 		String[] args = new String[] { 
 			"-databases",
 			SqliteSchemaFrontendTest.DATABASE_FILE_PATH,
+			SqliteSchemaFrontendTest.DATABASE_FILE_PATH,
 			SqliteSchemaFrontendTest.DROPPED_COLUMN_DATABASE_FILE_PATH,
 			SqliteSchemaFrontendTest.DATABASE_FILE_PATH,
 			SqliteSchemaFrontendTest.DROPPED_TABLE_DATABASE_FILE_PATH,

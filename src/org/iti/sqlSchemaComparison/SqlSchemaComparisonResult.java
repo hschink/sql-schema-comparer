@@ -204,7 +204,7 @@ public class SqlSchemaComparisonResult {
 		}
 		
 		if (result.length() > 0) {
-			output += "-----------------------------\n";
+			output += "\n-----------------------------\n";
 			output += "| " + title + " |\n";
 			output += "-----------------------------\n";
 			output += result;
@@ -223,7 +223,7 @@ public class SqlSchemaComparisonResult {
 		}
 		
 		if (result.length() > 0) {
-			output += "-----------------------------\n";
+			output += "\n-----------------------------\n";
 			output += "| " + title + " |\n";
 			output += "-----------------------------";
 			output += result;
