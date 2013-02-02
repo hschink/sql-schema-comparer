@@ -36,6 +36,10 @@ public class ColumnConstraintHelper {
 		return new ColumnConstraintComparisonResult(constraints1, constraints2, addedConstraints, removedConstraints);
 	}
 	
+	public static String toString(IColumnConstraint columnConstraint) {
+		return String.format("[%s] %s", columnConstraint.getConstraintType(), columnConstraint.getConstraintExpression());
+	}
+	
 	public static boolean equals(IColumnConstraint columnConstraint, Object o) {
 
 		if (o instanceof IColumnConstraint) {

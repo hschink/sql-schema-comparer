@@ -27,6 +27,11 @@ public class DefaultColumnConstraint implements IColumnConstraint {
 		this.expression = expression;
 		this.vertex = vertex;
 	}
+	
+	@Override
+	public String toString() {
+		return ColumnConstraintHelper.toString(this);
+	}
 
 	@Override
 	public boolean equals(Object o) {
