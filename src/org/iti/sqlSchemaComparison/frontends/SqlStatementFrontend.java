@@ -96,7 +96,7 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 		for (Object item : query.getSelect()) {
 			ZSelectItem selectItem = (ZSelectItem) item;
 			
-			if (query.getFrom().size() == 1 || columnMatchesTable(query, fromItem, selectItem)) {
+			if ((databaseSchema != null && columnMatchesTable(query, fromItem, selectItem)) || query.getFrom().size() == 1) {
 				ISqlElement column = new SqlColumnVertex(selectItem.getColumn(), null, table.getSqlElementId());
 				
 				schema.addVertex(column);
@@ -108,10 +108,7 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 	private boolean columnMatchesTable(ZQuery query, ZFromItem fromItem,
 			ZSelectItem selectItem) {
 		String tableForColumn = selectItem.getTable();
-		
-		if (tableForColumn == null && databaseSchema == null)
-			throw new IllegalArgumentException("Cannot resolve table for column because no database schema is passed!");
-		
+
 		if (tableForColumn == null) {
 			Set<String> tables = getTablesFromQuery(query);
 			Set<String> matchingTables = getTablesContainingColumn(tables, selectItem.getColumn());
