@@ -14,7 +14,9 @@ import org.jgrapht.graph.DefaultEdge;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
@@ -26,8 +28,13 @@ public class SqlStatementFrontendTest {
 	private static final String JOIN_TABLE_WITH_ALIAS_QUERY = "SELECT e.firstname, e.surname, d.name FROM employees e, departments d;";
 	private static final String JOIN_TABLE_WITH_TABLE_REFERENCE_QUERY = "SELECT employees.firstname, employees.surname, departments.name FROM employees, departments;";
 	private static final String TABLE_DOES_NOT_EXIST_QUERY = "SELECT name from wrong_table;";
+	private static final String COLUMN_DOES_NOT_EXIST_QUERY = "SELECT wrong_column from customers;";
+	private static final String MULTIPLE_MATCHING_COLUMNS_QUERY = "SELECT account from managers, salespersons;";
 	
 	private static Graph<ISqlElement, DefaultEdge> sqliteSchema;
+	
+	@Rule
+	public ExpectedException exception = ExpectedException.none();
 	
 	@BeforeClass
 	public static void Init() {
@@ -75,10 +82,27 @@ public class SqlStatementFrontendTest {
 		Assert.assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
 	}
 	
-	@Test(expected=IllegalArgumentException.class)
+	@Test
 	public void QueryOnNonExistingTable() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(TABLE_DOES_NOT_EXIST_QUERY, sqliteSchema);
 		
+		exception.expect(IllegalArgumentException.class);
+		frontend.createSqlSchema();
+	}
+	
+	@Test
+	public void QueryOnNonExistingColumn() {
+		ISqlSchemaFrontend frontend = new SqlStatementFrontend(COLUMN_DOES_NOT_EXIST_QUERY, sqliteSchema);
+		
+		exception.expect(IllegalArgumentException.class);
+		frontend.createSqlSchema();
+	}
+	
+	@Test
+	public void QueryWithMultipleMatchingColumns() {
+		ISqlSchemaFrontend frontend = new SqlStatementFrontend(MULTIPLE_MATCHING_COLUMNS_QUERY, sqliteSchema);
+		
+		exception.expect(IllegalArgumentException.class);
 		frontend.createSqlSchema();
 	}
 
