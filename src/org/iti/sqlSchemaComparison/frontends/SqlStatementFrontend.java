@@ -83,7 +83,13 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 
 	private void createTableSchema(Graph<ISqlElement, DefaultEdge> schema,
 			ZQuery query, ZFromItem fromItem) {
-
+		if (databaseSchema != null) {
+			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, fromItem.getTable(), databaseSchema.vertexSet());
+			
+			if (table == null)
+				throw new IllegalArgumentException(String.format("Table %s does not exist in schema!", fromItem.getTable()));
+		}
+		
 		ISqlElement table = SqlElementFactory.createSqlElement(SqlElementType.Table, fromItem.getTable());
 		schema.addVertex(table);
 		
