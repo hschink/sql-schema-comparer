@@ -25,6 +25,7 @@ public class SqlStatementFrontendTest {
 	private static final String JOIN_TABLE_QUERY = "SELECT firstname, surname, name FROM employees, departments;";
 	private static final String JOIN_TABLE_WITH_ALIAS_QUERY = "SELECT e.firstname, e.surname, d.name FROM employees e, departments d;";
 	private static final String JOIN_TABLE_WITH_TABLE_REFERENCE_QUERY = "SELECT employees.firstname, employees.surname, departments.name FROM employees, departments;";
+	private static final String TABLE_DOES_NOT_EXIST_QUERY = "SELECT name from wrong_table;";
 	
 	private static Graph<ISqlElement, DefaultEdge> sqliteSchema;
 	
@@ -72,6 +73,13 @@ public class SqlStatementFrontendTest {
 		
 		Assert.assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
 		Assert.assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void QueryOnNonExistingTable() {
+		ISqlSchemaFrontend frontend = new SqlStatementFrontend(TABLE_DOES_NOT_EXIST_QUERY, sqliteSchema);
+		
+		frontend.createSqlSchema();
 	}
 
 	@After
