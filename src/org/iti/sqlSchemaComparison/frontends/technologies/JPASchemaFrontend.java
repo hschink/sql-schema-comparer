@@ -10,7 +10,10 @@ import japa.parser.ast.expr.MemberValuePair;
 import japa.parser.ast.expr.NormalAnnotationExpr;
 import japa.parser.ast.visitor.VoidVisitorAdapter;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,13 +43,13 @@ public class JPASchemaFrontend implements ISqlSchemaFrontend {
 		
 		private final static String GETTER_PREFIX = "get";
 		
-		private Graph<ISqlElement, DefaultEdge> schema = new SimpleGraph<ISqlElement, DefaultEdge>(DefaultEdge.class);
-		
-		public Graph<ISqlElement, DefaultEdge> getSchema() {
-			return schema;
-		}
+		private Graph<ISqlElement, DefaultEdge> schema;
 
 		private ISqlElement lastVisitedClass;
+		
+		public JPAAnnotationVisitor(Graph<ISqlElement, DefaultEdge> schema) {
+			this.schema = schema;
+		}
 		
 		@Override
 		public void visit(ClassOrInterfaceDeclaration n, Graph<ISqlElement, DefaultEdge> arg) {
@@ -153,9 +156,34 @@ public class JPASchemaFrontend implements ISqlSchemaFrontend {
 		}
 		return schema;
 	}
+	
+	private static FilenameFilter javaFilenameFilter = new FilenameFilter() {
+		
+		@Override
+		public boolean accept(File arg0, String arg1) {
+			return arg1.endsWith(".java");
+		}
+	};
 
 	private Graph<ISqlElement, DefaultEdge> tryCreateSqlSchema() throws ParseException, IOException {
-		Graph<ISqlElement, DefaultEdge> schema = null;
+		Graph<ISqlElement, DefaultEdge> schema = new SimpleGraph<ISqlElement, DefaultEdge>(DefaultEdge.class);
+		File file = new File(filePath);
+		
+		if (file.isDirectory()) {			
+			for (String f : file.list(javaFilenameFilter)) {
+				File child = new File(file, f);
+				
+				processFile(schema,  child.getAbsolutePath());
+			}
+		} else {
+			processFile(schema, filePath);
+		}
+
+        return schema;
+	}
+
+	private void processFile(Graph<ISqlElement, DefaultEdge> schema, String filePath)
+			throws FileNotFoundException, ParseException, IOException {
 		FileInputStream in = new FileInputStream(filePath);
 
         CompilationUnit cu;
@@ -164,20 +192,16 @@ public class JPASchemaFrontend implements ISqlSchemaFrontend {
             // parse the file
             cu = JavaParser.parse(in);
 
-            schema = parseJavaCompilationUnit(cu);
+            parseJavaCompilationUnit(cu, schema);
         } finally {
             in.close();
         }
-
-        return schema;
 	}
 
-	private Graph<ISqlElement, DefaultEdge> parseJavaCompilationUnit(CompilationUnit cu) {
-		JPAAnnotationVisitor visitor = new JPAAnnotationVisitor();
+	private void parseJavaCompilationUnit(CompilationUnit cu, Graph<ISqlElement, DefaultEdge> schema) {
+		JPAAnnotationVisitor visitor = new JPAAnnotationVisitor(schema);
 		
 		visitor.visit(cu, null);
-		
-		return visitor.getSchema();
 	}
 
 	public JPASchemaFrontend(String filePath) {
