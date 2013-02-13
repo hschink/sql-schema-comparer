@@ -182,7 +182,7 @@ public class JPASchemaFrontend implements ISqlSchemaFrontend {
 
 	public JPASchemaFrontend(String filePath) {
 		if (filePath == null || filePath == "")
-			throw new NullPointerException("Path to SQLite database file must not be null or empty!");
+			throw new NullPointerException("Path to JPA file(s) must not be null or empty!");
 		
 		this.filePath = filePath;
 	}
