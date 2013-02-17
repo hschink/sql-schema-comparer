@@ -6,6 +6,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
+import org.iti.sqlSchemaComparison.vertex.sqlColumn.PrimaryKeyColumnConstraint;
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
+
 public abstract class SqlElementFactory {
 
 	public static ISqlElement createSqlElement(SqlElementType type, String id) {
@@ -99,6 +104,31 @@ public abstract class SqlElementFactory {
 		}
 		
 		return matchingColumns;
+	}
+
+	public static ISqlElement getPrimaryKey(ISqlElement table, Graph<ISqlElement, DefaultEdge> schema) {
+		Set<ISqlElement> columns = getColumnsOfTable(table, schema.vertexSet());
+		
+		for (ISqlElement e : columns) {
+			if (e instanceof SqlColumnVertex)
+				for (IColumnConstraint c : ((SqlColumnVertex) e).getConstraints())
+					if (PrimaryKeyColumnConstraint.class.isAssignableFrom(c.getClass()))
+						return e;
+		}
+		
+		return null;
+	}
+
+	private static Set<ISqlElement> getColumnsOfTable(ISqlElement table, Collection<ISqlElement> vertices) {
+		Set<ISqlElement> columns = SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, vertices);
+		Set<ISqlElement> columnsOfTable = new HashSet<>();
+		
+		for (ISqlElement column : columns) {
+			if (((SqlColumnVertex)column).getTable().equals(table.getSqlElementId()))
+				columnsOfTable.add(column);
+		}
+		
+		return columnsOfTable;
 	}
 
 }
