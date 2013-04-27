@@ -42,3 +42,23 @@ Two SQL schemes (databases) must only differ by one of the following transformat
 - **Foreign Key Relation**
  - Create
  - Drop
+
+Usage
+-----
+
+Please refer to the [unit tests] [ut] to get a detailed description of how to use the library in your code.
+
+[ut]: https://github.com/hschink/sql-schema-comparer/tree/master/test
+
+Commandline Usage
+-----------------
+
+The following examples assume that the Eclipse project `sql-schema-comparer` was exported in a jar file.
+
+**Compare two SQLite database files**
+
+`> java -jar sql-schema-comparer.jar -databases file1.sqlite file2.sqlite`
+
+**Compare an SQLite database file with an SQL statement**
+
+`> java -jar sql-schema-comparer.jar -statement $STATEMENT -databases file.sqlite`
