@@ -1,0 +1,19 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceSets.main.compileClasspath += files('dependencies/zql/classes')
+sourceSets.main.runtimeClasspath += files('dependencies/zql/classes')
+
+sourceSets.test.compileClasspath += files('dependencies/zql/classes')
+sourceSets.test.runtimeClasspath += files('dependencies/zql/classes')
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  compile fileTree(dir: 'dependencies', include: '*.jar')
+  runtime fileTree(dir: 'dependencies', include: '*.jar')
+
+  testCompile group: 'junit', name: 'junit', version: '4.+'
+}
