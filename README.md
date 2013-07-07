@@ -57,8 +57,8 @@ The following examples assume that the Eclipse project `sql-schema-comparer` was
 
 **Compare two SQLite database files**
 
-`> java -jar sql-schema-comparer.jar -databases file1.sqlite file2.sqlite`
+`> java -jar sql-schema-comparer.jar file1.sqlite file2.sqlite`
 
 **Compare an SQLite database file with an SQL statement**
 
-`> java -jar sql-schema-comparer.jar -statement $STATEMENT -databases file.sqlite`
+`> java -jar sql-schema-comparer.jar -statement $STATEMENT file.sqlite`
