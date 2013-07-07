@@ -17,7 +17,6 @@ public class MainTest {
 	@Test
 	public void DatabaseSchemaComparison() {
 		String[] args = new String[] { 
-			"-databases",
 			SqliteSchemaFrontendTest.DATABASE_FILE_PATH,
 			SqliteSchemaFrontendTest.DATABASE_FILE_PATH,
 			SqliteSchemaFrontendTest.DROPPED_COLUMN_DATABASE_FILE_PATH,
@@ -43,7 +42,6 @@ public class MainTest {
 		String[] args = new String[] {
 			"-statement",
 			SqlStatementFrontendTest.SINGLE_TABLE_QUERY,
-			"-databases",
 			SqliteSchemaFrontendTest.DATABASE_FILE_PATH
 		};
 		
@@ -55,7 +53,6 @@ public class MainTest {
 		String[] args = new String[] {
 			"-statement",
 			SqlStatementExpectationValidatorTest.QUERY_WITH_MISSING_COLUMN,
-			"-databases",
 			SqliteSchemaFrontendTest.DATABASE_FILE_PATH
 		};
 		
@@ -67,7 +64,6 @@ public class MainTest {
 		String[] args = new String[] {
 			"-statement",
 			SqlStatementExpectationValidatorTest.QUERY_WITH_FOREIGN_TABLE_REFERENCE,
-			"-databases",
 			SqliteSchemaFrontendTest.DATABASE_FILE_PATH
 		};
 		
