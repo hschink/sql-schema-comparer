@@ -23,13 +23,11 @@ public class Main {
 				usage="Statement to validate against a schema (at least one database must be passed)", 
 				required=false)
 		private String statement;
-		
-		@Option(name="-databases", 
-				usage="One ore more SQLite files - If a statement and more than one SQLite file are given, the first" + 
-					  "SQLite file is treated as the statement's original (working) database schema.",
-				required=false,
-				multiValued=true)
-		@Argument
+				
+		@Argument(usage="One ore more SQLite files - If a statement and more than one SQLite file are given, the first" + 
+				"SQLite file is treated as the statement's original (working) database schema.",
+			  required=false,
+			  multiValued=true)
 		private List<String> databases;
 	}
 	

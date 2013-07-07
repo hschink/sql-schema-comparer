@@ -29,15 +29,15 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class SqliteSchemaFrontendTest {
 
-	public static final String DATABASE_FILE_PATH = "test\\databases\\hrm.sqlite";
+	public static final String DATABASE_FILE_PATH = "src//test//java//databases//hrm.sqlite";
 	
-	public static final String DROPPED_COLUMN_DATABASE_FILE_PATH = "test\\databases\\refactored\\hrm_DropColumn.sqlite";
-	public static final String DROPPED_TABLE_DATABASE_FILE_PATH = "test\\databases\\refactored\\hrm_DropTable.sqlite";
-	public static final String MOVE_COLUMN_DATABASE_FILE_PATH = "test\\databases\\refactored\\hrm_MoveColumn.sqlite";
-	public static final String RENAME_COLUMN_DATABASE_FILE_PATH = "test\\databases\\refactored\\hrm_RenameColumn.sqlite";
-	public static final String RENAME_TABLE_DATABASE_FILE_PATH = "test\\databases\\refactored\\hrm_RenameTable.sqlite";
-	public static final String REPLACE_COLUMN_DATABASE_FILE_PATH = "test\\databases\\refactored\\hrm_ReplaceColumn.sqlite";
-	public static final String REPLACE_LOB_WITH_TABLE_DATABASE_FILE_PATH = "test\\databases\\refactored\\hrm_ReplaceLobWithTable.sqlite";
+	public static final String DROPPED_COLUMN_DATABASE_FILE_PATH = "src//test//java//databases//refactored//hrm_DropColumn.sqlite";
+	public static final String DROPPED_TABLE_DATABASE_FILE_PATH = "src//test//java//databases//refactored//hrm_DropTable.sqlite";
+	public static final String MOVE_COLUMN_DATABASE_FILE_PATH = "src//test//java//databases//refactored//hrm_MoveColumn.sqlite";
+	public static final String RENAME_COLUMN_DATABASE_FILE_PATH = "src//test//java//databases//refactored//hrm_RenameColumn.sqlite";
+	public static final String RENAME_TABLE_DATABASE_FILE_PATH = "src//test//java//databases//refactored//hrm_RenameTable.sqlite";
+	public static final String REPLACE_COLUMN_DATABASE_FILE_PATH = "src//test//java//databases//refactored//hrm_ReplaceColumn.sqlite";
+	public static final String REPLACE_LOB_WITH_TABLE_DATABASE_FILE_PATH = "src//test//java//databases//refactored//hrm_ReplaceLobWithTable.sqlite";
 	
 	private static final String DROPPED_COLUMN_NAME = "boss";
 	private static final String DROPPED_TABLE_NAME = "external_staff";
