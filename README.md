@@ -1,6 +1,8 @@
 sql-schema-comparer
 ===================
 
+[![Build Status](https://travis-ci.org/hschink/sql-schema-comparer.png?branch=master)](https://travis-ci.org/hschink/sql-schema-comparer)
+
 **Experimental** library to compare and check SQL schemas and statements
 
 Details
