@@ -1,9 +1,9 @@
 package org.iti.sqlSchemaComparison;
 
+import static org.junit.Assert.*;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.Assert;
 
 import org.iti.sqlSchemaComparison.edge.ForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.edge.TableHasColumnEdge;
@@ -156,29 +156,29 @@ public class SqlSchemaComparerTest {
 	public void IsomorphicGraphsAreDetectedCorrectly()  {
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema2, schema3);
 		
-		Assert.assertTrue(comparer.isIsomorphic());
+		assertTrue(comparer.isIsomorphic());
 	}
 	
 	@Test
 	public void IsomorphismMapsVerticesCorrectly()  {
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema2, schema3);
 
-		Assert.assertTrue(comparer.isIsomorphic());
+		assertTrue(comparer.isIsomorphic());
 		
 		for (IsomorphismRelation<ISqlElement, Graph<ISqlElement, DefaultEdge>> isomorphism : comparer.getIsomorphisms()) {
-			Assert.assertEquals(t1, isomorphism.getVertexCorrespondence(t1, false));
-			Assert.assertEquals(t1, isomorphism.getVertexCorrespondence(t1, true));
-			Assert.assertEquals(t2, isomorphism.getVertexCorrespondence(t2, false));
-			Assert.assertEquals(t2, isomorphism.getVertexCorrespondence(t2, true));
+			assertEquals(t1, isomorphism.getVertexCorrespondence(t1, false));
+			assertEquals(t1, isomorphism.getVertexCorrespondence(t1, true));
+			assertEquals(t2, isomorphism.getVertexCorrespondence(t2, false));
+			assertEquals(t2, isomorphism.getVertexCorrespondence(t2, true));
 			
-			Assert.assertEquals(c1, isomorphism.getVertexCorrespondence(c1, false));
-			Assert.assertEquals(c1, isomorphism.getVertexCorrespondence(c1, true));
-			Assert.assertEquals(c12, isomorphism.getVertexCorrespondence(c12, false));
-			Assert.assertEquals(c12, isomorphism.getVertexCorrespondence(c12, true));
-			Assert.assertEquals(c2, isomorphism.getVertexCorrespondence(c2, false));
-			Assert.assertEquals(c2, isomorphism.getVertexCorrespondence(c2, true));
-			Assert.assertEquals(c22, isomorphism.getVertexCorrespondence(c22, false));
-			Assert.assertEquals(c22, isomorphism.getVertexCorrespondence(c22, true));
+			assertEquals(c1, isomorphism.getVertexCorrespondence(c1, false));
+			assertEquals(c1, isomorphism.getVertexCorrespondence(c1, true));
+			assertEquals(c12, isomorphism.getVertexCorrespondence(c12, false));
+			assertEquals(c12, isomorphism.getVertexCorrespondence(c12, true));
+			assertEquals(c2, isomorphism.getVertexCorrespondence(c2, false));
+			assertEquals(c2, isomorphism.getVertexCorrespondence(c2, true));
+			assertEquals(c22, isomorphism.getVertexCorrespondence(c22, false));
+			assertEquals(c22, isomorphism.getVertexCorrespondence(c22, true));
 		}
 	}
 	
@@ -186,84 +186,84 @@ public class SqlSchemaComparerTest {
 	public void NewTableIsDetectedCorrectly()  {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema1, schema5);
 		
-		Assert.assertFalse(comparer1.isIsomorphic());
-		Assert.assertNotNull(comparer1.matching);
-		Assert.assertNotNull(comparer1.comparisonResult);
+		assertFalse(comparer1.isIsomorphic());
+		assertNotNull(comparer1.matching);
+		assertNotNull(comparer1.comparisonResult);
 		
-		Assert.assertNotNull(comparer1.comparisonResult.getAddedTable());
-		Assert.assertEquals(t2.getSqlElementId(), comparer1.comparisonResult.getAddedTable().getSqlElementId());
+		assertNotNull(comparer1.comparisonResult.getAddedTable());
+		assertEquals(t2.getSqlElementId(), comparer1.comparisonResult.getAddedTable().getSqlElementId());
 	}
 	
 	@Test
 	public void RemovedTableIsDetectedCorrectly()  {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema1, schema8);
 		
-		Assert.assertFalse(comparer1.isIsomorphic());
-		Assert.assertNotNull(comparer1.matching);
-		Assert.assertNotNull(comparer1.comparisonResult);
+		assertFalse(comparer1.isIsomorphic());
+		assertNotNull(comparer1.matching);
+		assertNotNull(comparer1.comparisonResult);
 		
-		Assert.assertNotNull(comparer1.comparisonResult.getRemovedTable());
-		Assert.assertEquals(t1.getSqlElementId(), comparer1.comparisonResult.getRemovedTable().getSqlElementId());
+		assertNotNull(comparer1.comparisonResult.getRemovedTable());
+		assertEquals(t1.getSqlElementId(), comparer1.comparisonResult.getRemovedTable().getSqlElementId());
 	}
 	
 	@Test
 	public void RenamedTableIsDetectedCorrectly()  {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema1, schema9);
 		
-		Assert.assertFalse(comparer1.isIsomorphic());
-		Assert.assertNotNull(comparer1.matching);
-		Assert.assertNotNull(comparer1.comparisonResult);
+		assertFalse(comparer1.isIsomorphic());
+		assertNotNull(comparer1.matching);
+		assertNotNull(comparer1.comparisonResult);
 		
-		Assert.assertNotNull(comparer1.comparisonResult.getRenamedTable());
-		Assert.assertEquals(t1.getSqlElementId(), comparer1.comparisonResult.getRenamedTable().getSqlElementId());
+		assertNotNull(comparer1.comparisonResult.getRenamedTable());
+		assertEquals(t1.getSqlElementId(), comparer1.comparisonResult.getRenamedTable().getSqlElementId());
 	}
 	
 	@Test
 	public void NewColumnIsDetectedCorrectly()  {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema7, schema1);
 		
-		Assert.assertFalse(comparer1.isIsomorphic());
-		Assert.assertNotNull(comparer1.matching);
-		Assert.assertNotNull(comparer1.comparisonResult);
+		assertFalse(comparer1.isIsomorphic());
+		assertNotNull(comparer1.matching);
+		assertNotNull(comparer1.comparisonResult);
 		
-		Assert.assertNotNull(comparer1.comparisonResult.getAddedColumn());
-		Assert.assertEquals(c1.getSqlElementId(), comparer1.comparisonResult.getAddedColumn().getSqlElementId());
+		assertNotNull(comparer1.comparisonResult.getAddedColumn());
+		assertEquals(c1.getSqlElementId(), comparer1.comparisonResult.getAddedColumn().getSqlElementId());
 	}
 	
 	@Test
 	public void RemovedColumnIsDetectedCorrectly()  {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema1, schema7);
 		
-		Assert.assertFalse(comparer1.isIsomorphic());
-		Assert.assertNotNull(comparer1.matching);
-		Assert.assertNotNull(comparer1.comparisonResult);
+		assertFalse(comparer1.isIsomorphic());
+		assertNotNull(comparer1.matching);
+		assertNotNull(comparer1.comparisonResult);
 		
-		Assert.assertNotNull(comparer1.comparisonResult.getRemovedColumn());
-		Assert.assertEquals(c1.getSqlElementId(), comparer1.comparisonResult.getRemovedColumn().getSqlElementId());
+		assertNotNull(comparer1.comparisonResult.getRemovedColumn());
+		assertEquals(c1.getSqlElementId(), comparer1.comparisonResult.getRemovedColumn().getSqlElementId());
 	}
 	
 	@Test
 	public void RenamedColumnIsDetectedCorrectly()  {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema1, schema6);
 		
-		Assert.assertFalse(comparer1.isIsomorphic());
-		Assert.assertNotNull(comparer1.matching);
-		Assert.assertNotNull(comparer1.comparisonResult);
+		assertFalse(comparer1.isIsomorphic());
+		assertNotNull(comparer1.matching);
+		assertNotNull(comparer1.comparisonResult);
 		
-		Assert.assertNotNull(comparer1.comparisonResult.getRenamedColumn());
-		Assert.assertEquals(c1.getSqlElementId(), comparer1.comparisonResult.getRenamedColumn().getSqlElementId());
+		assertNotNull(comparer1.comparisonResult.getRenamedColumn());
+		assertEquals(c1.getSqlElementId(), comparer1.comparisonResult.getRenamedColumn().getSqlElementId());
 	}
 	
 	@Test
 	public void MovedColumnIsDetectedCorrectly()  {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema4, schema5);
 		
-		Assert.assertFalse(comparer1.isIsomorphic());
-		Assert.assertNotNull(comparer1.matching);
-		Assert.assertNotNull(comparer1.comparisonResult);
+		assertFalse(comparer1.isIsomorphic());
+		assertNotNull(comparer1.matching);
+		assertNotNull(comparer1.comparisonResult);
 		
-		Assert.assertNotNull(comparer1.comparisonResult.getMovedColumn());
-		Assert.assertEquals(c1.getSqlElementId(), comparer1.comparisonResult.getMovedColumn().getSqlElementId());
+		assertNotNull(comparer1.comparisonResult.getMovedColumn());
+		assertEquals(c1.getSqlElementId(), comparer1.comparisonResult.getMovedColumn().getSqlElementId());
 	}
 	
 	@Test
@@ -271,18 +271,18 @@ public class SqlSchemaComparerTest {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema11, schema11);
 		SqlSchemaColumnComparisonResult.ColumnConstraintComparisonResult cccr = comparer1.comparisonResult.getColumnComparisonResults().get(c111).getConstraintComparisonResult();		
 		
-		Assert.assertNotNull(comparer1.comparisonResult);
-		Assert.assertEquals(1, comparer1.comparisonResult.getColumnComparisonResults().size());
-		Assert.assertFalse(comparer1.comparisonResult.getColumnComparisonResults().get(c111).hasColumnTypeChanged());
-		Assert.assertEquals(0, cccr.getAddedConstraints().size());
-		Assert.assertEquals(0, cccr.getRemovedConstraints().size());
+		assertNotNull(comparer1.comparisonResult);
+		assertEquals(1, comparer1.comparisonResult.getColumnComparisonResults().size());
+		assertFalse(comparer1.comparisonResult.getColumnComparisonResults().get(c111).hasColumnTypeChanged());
+		assertEquals(0, cccr.getAddedConstraints().size());
+		assertEquals(0, cccr.getRemovedConstraints().size());
 	}
 	
 	@Test
 	public void ChangedColumnTypeDetectedCorrectly() {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema11, schema12);		
 		
-		Assert.assertTrue(comparer1.comparisonResult.getColumnComparisonResults().get(c112).hasColumnTypeChanged());
+		assertTrue(comparer1.comparisonResult.getColumnComparisonResults().get(c112).hasColumnTypeChanged());
 	}
 	
 	@Test
@@ -290,7 +290,7 @@ public class SqlSchemaComparerTest {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema11, schema12);		
 		SqlSchemaColumnComparisonResult.ColumnConstraintComparisonResult cccr = comparer1.comparisonResult.getColumnComparisonResults().get(c112).getConstraintComparisonResult();
 		
-		Assert.assertTrue(cccr.getAddedConstraints().contains(constraint2));
+		assertTrue(cccr.getAddedConstraints().contains(constraint2));
 	}
 	
 	@Test
@@ -298,7 +298,7 @@ public class SqlSchemaComparerTest {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema11, schema13);		
 		SqlSchemaColumnComparisonResult.ColumnConstraintComparisonResult cccr = comparer1.comparisonResult.getColumnComparisonResults().get(c113).getConstraintComparisonResult();
 		
-		Assert.assertTrue(cccr.getRemovedConstraints().contains(constraint1));
+		assertTrue(cccr.getRemovedConstraints().contains(constraint1));
 	}
 	
 	@Test
@@ -306,9 +306,9 @@ public class SqlSchemaComparerTest {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema31, schema31);
 		SqlSchemaComparisonResult result = comparer1.comparisonResult;
 		
-		Assert.assertNotNull(result);
-		Assert.assertEquals(0, result.getAddedForeignKeyRelations().size());
-		Assert.assertEquals(0, result.getRemovedForeignKeyRelations().size());
+		assertNotNull(result);
+		assertEquals(0, result.getAddedForeignKeyRelations().size());
+		assertEquals(0, result.getRemovedForeignKeyRelations().size());
 	}
 	
 	@Test
@@ -316,9 +316,9 @@ public class SqlSchemaComparerTest {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema3, schema31);
 		SqlSchemaComparisonResult result = comparer1.comparisonResult;
 		
-		Assert.assertNotNull(result);
-		Assert.assertEquals(1, result.getAddedForeignKeyRelations().size());
-		Assert.assertEquals(0, result.getRemovedForeignKeyRelations().size());
+		assertNotNull(result);
+		assertEquals(1, result.getAddedForeignKeyRelations().size());
+		assertEquals(0, result.getRemovedForeignKeyRelations().size());
 	}
 	
 	@Test
@@ -326,9 +326,9 @@ public class SqlSchemaComparerTest {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema31, schema3);
 		SqlSchemaComparisonResult result = comparer1.comparisonResult;
 		
-		Assert.assertNotNull(result);
-		Assert.assertEquals(0, result.getAddedForeignKeyRelations().size());
-		Assert.assertEquals(1, result.getRemovedForeignKeyRelations().size());
+		assertNotNull(result);
+		assertEquals(0, result.getAddedForeignKeyRelations().size());
+		assertEquals(1, result.getRemovedForeignKeyRelations().size());
 	}
 	
 	@After

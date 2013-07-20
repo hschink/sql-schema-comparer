@@ -1,6 +1,6 @@
 package org.iti.sqlSchemaComparison.edge;
 
-import junit.framework.Assert;
+import static org.junit.Assert.*;
 
 import org.iti.sqlSchemaComparison.reachability.ISqlElementReachabilityChecker;
 import org.iti.sqlSchemaComparison.reachability.SqlTableVertexReachableChecker;
@@ -47,18 +47,18 @@ public class SqlTableVertexReachableCheckerTest {
 	public void ReachableTableDetectedCorrectly() {
 		ISqlElementReachabilityChecker checker = new SqlTableVertexReachableChecker(schema1, t1);
 		
-		Assert.assertTrue(checker.isReachable());
-		Assert.assertEquals(1, checker.getPath().size());
-		Assert.assertTrue(checker.getPath().contains(t1));
+		assertTrue(checker.isReachable());
+		assertEquals(1, checker.getPath().size());
+		assertTrue(checker.getPath().contains(t1));
 	}
 	
 	@Test
 	public void NonReachableTableDetectedCorrectly() {
 		ISqlElementReachabilityChecker checker = new SqlTableVertexReachableChecker(schema1, t2);
 		
-		Assert.assertFalse(checker.isReachable());
-		Assert.assertEquals(0, checker.getPath().size());
-		Assert.assertFalse(checker.getPath().contains(t2));
+		assertFalse(checker.isReachable());
+		assertEquals(0, checker.getPath().size());
+		assertFalse(checker.getPath().contains(t2));
 	}
 	
 	@After

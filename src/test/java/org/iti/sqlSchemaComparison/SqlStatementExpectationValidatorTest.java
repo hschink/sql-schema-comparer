@@ -1,6 +1,6 @@
 package org.iti.sqlSchemaComparison;
 
-import junit.framework.Assert;
+import static org.junit.Assert.*;
 
 import org.iti.sqlSchemaComparison.edge.SqlStatementFrontendTest;
 import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
@@ -43,7 +43,7 @@ public class SqlStatementExpectationValidatorTest {
 		
 		SqlStatementExpectationValidationResult result = validator.computeGraphMatching(expectedSchema);
 		
-		Assert.assertTrue(result.isStatementValid());		
+		assertTrue(result.isStatementValid());		
 	}
 	
 	@Test
@@ -54,9 +54,9 @@ public class SqlStatementExpectationValidatorTest {
 		
 		SqlStatementExpectationValidationResult result = validator.computeGraphMatching(expectedSchema);
 		
-		Assert.assertFalse(result.isStatementValid());	
-		Assert.assertEquals(1, result.getMissingColumns().size());
-		Assert.assertEquals("fee", result.getMissingColumns().get(0).getSqlElementId());
+		assertFalse(result.isStatementValid());	
+		assertEquals(1, result.getMissingColumns().size());
+		assertEquals("fee", result.getMissingColumns().get(0).getSqlElementId());
 	}
 	
 	@Test
@@ -69,10 +69,10 @@ public class SqlStatementExpectationValidatorTest {
 		
 		ISqlElement key = result.getMissingButReachableColumns().keySet().iterator().next();
 		
-		Assert.assertFalse(result.isStatementValid());	
-		Assert.assertEquals(1, result.getMissingButReachableColumns().size());
-		Assert.assertEquals(2, result.getMissingButReachableColumns().get(key).size());
-		Assert.assertEquals("account", key.getSqlElementId());
+		assertFalse(result.isStatementValid());	
+		assertEquals(1, result.getMissingButReachableColumns().size());
+		assertEquals(2, result.getMissingButReachableColumns().get(key).size());
+		assertEquals("account", key.getSqlElementId());
 	}
 	
 	@After

@@ -1,6 +1,6 @@
 package org.iti.sqlSchemaComparison.frontends.technologies;
 
-import junit.framework.Assert;
+import static org.junit.Assert.*;
 
 import org.iti.sqlSchemaComparison.edge.ForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
@@ -29,9 +29,9 @@ public class JPASchemaFrontendTest {
 		ISqlSchemaFrontend frontend = new JPASchemaFrontend(JPA_FILE_PATH);
 		Graph<ISqlElement, DefaultEdge> schema = frontend.createSqlSchema();
 		
-		Assert.assertNotNull(schema);
-		Assert.assertEquals(1, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
-		Assert.assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
+		assertNotNull(schema);
+		assertEquals(1, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
+		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
 	}
 	
 	@Test
@@ -39,10 +39,10 @@ public class JPASchemaFrontendTest {
 		ISqlSchemaFrontend frontend = new JPASchemaFrontend(JPA_FOLDER);
 		Graph<ISqlElement, DefaultEdge> schema = frontend.createSqlSchema();
 		
-		Assert.assertNotNull(schema);
-		Assert.assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
-		Assert.assertEquals(10, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
-		Assert.assertEquals(2, getForeignKeyCount(schema));
+		assertNotNull(schema);
+		assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
+		assertEquals(10, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
+		assertEquals(2, getForeignKeyCount(schema));
 	}
 
 	private int getForeignKeyCount(Graph<ISqlElement, DefaultEdge> schema) {

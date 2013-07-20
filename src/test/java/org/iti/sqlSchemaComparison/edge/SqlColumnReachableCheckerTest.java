@@ -1,6 +1,6 @@
 package org.iti.sqlSchemaComparison.edge;
 
-import junit.framework.Assert;
+import static org.junit.Assert.*;
 
 import org.iti.sqlSchemaComparison.reachability.ISqlElementReachabilityChecker;
 import org.iti.sqlSchemaComparison.reachability.SqlColumnReachableChecker;
@@ -80,39 +80,39 @@ public class SqlColumnReachableCheckerTest {
 	public void ReachableColumnDetectedCorrectly() {
 		ISqlElementReachabilityChecker checker = new SqlColumnReachableChecker(schema1, t1, c1);
 		
-		Assert.assertTrue(checker.isReachable());
-		Assert.assertEquals(2, checker.getPath().size());
-		Assert.assertTrue(checker.getPath().contains(t1));
-		Assert.assertTrue(checker.getPath().contains(c1));
+		assertTrue(checker.isReachable());
+		assertEquals(2, checker.getPath().size());
+		assertTrue(checker.getPath().contains(t1));
+		assertTrue(checker.getPath().contains(c1));
 	}
 	
 	@Test
 	public void ReachableForeignColumnDetectedCorrectly() {
 		ISqlElementReachabilityChecker checker = new SqlColumnReachableChecker(schema2, t1, c1);
 		
-		Assert.assertTrue(checker.isReachable());
-		Assert.assertEquals(5, checker.getPath().size());
-		Assert.assertTrue(checker.getPath().contains(t1));
-		Assert.assertTrue(checker.getPath().contains(c3));
-		Assert.assertTrue(checker.getPath().contains(c2));
-		Assert.assertTrue(checker.getPath().contains(t2));
-		Assert.assertTrue(checker.getPath().contains(c1));
+		assertTrue(checker.isReachable());
+		assertEquals(5, checker.getPath().size());
+		assertTrue(checker.getPath().contains(t1));
+		assertTrue(checker.getPath().contains(c3));
+		assertTrue(checker.getPath().contains(c2));
+		assertTrue(checker.getPath().contains(t2));
+		assertTrue(checker.getPath().contains(c1));
 	}
 	
 	@Test
 	public void ReachableForeignColumnWithOneIndirectionDetectedCorrectly() {
 		ISqlElementReachabilityChecker checker = new SqlColumnReachableChecker(schema3, t1, c1);
 		
-		Assert.assertTrue(checker.isReachable());
-		Assert.assertEquals(8, checker.getPath().size());
-		Assert.assertTrue(checker.getPath().contains(t1));
-		Assert.assertTrue(checker.getPath().contains(c3));
-		Assert.assertTrue(checker.getPath().contains(c2));
-		Assert.assertTrue(checker.getPath().contains(t2));
-		Assert.assertTrue(checker.getPath().contains(c5));
-		Assert.assertTrue(checker.getPath().contains(c4));
-		Assert.assertTrue(checker.getPath().contains(t3));
-		Assert.assertTrue(checker.getPath().contains(c1));
+		assertTrue(checker.isReachable());
+		assertEquals(8, checker.getPath().size());
+		assertTrue(checker.getPath().contains(t1));
+		assertTrue(checker.getPath().contains(c3));
+		assertTrue(checker.getPath().contains(c2));
+		assertTrue(checker.getPath().contains(t2));
+		assertTrue(checker.getPath().contains(c5));
+		assertTrue(checker.getPath().contains(c4));
+		assertTrue(checker.getPath().contains(t3));
+		assertTrue(checker.getPath().contains(c1));
 	}
 	
 	@After
