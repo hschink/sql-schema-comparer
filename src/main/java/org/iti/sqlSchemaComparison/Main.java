@@ -1,7 +1,5 @@
 package org.iti.sqlSchemaComparison;
 
-import static org.kohsuke.args4j.ExampleMode.ALL;
-
 import java.util.List;
 
 import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
@@ -14,6 +12,7 @@ import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.kohsuke.args4j.OptionHandlerFilter;
 
 public class Main {
 
@@ -55,7 +54,7 @@ public class Main {
             System.err.println("java SampleMain [options...] arguments...\n");
             parser.printUsage(System.err);
             System.err.println();
-            System.err.println(" Example: java SampleMain" + parser.printExample(ALL));
+            System.err.println(" Example: java SampleMain" + parser.printExample(OptionHandlerFilter.ALL));
 
             return;
 		}
