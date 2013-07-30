@@ -70,8 +70,8 @@ The following examples assume that you created a [stand-alone JAR](#stand-alone-
 
 **Compare two SQLite database files**
 
-`> java -jar sql-schema-comparer.jar file1.sqlite file2.sqlite`
+`> java -jar sql-schema-comparer-standalone.jar file1.sqlite file2.sqlite`
 
 **Compare an SQLite database file with an SQL statement**
 
-`> java -jar sql-schema-comparer.jar -statement $STATEMENT file.sqlite`
+`> java -jar sql-schema-comparer-standalone.jar -statement $STATEMENT file.sqlite`
