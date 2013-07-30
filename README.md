@@ -1,12 +1,10 @@
-sql-schema-comparer
-===================
+# sql-schema-comparer #
 
 [![Build Status](https://travis-ci.org/hschink/sql-schema-comparer.png?branch=master)](https://travis-ci.org/hschink/sql-schema-comparer)
 
 **Experimental** library to compare and check SQL schemas and statements
 
-Details
--------
+## Details ##
 
 `sql-schema-comparer` allows to compare
 
@@ -16,16 +14,14 @@ Details
 Therfor, `sql-schema-comparer` transforms SQL statements and database definitions into a graph representation. The graph
 representation is then used for comparison.
 
-Frontends
----------
+## Frontends ##
 
 `sql-schema-comparer` brings *limited* support for
 
 - SQLite (database schema and SQL statement parsing)
 - JPA (annotations)
 
-Limitations
------------
+## Limitations ##
 
 Two SQL schemes (databases) must only differ by one of the following transformations:
 
@@ -45,17 +41,32 @@ Two SQL schemes (databases) must only differ by one of the following transformat
  - Create
  - Drop
 
-Usage
------
+## Usage ##
 
 Please refer to the [unit tests] [ut] to get a detailed description of how to use the library in your code.
 
 [ut]: https://github.com/hschink/sql-schema-comparer/tree/master/test
 
-Commandline Usage
------------------
+## Development ##
 
-The following examples assume that the Eclipse project `sql-schema-comparer` was exported in a jar file.
+If you like to join sql-schema-comparer development you may just want to use [Eclipse IDE][eclipse].
+Just use [gradle's Eclipse plug-in][eclipse plug-in] with ``gradle eclipse`` to create the necessary Eclipse
+configuration files.
+
+Happy programming! :smile:
+
+[eclipse]: [http://www.eclipse.org/]
+[eclipse plug-in]: [http://www.gradle.org/docs/current/userguide/eclipse_plugin.html]
+
+## Stand-alone JAR ##
+
+You create a stand-alone JAR with [gradle][]: ``gradle standaloneJar``. You'll find the JAR in ``build/libs``.
+
+[gradle]: http://www.gradle.org
+
+## Commandline Usage ##
+
+The following examples assume that you created a [stand-alone JAR](#stand-alone-jar).
 
 **Compare two SQLite database files**
 
