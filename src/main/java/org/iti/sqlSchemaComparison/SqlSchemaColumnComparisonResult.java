@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
 
-
 public class SqlSchemaColumnComparisonResult {
 
 	public static class ColumnConstraintComparisonResult {
