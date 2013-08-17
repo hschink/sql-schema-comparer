@@ -1,6 +1,11 @@
 package org.iti.sqlSchemaComparison;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.iti.sqlSchemaComparison.edge.SqlStatementFrontendTest;
 import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
@@ -17,10 +22,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import static org.junit.Assert.assertThat;
+
+import static org.hamcrest.CoreMatchers.*;
+
 @RunWith(JUnit4.class)
 public class SqlStatementExpectationValidatorTest {
 
 	public static final String QUERY_WITH_MISSING_COLUMN = "SELECT firstname, surname, fee FROM customers;";
+	public static final String QUERY_WITH_TWO_MISSING_COLUMNS = "SELECT firstname, surname, missing_1, missing_2 FROM customers;";
+	public static final String QUERY_WITH_MISSING_TABLE = "SELECT firstname, surname FROM missing;";
+	public static final String QUERY_WITH_TWO_MISSING_TABLEs = "SELECT firstname, surname FROM missing_1, missing_2;";
 	public static final String QUERY_WITH_FOREIGN_TABLE_REFERENCE = "SELECT firstname, surname, account FROM customers;";
 	
 	private static Graph<ISqlElement, DefaultEdge> sqliteSchema;
@@ -57,6 +69,59 @@ public class SqlStatementExpectationValidatorTest {
 		assertFalse(result.isStatementValid());	
 		assertEquals(1, result.getMissingColumns().size());
 		assertEquals("fee", result.getMissingColumns().get(0).getSqlElementId());
+	}
+	
+	@Test
+	public void QueryWithTwoMissingColumns() {
+		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_TWO_MISSING_COLUMNS, null);
+		Graph<ISqlElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
+		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
+		
+		SqlStatementExpectationValidationResult result = validator.computeGraphMatching(expectedSchema);
+		
+		assertFalse(result.isStatementValid());	
+		assertEquals(2, result.getMissingColumns().size());
+		
+		List<String> columnNames = new ArrayList<>();
+		
+		for (ISqlElement element : result.getMissingColumns()) {
+			columnNames.add(element.getSqlElementId());
+		}
+
+		assertThat(columnNames, hasItems("missing_1", "missing_2"));
+	}
+	
+	@Test
+	public void QueryWithMissingTable() {
+		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_MISSING_TABLE, null);
+		Graph<ISqlElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
+		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
+		
+		SqlStatementExpectationValidationResult result = validator.computeGraphMatching(expectedSchema);
+		
+		assertFalse(result.isStatementValid());	
+		assertEquals(1, result.getMissingTables().size());
+		assertEquals("missing", result.getMissingTables().get(0).getSqlElementId());
+	}
+	
+	@Test
+	public void QueryWithTwoMissingTables() {
+		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_TWO_MISSING_TABLEs, null);
+		Graph<ISqlElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
+		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
+		
+		SqlStatementExpectationValidationResult result = validator.computeGraphMatching(expectedSchema);
+		
+		assertFalse(result.isStatementValid());	
+		assertEquals(2, result.getMissingTables().size());
+		
+		List<String> tableNames = new ArrayList<>();
+		
+		for (ISqlElement element : result.getMissingTables()) {
+			tableNames.add(element.getSqlElementId());
+		}
+
+		assertThat(tableNames, hasItems("missing_1", "missing_2"));
 	}
 	
 	@Test
