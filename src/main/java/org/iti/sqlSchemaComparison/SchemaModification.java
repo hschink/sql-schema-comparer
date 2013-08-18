@@ -1,0 +1,15 @@
+package org.iti.sqlSchemaComparison;
+
+public enum SchemaModification {
+	NO_MODIFICATION,
+	
+	CREATE_TABLE,
+	DELETE_TABLE,
+	RENAME_TABLE,
+	DELETE_AFTER_RENAME_TABLE,
+	
+	CREATE_COLUMN,
+	DELETE_COLUMN,
+	RENAME_COLUMN,
+	MOVE_COLUMN,
+}

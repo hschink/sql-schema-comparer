@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.iti.sqlSchemaComparison.edge.ForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.edge.TableHasColumnEdge;
@@ -189,9 +190,13 @@ public class SqlSchemaComparerTest {
 		assertFalse(comparer1.isIsomorphic());
 		assertNotNull(comparer1.matching);
 		assertNotNull(comparer1.comparisonResult);
-		
-		assertNotNull(comparer1.comparisonResult.getAddedTable());
-		assertEquals(t2.getSqlElementId(), comparer1.comparisonResult.getAddedTable().getSqlElementId());
+
+		for (Entry<ISqlElement, SchemaModification> entry : comparer1.comparisonResult.getModifications().entrySet()) {
+			if (entry.getValue() == SchemaModification.CREATE_TABLE) {
+				assertEquals(SchemaModification.CREATE_TABLE, entry.getValue());
+				assertEquals(t2.getSqlElementId(), entry.getKey().getSqlElementId());
+			}
+		}
 	}
 	
 	@Test
@@ -201,9 +206,13 @@ public class SqlSchemaComparerTest {
 		assertFalse(comparer1.isIsomorphic());
 		assertNotNull(comparer1.matching);
 		assertNotNull(comparer1.comparisonResult);
-		
-		assertNotNull(comparer1.comparisonResult.getRemovedTable());
-		assertEquals(t1.getSqlElementId(), comparer1.comparisonResult.getRemovedTable().getSqlElementId());
+
+		for (Entry<ISqlElement, SchemaModification> entry : comparer1.comparisonResult.getModifications().entrySet()) {
+			if (entry.getValue() == SchemaModification.DELETE_TABLE) {
+				assertEquals(SchemaModification.DELETE_TABLE, entry.getValue());
+				assertEquals(t1.getSqlElementId(), entry.getKey().getSqlElementId());
+			}
+		}
 	}
 	
 	@Test
@@ -213,9 +222,13 @@ public class SqlSchemaComparerTest {
 		assertFalse(comparer1.isIsomorphic());
 		assertNotNull(comparer1.matching);
 		assertNotNull(comparer1.comparisonResult);
-		
-		assertNotNull(comparer1.comparisonResult.getRenamedTable());
-		assertEquals(t1.getSqlElementId(), comparer1.comparisonResult.getRenamedTable().getSqlElementId());
+
+		for (Entry<ISqlElement, SchemaModification> entry : comparer1.comparisonResult.getModifications().entrySet()) {
+			if (entry.getValue() == SchemaModification.RENAME_TABLE) {
+				assertEquals(SchemaModification.RENAME_TABLE, entry.getValue());
+				assertEquals(t1.getSqlElementId(), entry.getKey().getSqlElementId());
+			}
+		}
 	}
 	
 	@Test
@@ -225,9 +238,13 @@ public class SqlSchemaComparerTest {
 		assertFalse(comparer1.isIsomorphic());
 		assertNotNull(comparer1.matching);
 		assertNotNull(comparer1.comparisonResult);
-		
-		assertNotNull(comparer1.comparisonResult.getAddedColumn());
-		assertEquals(c1.getSqlElementId(), comparer1.comparisonResult.getAddedColumn().getSqlElementId());
+
+		for (Entry<ISqlElement, SchemaModification> entry : comparer1.comparisonResult.getModifications().entrySet()) {
+			if (entry.getValue() == SchemaModification.CREATE_COLUMN) {
+				assertEquals(SchemaModification.CREATE_COLUMN, entry.getValue());
+				assertEquals(c1.getSqlElementId(), entry.getKey().getSqlElementId());
+			}
+		}
 	}
 	
 	@Test
@@ -237,9 +254,13 @@ public class SqlSchemaComparerTest {
 		assertFalse(comparer1.isIsomorphic());
 		assertNotNull(comparer1.matching);
 		assertNotNull(comparer1.comparisonResult);
-		
-		assertNotNull(comparer1.comparisonResult.getRemovedColumn());
-		assertEquals(c1.getSqlElementId(), comparer1.comparisonResult.getRemovedColumn().getSqlElementId());
+
+		for (Entry<ISqlElement, SchemaModification> entry : comparer1.comparisonResult.getModifications().entrySet()) {
+			if (entry.getValue() == SchemaModification.DELETE_COLUMN) {
+				assertEquals(SchemaModification.DELETE_COLUMN, entry.getValue());
+				assertEquals(c1.getSqlElementId(), entry.getKey().getSqlElementId());
+			}
+		}
 	}
 	
 	@Test
@@ -249,9 +270,13 @@ public class SqlSchemaComparerTest {
 		assertFalse(comparer1.isIsomorphic());
 		assertNotNull(comparer1.matching);
 		assertNotNull(comparer1.comparisonResult);
-		
-		assertNotNull(comparer1.comparisonResult.getRenamedColumn());
-		assertEquals(c1.getSqlElementId(), comparer1.comparisonResult.getRenamedColumn().getSqlElementId());
+
+		for (Entry<ISqlElement, SchemaModification> entry : comparer1.comparisonResult.getModifications().entrySet()) {
+			if (entry.getValue() == SchemaModification.RENAME_COLUMN) {
+				assertEquals(SchemaModification.RENAME_COLUMN, entry.getValue());
+				assertEquals(c1.getSqlElementId(), entry.getKey().getSqlElementId());
+			}
+		}
 	}
 	
 	@Test
@@ -261,9 +286,13 @@ public class SqlSchemaComparerTest {
 		assertFalse(comparer1.isIsomorphic());
 		assertNotNull(comparer1.matching);
 		assertNotNull(comparer1.comparisonResult);
-		
-		assertNotNull(comparer1.comparisonResult.getMovedColumn());
-		assertEquals(c1.getSqlElementId(), comparer1.comparisonResult.getMovedColumn().getSqlElementId());
+
+		for (Entry<ISqlElement, SchemaModification> entry : comparer1.comparisonResult.getModifications().entrySet()) {
+			if (entry.getValue() == SchemaModification.MOVE_COLUMN) {
+				assertEquals(SchemaModification.MOVE_COLUMN, entry.getValue());
+				assertEquals(c1.getSqlElementId(), entry.getKey().getSqlElementId());
+			}
+		}
 	}
 	
 	@Test
@@ -281,7 +310,7 @@ public class SqlSchemaComparerTest {
 	@Test
 	public void ChangedColumnTypeDetectedCorrectly() {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema11, schema12);		
-		
+
 		assertTrue(comparer1.comparisonResult.getColumnComparisonResults().get(c112).hasColumnTypeChanged());
 	}
 	

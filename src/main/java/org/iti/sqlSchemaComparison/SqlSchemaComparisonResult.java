@@ -4,76 +4,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.iti.sqlSchemaComparison.edge.IForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
-import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
-import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
 
 public class SqlSchemaComparisonResult {
 
-	private SqlTableVertex renamedTable;
+	private Map<ISqlElement, SchemaModification> modifications = new HashMap<>();
 	
-	public SqlTableVertex getRenamedTable() {
-		return renamedTable;
-	}
-	
-	private SqlTableVertex removedRenamedTable;
-	
-	public SqlTableVertex getRemovedRenamedTable() {
-		return removedRenamedTable;
-	}
-	
-	private SqlTableVertex removedTable;
-
-	public SqlTableVertex getRemovedTable() {
-		return removedTable;
+	public Map<ISqlElement, SchemaModification> getModifications() {
+		return modifications;
 	}
 
-	public void setRemovedColumn(SqlColumnVertex removedColumn) {
-		this.removedColumn = removedColumn;
-	}
-	
-	private SqlTableVertex addedTable;
-
-	public SqlTableVertex getAddedTable() {
-		return addedTable;
-	}
-
-	public void setAddedColumn(SqlColumnVertex addedColumn) {
-		this.addedColumn = addedColumn;
-	}
-	
-	private SqlColumnVertex renamedColumn;
-
-	public SqlColumnVertex getRenamedColumn() {
-		return renamedColumn;
-	}
-	
-	public void setRenamedColumn(SqlColumnVertex renamedColumn) {
-		this.renamedColumn = renamedColumn;
-	}
-	
-	private SqlColumnVertex movedColumn;
-	
-	public SqlColumnVertex getMovedColumn() {
-		return movedColumn;
-	}
-
-	public void setMovedColumn(SqlColumnVertex movedColumn) {
-		this.movedColumn = movedColumn;
-	}
-	
-	private SqlColumnVertex removedColumn;
-
-	public SqlColumnVertex getRemovedColumn() {
-		return removedColumn;
-	}
-	
-	private SqlColumnVertex addedColumn;
-
-	public SqlColumnVertex getAddedColumn() {
-		return addedColumn;
+	public void addModification(ISqlElement modifiedElement, SchemaModification schemaModification) {
+		modifications.put(modifiedElement, schemaModification);
 	}
 	
 	private Map<ISqlElement, SqlSchemaColumnComparisonResult> columnComparisonResults = new HashMap<>();
@@ -108,30 +53,6 @@ public class SqlSchemaComparisonResult {
 			List<IForeignKeyRelationEdge> removedForeignKeyRelations) {
 		this.removedForeignKeyRelations = removedForeignKeyRelations;
 	}
-
-	public SqlSchemaComparisonResult() {}
-	
-	public SqlSchemaComparisonResult(SqlTableVertex renamedTable,
-			SqlTableVertex removedRenamedTable,
-			SqlTableVertex removedTable,
-			SqlTableVertex addedTable) {
-		
-		this.renamedTable = renamedTable;
-		this.removedRenamedTable = removedRenamedTable;
-		this.removedTable = removedTable;
-		this.addedTable = addedTable;
-	}
-	
-	public SqlSchemaComparisonResult(SqlColumnVertex renamedColumn,
-			SqlColumnVertex movedColumn,
-			SqlColumnVertex removedColumn,
-			SqlColumnVertex addedColumn) {
-		
-		this.renamedColumn = renamedColumn;
-		this.movedColumn = movedColumn;
-		this.removedColumn = removedColumn;
-		this.addedColumn = addedColumn;
-	}
 	
 	@Override
 	public String toString() {
@@ -140,44 +61,36 @@ public class SqlSchemaComparisonResult {
 		
 		output += "Schema Comparison Result\n";
 		output += "------------------------\n";
-		
-		if (renamedTable != null || removedRenamedTable != null || removedTable != null || addedTable != null) {
-			result += "\n";
-			result += "-----------------------\n";
-			result += "| TABLE MODIFICATIONS |\n";
-			result += "-----------------------";
-			if (renamedTable != null)
-				result += String.format("\nRenamed Table | %s", renamedTable.getSqlElementId());
+
+		for (Entry<ISqlElement, SchemaModification> entry : modifications.entrySet()) {
+			switch (entry.getValue()) {
+				case CREATE_TABLE:
+				case DELETE_TABLE:
+				case RENAME_TABLE:
+				case DELETE_AFTER_RENAME_TABLE:
+					result += "\n";
+					result += "----------------------\n";
+					result += "| TABLE MODIFICATION |\n";
+					result += "----------------------";
+					break;
+
+				case CREATE_COLUMN:
+				case DELETE_COLUMN:
+				case RENAME_COLUMN:
+				case MOVE_COLUMN:
+					result += "\n";
+					result += "------------------------\n";
+					result += "| COLUMN MODIFICATIONS |\n";
+					result += "------------------------";
+					break;
 			
-			if (removedRenamedTable != null)
-				result += String.format("\nRenamed Table | %s", removedRenamedTable.getSqlElementId());
+				default:
+					break;
+			}
 			
-			if (removedTable != null)
-				result += String.format("\nRemoved Table | %s", removedTable.getSqlElementId());
-			
-			if (addedTable != null)
-				result += String.format("\nCreated Table | %s", addedTable.getSqlElementId());
+			result += String.format("\n%s | %s", entry.getValue().toString(), entry.getKey().getSqlElementId());
 		}
-		
-		if (renamedColumn != null || movedColumn != null || removedColumn != null || addedColumn != null) {
-			result += "\n";
-			result += "------------------------\n";
-			result += "| COLUMN MODIFICATIONS |\n";
-			result += "------------------------";
-			
-			if (renamedColumn != null)
-				result += String.format("\nRenamed Column | %s", renamedColumn.getSqlElementId());
-			
-			if (movedColumn != null)
-				result += String.format("\nMoved Column   | %s", movedColumn.getSqlElementId());
-			
-			if (removedColumn != null)
-				result += String.format("\nRemoved Column | %s", removedColumn.getSqlElementId());
-			
-			if (addedColumn != null)
-				result += String.format("\nCreated Column | %s", addedColumn.getSqlElementId());
-		}
-		
+
 		result += toResultString("COLUMN COMPARISON RESULTS", columnComparisonResults);
 		result += toResultString("CREATED FOREIGN REFERENCES", addedForeignKeyRelations);
 		result += toResultString("REMOVED FOREIGN REFERENCES", removedForeignKeyRelations);
@@ -223,7 +136,8 @@ public class SqlSchemaComparisonResult {
 		}
 		
 		if (result.length() > 0) {
-			output += "\n-----------------------------\n";
+			output += "\n";
+			output += "-----------------------------\n";
 			output += "| " + title + " |\n";
 			output += "-----------------------------";
 			output += result;

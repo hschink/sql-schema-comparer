@@ -4,22 +4,9 @@ import java.util.List;
 
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
 
-
 public class SqlSchemaColumnComparisonResult {
 
 	public static class ColumnConstraintComparisonResult {
-		
-		private List<IColumnConstraint> constraints1;
-		
-		public List<IColumnConstraint> getConstraints1() {
-			return constraints1;
-		}
-
-		private List<IColumnConstraint> constraints2;
-
-		public List<IColumnConstraint> getConstraints2() {
-			return constraints2;
-		}
 		
 		private List<IColumnConstraint> addedConstraints;
 
@@ -33,13 +20,9 @@ public class SqlSchemaColumnComparisonResult {
 			return removedConstraints;
 		}
 		
-		public ColumnConstraintComparisonResult(List<IColumnConstraint> constraints1,
-				List<IColumnConstraint> constraints2,
-				List<IColumnConstraint> addedConstraints,
+		public ColumnConstraintComparisonResult(List<IColumnConstraint> addedConstraints,
 				List<IColumnConstraint> removedConstraints) {
 			
-			this.constraints1 = constraints1;
-			this.constraints2 = constraints2;
 			this.addedConstraints = addedConstraints;
 			this.removedConstraints = removedConstraints;
 		}
