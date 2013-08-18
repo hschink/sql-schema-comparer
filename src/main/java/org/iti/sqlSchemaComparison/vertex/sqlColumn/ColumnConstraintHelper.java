@@ -33,7 +33,7 @@ public class ColumnConstraintHelper {
 			if (!constraints1.contains(constraint))
 				addedConstraints.add(constraint);
 		
-		return new ColumnConstraintComparisonResult(constraints1, constraints2, addedConstraints, removedConstraints);
+		return new ColumnConstraintComparisonResult(addedConstraints, removedConstraints);
 	}
 	
 	public static String toString(IColumnConstraint columnConstraint) {

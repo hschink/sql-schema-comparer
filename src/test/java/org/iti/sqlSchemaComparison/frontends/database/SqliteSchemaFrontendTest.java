@@ -5,7 +5,9 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.Map.Entry;
 
+import org.iti.sqlSchemaComparison.SchemaModification;
 import org.iti.sqlSchemaComparison.SqlSchemaColumnComparisonResult;
 import org.iti.sqlSchemaComparison.SqlSchemaComparer;
 import org.iti.sqlSchemaComparison.SqlSchemaComparisonResult;
@@ -105,8 +107,13 @@ public class SqliteSchemaFrontendTest {
 		
 		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
 		assertEquals(30, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
-		assertNotNull(result.getRemovedColumn());
-		assertEquals(DROPPED_COLUMN_NAME, result.getRemovedColumn().getSqlElementId());
+
+		for (Entry<ISqlElement, SchemaModification> entry : result.getModifications().entrySet()) {
+			if (entry.getValue() == SchemaModification.RENAME_COLUMN) {
+				assertEquals(SchemaModification.RENAME_COLUMN, entry.getValue());
+				assertEquals(DROPPED_COLUMN_NAME, entry.getKey().getSqlElementId());
+			}
+		}
 	}
 	
 	@Test
@@ -120,8 +127,13 @@ public class SqliteSchemaFrontendTest {
 		
 		assertEquals(8, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema1.vertexSet()).size());
 		assertEquals(7, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema2.vertexSet()).size());
-		assertNotNull(result.getRemovedTable());
-		assertEquals(DROPPED_TABLE_NAME, result.getRemovedTable().getSqlElementId());
+
+		for (Entry<ISqlElement, SchemaModification> entry : result.getModifications().entrySet()) {
+			if (entry.getValue() == SchemaModification.DELETE_TABLE) {
+				assertEquals(SchemaModification.DELETE_TABLE, entry.getValue());
+				assertEquals(DROPPED_TABLE_NAME, entry.getKey().getSqlElementId());
+			}
+		}
 	}
 	
 	@Test
@@ -135,8 +147,11 @@ public class SqliteSchemaFrontendTest {
 		
 		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
 		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
-		assertNotNull(result.getMovedColumn());
-		assertEquals(MOVE_COLUMN_NAME, result.getMovedColumn().getSqlElementId());
+
+		Entry<ISqlElement, SchemaModification> entry = result.getModifications().entrySet().iterator().next();
+
+		assertEquals(SchemaModification.MOVE_COLUMN, entry.getValue());
+		assertEquals(MOVE_COLUMN_NAME, entry.getKey().getSqlElementId());
 	}
 	
 	@Test
@@ -150,8 +165,11 @@ public class SqliteSchemaFrontendTest {
 		
 		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
 		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
-		assertNotNull(result.getRenamedColumn());
-		assertEquals(RENAME_COLUMN_NAME, result.getRenamedColumn().getSqlElementId());
+
+		Entry<ISqlElement, SchemaModification> entry = result.getModifications().entrySet().iterator().next();
+
+		assertEquals(SchemaModification.RENAME_COLUMN, entry.getValue());
+		assertEquals(RENAME_COLUMN_NAME, entry.getKey().getSqlElementId());
 	}
 	
 	@Test
@@ -165,8 +183,12 @@ public class SqliteSchemaFrontendTest {
 		
 		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
 		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
-		assertNotNull(result.getRenamedTable());
-		assertEquals(RENAME_TABLE_NAME, result.getRenamedTable().getSqlElementId());
+
+		for (Entry<ISqlElement, SchemaModification> entry : result.getModifications().entrySet()) {
+			if (entry.getValue() == SchemaModification.RENAME_TABLE) {
+				assertEquals(RENAME_TABLE_NAME, entry.getKey().getSqlElementId());
+			}
+		}
 	}
 	
 	@Test
@@ -188,8 +210,11 @@ public class SqliteSchemaFrontendTest {
 		
 		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
 		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
-		assertNotNull(result.getRenamedColumn());
-		assertEquals(REPLACE_COLUMN_NAME, result.getRenamedColumn().getSqlElementId());
+
+		Entry<ISqlElement, SchemaModification> entry = result.getModifications().entrySet().iterator().next();
+
+		assertEquals(SchemaModification.RENAME_COLUMN, entry.getValue());
+		assertEquals(REPLACE_COLUMN_NAME, entry.getKey().getSqlElementId());
 		assertTrue(column.hasColumnTypeChanged());
 		assertEquals(REPLACE_COLUMN_TYPE, column.getCurrentColumnType());
 	}
@@ -202,12 +227,19 @@ public class SqliteSchemaFrontendTest {
 		Graph<ISqlElement, DefaultEdge> schema2 = frontend2.createSqlSchema();
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
 		SqlSchemaComparisonResult result = comparer.comparisonResult;
-		
+
 		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
 		assertEquals(34, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
-		assertNotNull(result.getAddedTable());
-		assertEquals(REPLACE_LOB_WITH_TABLE, result.getAddedTable().getSqlElementId());
-		assertEquals(REPLACE_LOB_WITH_COLUMN, result.getRemovedColumn().getSqlElementId());
+
+		for (Entry<ISqlElement, SchemaModification> entry : result.getModifications().entrySet()) {
+			if (entry.getValue() == SchemaModification.CREATE_TABLE) {
+				assertEquals(REPLACE_LOB_WITH_TABLE, entry.getKey().getSqlElementId());
+			}
+
+			if (entry.getValue() == SchemaModification.RENAME_COLUMN) {
+				assertEquals(REPLACE_LOB_WITH_COLUMN, entry.getKey().getSqlElementId());
+			}
+		}
 	}
 
 	@After
