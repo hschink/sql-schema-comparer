@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.iti.sqlSchemaComparison.edge.ForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.edge.TableHasColumnEdge;
-import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
@@ -35,13 +34,7 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
-public class JPASchemaFrontend implements ISqlSchemaFrontend {
-
-	private final static String GETTER_PREFIX = "get";
-	private final static String ENTITY = "Entity";
-	private final static String TABLE = "Table";
-	private final static String COLUMN = "Column";
-	private final static String TABLE_NAME = "name";
+public class JPASchemaFrontend implements IJPASchemaFrontend {
 	
 	private String filePath;
 	
