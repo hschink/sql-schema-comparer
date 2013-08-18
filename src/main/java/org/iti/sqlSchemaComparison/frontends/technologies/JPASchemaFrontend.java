@@ -210,12 +210,12 @@ public class JPASchemaFrontend implements ISqlSchemaFrontend {
 	private static class ForeignKeyVisitor extends VoidVisitorAdapter<Graph<ISqlElement, DefaultEdge>> {
 
 		private final static String[] RELATIONSHIP_ANNOTATIONS = new String[]
-				{
-					"@ManyToMany",
-					"ManyToOne",
-					"OneToMany",
-					"OneToOne"
-				};
+		{
+			"@ManyToMany",
+			"ManyToOne",
+			"OneToMany",
+			"OneToOne"
+		};
 		
 		private Graph<ISqlElement, DefaultEdge> schema;
 		
@@ -273,13 +273,13 @@ public class JPASchemaFrontend implements ISqlSchemaFrontend {
 	}
 
 	private static boolean isAnnotationAvailable(
-			List<AnnotationExpr> annotations, String annotation) {
+		List<AnnotationExpr> annotations, String annotation) {
 
 		return getAnnotation(annotations, annotation) != null;
 	}
 
 	private static boolean isAnnotationAvailable(
-			List<AnnotationExpr> annotations, String[] relationshipAnnotations) {
+		List<AnnotationExpr> annotations, String[] relationshipAnnotations) {
 
 		for (AnnotationExpr annotation : annotations)
 			if (Arrays.asList(relationshipAnnotations).contains(annotation.getName().toString()))
@@ -381,7 +381,7 @@ public class JPASchemaFrontend implements ISqlSchemaFrontend {
 		}
 		
 		for (CompilationUnit c : cus) {
-			crateForeignKeyPrimaryRelationships(c, schema, classToTable, classDeclarations);
+			createForeignKeyPrimaryRelationships(c, schema, classToTable, classDeclarations);
 		}
 		
 		for (CompilationUnit c : cus) {
@@ -418,7 +418,7 @@ public class JPASchemaFrontend implements ISqlSchemaFrontend {
 		classDeclarations.putAll(visitor.classDeclarations);
 	}
 
-	private void crateForeignKeyPrimaryRelationships(CompilationUnit cu,
+	private void createForeignKeyPrimaryRelationships(CompilationUnit cu,
 			Graph<ISqlElement, DefaultEdge> schema,
 			Map<String, String> classToTable,
 			Map<String, ClassOrInterfaceDeclaration> classDeclarations) {
