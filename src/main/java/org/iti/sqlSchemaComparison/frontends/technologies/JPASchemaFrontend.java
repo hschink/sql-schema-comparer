@@ -296,7 +296,7 @@ public class JPASchemaFrontend implements ISqlSchemaFrontend {
 			
 			for (MemberValuePair p : a.getPairs()) {
 				if (p.getName().equals(TABLE_NAME))
-					return p.getValue().toString();
+					return p.getValue().toString().replace("\"", "");
 			}
 		}
 		

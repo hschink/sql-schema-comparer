@@ -30,7 +30,10 @@ public class JPASchemaFrontendTest {
 		Graph<ISqlElement, DefaultEdge> schema = frontend.createSqlSchema();
 		
 		assertNotNull(schema);
-		assertEquals(1, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
+		ISqlElement[] tables = SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).toArray(new ISqlElement[] {});
+		
+		assertEquals(1, tables.length);
+		assertEquals("departments", tables[0].getSqlElementId());
 		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
 	}
 	
