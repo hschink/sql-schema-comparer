@@ -3,6 +3,8 @@ package org.iti.sqlSchemaComparison.vertex;
 
 public class SqlTableVertex implements ISqlElement {
 
+	private Object sourceElement = null;
+	
 	@Override
 	public SqlElementType getSqlElementType() {
 		return SqlElementType.Table;
@@ -33,5 +35,15 @@ public class SqlTableVertex implements ISqlElement {
 	@Override
 	public int hashCode() {
 		return SqlElementFactory.hashCode(this);
+	}
+
+	@Override
+	public Object getSourceElement() {
+		return sourceElement;
+	}
+
+	@Override
+	public void setSourceElement(Object sourceElement) {
+		this.sourceElement = sourceElement;
 	}
 }

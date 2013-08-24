@@ -7,6 +7,8 @@ import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
 
 public class SqlColumnVertex implements ISqlElement {
 
+	private Object sourceElement = null;
+	
 	@Override
 	public SqlElementType getSqlElementType() {
 		return SqlElementType.Column;
@@ -64,5 +66,15 @@ public class SqlColumnVertex implements ISqlElement {
 	@Override
 	public int hashCode() {
 		return SqlElementFactory.hashCode(this);
+	}
+
+	@Override
+	public Object getSourceElement() {
+		return sourceElement;
+	}
+
+	@Override
+	public void setSourceElement(Object sourceElement) {
+		this.sourceElement = sourceElement;
 	}
 }
