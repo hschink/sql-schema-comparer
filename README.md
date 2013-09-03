@@ -75,3 +75,16 @@ The following examples assume that you created a [stand-alone JAR](#stand-alone-
 **Compare an SQLite database file with an SQL statement**
 
 `> java -jar sql-schema-comparer-standalone.jar -statement $STATEMENT file.sqlite`
+
+## License ##
+
+!["GNU LGPLv3"](http://www.gnu.org/graphics/lgplv3-88x31.png)
+**Apart from the [SqlStatementFrontend.java](src/main/java/org/iti/sqlSchemaComparison/frontends/SqlStatementFrontend.java)**
+the sql-schema-comparer is released under the terms of the [LGPL][lgpl].
+
+!["GNU GPLv3"](http://www.gnu.org/graphics/gplv3-88x31.png)
+Only the [SqlStatementFrontend.java](src/main/java/org/iti/sqlSchemaComparison/frontends/SqlStatementFrontend.java) is
+released under the terms of the [GPL][gpl].
+
+[lgpl]: http://www.gnu.org/licenses/lgpl-3.0.en.html
+[gpl]: http://www.gnu.org/licenses/gpl-3.0.en.html
