@@ -21,13 +21,17 @@
 
 package org.iti.sqlSchemaComparison;
 
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.gibello.zql.ZFromItem;
+import org.gibello.zql.ZSelectItem;
 import org.iti.sqlSchemaComparison.edge.SqlStatementFrontendTest;
 import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
 import org.iti.sqlSchemaComparison.frontends.SqlStatementFrontend;
@@ -42,10 +46,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import static org.junit.Assert.assertThat;
-
-import static org.hamcrest.CoreMatchers.*;
 
 @RunWith(JUnit4.class)
 public class SqlStatementExpectationValidatorTest {
@@ -159,6 +159,34 @@ public class SqlStatementExpectationValidatorTest {
 		assertEquals(1, result.getMissingButReachableColumns().size());
 		assertEquals(2, result.getMissingButReachableColumns().get(key).size());
 		assertEquals("account", key.getSqlElementId());
+	}
+	
+	@Test
+	public void SourceElementIsNotEmptyForMissingColumn() {
+		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_MISSING_COLUMN, null);
+		Graph<ISqlElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
+		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
+		
+		SqlStatementExpectationValidationResult result = validator.computeGraphMatching(expectedSchema);
+		
+		for (ISqlElement element : result.getMissingColumns()) {
+			assertTrue(element.getSourceElement() != null);
+			assertTrue(element.getSourceElement() instanceof ZSelectItem);
+		}
+	}
+	
+	@Test
+	public void SourceElementIsNotEmptyForMissingTable() {
+		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_MISSING_TABLE, null);
+		Graph<ISqlElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
+		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
+		
+		SqlStatementExpectationValidationResult result = validator.computeGraphMatching(expectedSchema);
+		
+		for (ISqlElement element : result.getMissingTables()) {
+			assertTrue(element.getSourceElement() != null);
+			assertTrue(element.getSourceElement() instanceof ZFromItem);
+		}
 	}
 	
 	@After

@@ -88,6 +88,9 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 		private void processClass(ClassOrInterfaceDeclaration n) {
 			String tableName = getTableName(n);
 			ISqlElement table = SqlElementFactory.createSqlElement(SqlElementType.Table, tableName);
+			
+			table.setSourceElement(n);
+			
 			schema.addVertex(table);
 			
 			lastVisitedClass = table;
@@ -126,6 +129,9 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 			}
 			
 			schema.addVertex(column);
+			
+			column.setSourceElement(n);
+			
 			schema.addEdge(lastVisitedClass, column, new TableHasColumnEdge(lastVisitedClass, column));
 		}
 		
@@ -178,6 +184,8 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 				List<IColumnConstraint> constraints = new ArrayList<>();
 				
 				ISqlElement column = new SqlColumnVertex(id, type, table.getSqlElementId());
+				
+				column.setSourceElement(n);
 				
 				((SqlColumnVertex) column).setConstraints(constraints);
 				

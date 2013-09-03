@@ -112,6 +112,9 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 		}
 		
 		ISqlElement table = SqlElementFactory.createSqlElement(SqlElementType.Table, fromItem.getTable());
+		
+		table.setSourceElement(fromItem);
+		
 		schema.addVertex(table);
 		
 		for (Object item : query.getSelect()) {
@@ -119,6 +122,8 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 			
 			if ((databaseSchema != null && columnMatchesTable(query, fromItem, selectItem)) || query.getFrom().size() == 1) {
 				ISqlElement column = new SqlColumnVertex(selectItem.getColumn(), null, table.getSqlElementId());
+				
+				column.setSourceElement(selectItem);
 				
 				schema.addVertex(column);
 				schema.addEdge(table, column, new TableHasColumnEdge(table, column));
