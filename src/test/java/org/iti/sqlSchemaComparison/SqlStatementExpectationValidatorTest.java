@@ -55,6 +55,7 @@ public class SqlStatementExpectationValidatorTest {
 	public static final String QUERY_WITH_MISSING_TABLE = "SELECT firstname, surname FROM missing;";
 	public static final String QUERY_WITH_TWO_MISSING_TABLEs = "SELECT firstname, surname FROM missing_1, missing_2;";
 	public static final String QUERY_WITH_FOREIGN_TABLE_REFERENCE = "SELECT firstname, surname, account FROM customers;";
+	public static final String QUERY_WITH_MISSING_COLUMN_AND_TABLE_PREFIXED_COLUMNS = "SELECT customers.firstname, customers.name, customers.telephone FROM customers, departments;";
 	
 	private static Graph<ISqlElement, DefaultEdge> sqliteSchema;
 	
@@ -189,6 +190,22 @@ public class SqlStatementExpectationValidatorTest {
 		}
 	}
 	
+	@Test
+	public void QueryWithMissingColumnAndTablePrefixedColumns() {
+		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_MISSING_COLUMN_AND_TABLE_PREFIXED_COLUMNS, null);
+		Graph<ISqlElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
+		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
+
+		SqlStatementExpectationValidationResult result = validator.computeGraphMatching(expectedSchema);
+
+		assertFalse(result.isStatementValid());
+		assertEquals(1, result.getMissingButReachableColumns().size());
+
+		for (ISqlElement element : result.getMissingTables()) {
+			assertEquals("name", element.getSqlElementId());
+		}
+	}
+
 	@After
 	public void tearDown() { }
 }
