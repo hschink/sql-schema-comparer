@@ -120,7 +120,9 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 		for (Object item : query.getSelect()) {
 			ZSelectItem selectItem = (ZSelectItem) item;
 			
-			if ((databaseSchema != null && columnMatchesTable(query, fromItem, selectItem)) || query.getFrom().size() == 1) {
+			if (tableReferencedInQuery(fromItem, selectItem)
+					|| columnMatchesTable(query, fromItem, selectItem)
+					|| query.getFrom().size() == 1) {
 				ISqlElement column = new SqlColumnVertex(selectItem.getColumn(), null, table.getSqlElementId());
 				
 				column.setSourceElement(selectItem);
@@ -135,30 +137,40 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 			ZSelectItem selectItem) {
 		String tableForColumn = selectItem.getTable();
 
-		if (tableForColumn == null) {
-			Set<String> tables = getTablesFromQuery(query);
-			Set<String> matchingTables = getTablesContainingColumn(tables, selectItem.getColumn());
-			
-			if (matchingTables.size() > 1)
-				throw new IllegalArgumentException("Column " + selectItem.getColumn() + " is part of more than one table!");
-			
-			if (matchingTables.size() == 0)
-				throw new IllegalArgumentException("No matching table for column " + selectItem.getColumn() + " exists!");
-			
-			return matchingTables.contains(fromItem.getTable());
-			
-		} else {
-			Set<String> tables = new HashSet<>();
-			
-			if (fromItem.getAlias() != null && tableForColumn.equals(fromItem.getAlias()))
-				tableForColumn = fromItem.getTable();
-			
-			tables.add(tableForColumn);
-			
-			Set<String> matchingTables = getTablesContainingColumn(tables, selectItem.getColumn());
-			
-			return matchingTables.contains(fromItem.getTable());
+		if (databaseSchema != null) {
+			if (tableForColumn == null) {
+				Set<String> tables = getTablesFromQuery(query);
+				Set<String> matchingTables = getTablesContainingColumn(tables, selectItem.getColumn());
+
+				if (matchingTables.size() > 1)
+					throw new IllegalArgumentException("Column " + selectItem.getColumn() + " is part of more than one table!");
+
+				if (matchingTables.size() == 0)
+					throw new IllegalArgumentException("No matching table for column " + selectItem.getColumn() + " exists!");
+
+				return matchingTables.contains(fromItem.getTable());
+
+			} else {
+				Set<String> tables = new HashSet<>();
+
+				if (fromItem.getAlias() != null && tableForColumn.equals(fromItem.getAlias()))
+					tableForColumn = fromItem.getTable();
+
+				tables.add(tableForColumn);
+
+				Set<String> matchingTables = getTablesContainingColumn(tables, selectItem.getColumn());
+
+				return matchingTables.contains(fromItem.getTable());
+			}
 		}
+
+		return false;
+	}
+
+	private boolean tableReferencedInQuery(ZFromItem fromItem,
+			ZSelectItem selectItem) {
+		return fromItem.getTable().equals(selectItem.getTable())
+				|| (fromItem.getAlias() != null) && fromItem.getAlias().equals(selectItem.getTable());
 	}
 
 	private Set<String> getTablesFromQuery(ZQuery query) {
