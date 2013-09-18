@@ -53,7 +53,7 @@ public class SqlStatementExpectationValidatorTest {
 	public static final String QUERY_WITH_MISSING_COLUMN = "SELECT firstname, surname, fee FROM customers;";
 	public static final String QUERY_WITH_TWO_MISSING_COLUMNS = "SELECT firstname, surname, missing_1, missing_2 FROM customers;";
 	public static final String QUERY_WITH_MISSING_TABLE = "SELECT firstname, surname FROM missing;";
-	public static final String QUERY_WITH_TWO_MISSING_TABLEs = "SELECT firstname, surname FROM missing_1, missing_2;";
+	public static final String QUERY_WITH_TWO_MISSING_TABLES = "SELECT missing_1.firstname, missing_2.surname FROM missing_1, missing_2;";
 	public static final String QUERY_WITH_FOREIGN_TABLE_REFERENCE = "SELECT firstname, surname, account FROM customers;";
 	public static final String QUERY_WITH_TABLE_PREFIXED_COLUMNS_AND_MISSING_COLUMN = "SELECT customers.firstname, customers.name FROM customers, departments;";
 	
@@ -128,7 +128,7 @@ public class SqlStatementExpectationValidatorTest {
 	
 	@Test
 	public void QueryWithTwoMissingTables() {
-		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_TWO_MISSING_TABLEs, null);
+		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_TWO_MISSING_TABLES, null);
 		Graph<ISqlElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
 		
