@@ -106,12 +106,12 @@ public class SqliteSchemaFrontendTest {
 		List<ISqlElement> columns = new ArrayList<>();
 		
 		for (ISqlElement e : sqlElementsOfType) {
-			if (e instanceof SqlColumnVertex)
-				for (IColumnConstraint c : ((SqlColumnVertex) e).getConstraints())
-					if (constraintType.isAssignableFrom(c.getClass())) {
-						columns.add(e);
-						break;
-					}
+			for (IColumnConstraint c : ((SqlColumnVertex) e).getConstraints()) {
+				if (constraintType.isAssignableFrom(c.getClass())) {
+					columns.add(e);
+					break;
+				}
+			}
 		}
 		
 		return columns;
@@ -128,13 +128,14 @@ public class SqliteSchemaFrontendTest {
 		
 		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
 		assertEquals(30, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
-
+		
+		ISqlElement elements = null;
+		
 		for (Entry<ISqlElement, SchemaModification> entry : result.getModifications().entrySet()) {
-			if (entry.getValue() == SchemaModification.RENAME_COLUMN) {
-				assertEquals(SchemaModification.RENAME_COLUMN, entry.getValue());
-				assertEquals(DROPPED_COLUMN_NAME, entry.getKey().getSqlElementId());
-			}
+			elements = entry.getKey();
 		}
+
+		assertEquals(DROPPED_COLUMN_NAME, elements.getSqlElementId());
 	}
 	
 	@Test
@@ -225,7 +226,6 @@ public class SqliteSchemaFrontendTest {
 		for (ISqlElement element : result.getColumnComparisonResults().keySet()) {
 			if (element.getSqlElementId().equals(REPLACE_COLUMN_NAME)) {
 				column = result.getColumnComparisonResults().get(element);
-				break;
 			}
 		}
 		
@@ -257,7 +257,7 @@ public class SqliteSchemaFrontendTest {
 				assertEquals(REPLACE_LOB_WITH_TABLE, entry.getKey().getSqlElementId());
 			}
 
-			if (entry.getValue() == SchemaModification.RENAME_COLUMN) {
+			if (entry.getValue() == SchemaModification.DELETE_COLUMN) {
 				assertEquals(REPLACE_LOB_WITH_COLUMN, entry.getKey().getSqlElementId());
 			}
 		}
