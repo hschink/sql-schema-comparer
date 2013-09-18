@@ -51,6 +51,8 @@ public class SqlStatementFrontendTest {
 	private static final String TABLE_DOES_NOT_EXIST_QUERY = "SELECT name from wrong_table;";
 	private static final String COLUMN_DOES_NOT_EXIST_QUERY = "SELECT wrong_column from customers;";
 	private static final String MULTIPLE_MATCHING_COLUMNS_QUERY = "SELECT account from managers, salespersons;";
+	private static final String QUERY_WITH_TABLE_PREFIXED_COLUMNS_AND_WRONG_TABLE = "SELECT customers.firstname, department.name FROM customers, departments;";
+	private static final String QUERY_WITH_TABLE_PREFIXED_COLUMNS_AND_AMBIGUOUS_TABLES = "SELECT firstname, name FROM customers, departments;";
 	
 	private static Graph<ISqlElement, DefaultEdge> sqliteSchema;
 	
@@ -58,7 +60,7 @@ public class SqlStatementFrontendTest {
 	public ExpectedException exception = ExpectedException.none();
 	
 	@BeforeClass
-	public static void Init() {
+	public static void init() {
 		ISqlSchemaFrontend sqliteFrontend = new SqliteSchemaFrontend(SqliteSchemaFrontendTest.DATABASE_FILE_PATH);
 		
 		sqliteSchema = sqliteFrontend.createSqlSchema();
@@ -68,7 +70,7 @@ public class SqlStatementFrontendTest {
 	public void setUp() { }
 	
 	@Test
-	public void SingleTableQuery() {
+	public void singleTableQuery() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(SINGLE_TABLE_QUERY, null);
 		Graph<ISqlElement, DefaultEdge> schema = frontend.createSqlSchema();
 		
@@ -77,7 +79,7 @@ public class SqlStatementFrontendTest {
 	}
 	
 	@Test
-	public void JoinTablQuery() {
+	public void joinTablQuery() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(JOIN_TABLE_QUERY, sqliteSchema);
 		Graph<ISqlElement, DefaultEdge> schema = frontend.createSqlSchema();
 		
@@ -86,7 +88,7 @@ public class SqlStatementFrontendTest {
 	}
 	
 	@Test
-	public void JoinTablWithAliasQuery() {
+	public void joinTablWithAliasQuery() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(JOIN_TABLE_WITH_ALIAS_QUERY, sqliteSchema);
 		Graph<ISqlElement, DefaultEdge> schema = frontend.createSqlSchema();
 		
@@ -95,7 +97,7 @@ public class SqlStatementFrontendTest {
 	}
 	
 	@Test
-	public void JoinTablWithTableReferenceQuery() {
+	public void joinTablWithTableReferenceQuery() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(JOIN_TABLE_WITH_TABLE_REFERENCE_QUERY, sqliteSchema);
 		Graph<ISqlElement, DefaultEdge> schema = frontend.createSqlSchema();
 		
@@ -103,27 +105,38 @@ public class SqlStatementFrontendTest {
 		assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
 	}
 	
-	@Test
-	public void QueryOnNonExistingTable() {
+	@Test(expected=IllegalArgumentException.class)
+	public void queryOnNonExistingTable() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(TABLE_DOES_NOT_EXIST_QUERY, sqliteSchema);
-		
-		exception.expect(IllegalArgumentException.class);
+
 		frontend.createSqlSchema();
 	}
 	
-	@Test
-	public void QueryOnNonExistingColumn() {
+	@Test(expected=IllegalArgumentException.class)
+	public void queryOnNonExistingColumn() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(COLUMN_DOES_NOT_EXIST_QUERY, sqliteSchema);
-		
-		exception.expect(IllegalArgumentException.class);
+
 		frontend.createSqlSchema();
 	}
 	
-	@Test
-	public void QueryWithMultipleMatchingColumns() {
+	@Test(expected=IllegalArgumentException.class)
+	public void queryWithMultipleMatchingColumns() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(MULTIPLE_MATCHING_COLUMNS_QUERY, sqliteSchema);
-		
-		exception.expect(IllegalArgumentException.class);
+
+		frontend.createSqlSchema();
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void queryWithTablePrefixedColumnsAndWrongTable() {
+		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_TABLE_PREFIXED_COLUMNS_AND_WRONG_TABLE, null);
+
+		frontend.createSqlSchema();
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void queryWithTablePrefixedColumnsAndAmbiguousTables() {
+		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_TABLE_PREFIXED_COLUMNS_AND_AMBIGUOUS_TABLES, null);
+
 		frontend.createSqlSchema();
 	}
 

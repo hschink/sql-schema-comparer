@@ -51,7 +51,7 @@ public class SqlTableVertexReachableCheckerTest {
 	private static ISqlElement c12 = new SqlColumnVertex("c12", "", t2.getSqlElementId());
 	
 	@BeforeClass
-	public static void Init() throws Exception {
+	public static void init() throws Exception {
 		schema1.addVertex(t1);
 
 		schema1.addVertex(c1);
@@ -65,7 +65,7 @@ public class SqlTableVertexReachableCheckerTest {
 	public void setUp() { }
 	
 	@Test
-	public void ReachableTableDetectedCorrectly() {
+	public void reachableTableDetectedCorrectly() {
 		ISqlElementReachabilityChecker checker = new SqlTableVertexReachableChecker(schema1, t1);
 		
 		assertTrue(checker.isReachable());
@@ -74,7 +74,7 @@ public class SqlTableVertexReachableCheckerTest {
 	}
 	
 	@Test
-	public void NonReachableTableDetectedCorrectly() {
+	public void nonReachableTableDetectedCorrectly() {
 		ISqlElementReachabilityChecker checker = new SqlTableVertexReachableChecker(schema1, t2);
 		
 		assertFalse(checker.isReachable());
