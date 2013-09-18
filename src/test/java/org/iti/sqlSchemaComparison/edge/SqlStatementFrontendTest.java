@@ -52,6 +52,7 @@ public class SqlStatementFrontendTest {
 	private static final String COLUMN_DOES_NOT_EXIST_QUERY = "SELECT wrong_column from customers;";
 	private static final String MULTIPLE_MATCHING_COLUMNS_QUERY = "SELECT account from managers, salespersons;";
 	private static final String QUERY_WITH_TABLE_PREFIXED_COLUMNS_AND_WRONG_TABLE = "SELECT customers.firstname, department.name FROM customers, departments;";
+	private static final String QUERY_WITH_TABLE_PREFIXED_COLUMNS_AND_AMBIGUOUS_TABLES = "SELECT firstname, name FROM customers, departments;";
 	
 	private static Graph<ISqlElement, DefaultEdge> sqliteSchema;
 	
@@ -128,6 +129,13 @@ public class SqlStatementFrontendTest {
 	@Test(expected=IllegalArgumentException.class)
 	public void QueryWithTablePrefixedColumnsAndWrongTable() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_TABLE_PREFIXED_COLUMNS_AND_WRONG_TABLE, null);
+
+		frontend.createSqlSchema();
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void QueryWithTablePrefixedColumnsAndAmbiguousTables() {
+		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_TABLE_PREFIXED_COLUMNS_AND_AMBIGUOUS_TABLES, null);
 
 		frontend.createSqlSchema();
 	}

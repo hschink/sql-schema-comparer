@@ -21,12 +21,15 @@
 
 package org.iti.sqlSchemaComparison.frontends.database;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.nio.file.InvalidPathException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.iti.sqlSchemaComparison.SchemaModification;
 import org.iti.sqlSchemaComparison.SqlSchemaColumnComparisonResult;
@@ -34,7 +37,6 @@ import org.iti.sqlSchemaComparison.SqlSchemaComparer;
 import org.iti.sqlSchemaComparison.SqlSchemaComparisonResult;
 import org.iti.sqlSchemaComparison.edge.ForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
-import org.iti.sqlSchemaComparison.frontends.database.SqliteSchemaFrontend;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
@@ -261,6 +263,27 @@ public class SqliteSchemaFrontendTest {
 				assertEquals(REPLACE_LOB_WITH_COLUMN, entry.getKey().getSqlElementId());
 			}
 		}
+	}
+
+	@Test(expected=InvalidPathException.class)
+	public void ThrowsInvaidFilePathExceptionForEmptyString() {
+		ISqlSchemaFrontend frontend = new SqliteSchemaFrontend("");
+
+		frontend.createSqlSchema();
+	}
+
+	@Test(expected=InvalidPathException.class)
+	public void ThrowsInvaidFilePathExceptionForNull() {
+		ISqlSchemaFrontend frontend = new SqliteSchemaFrontend(null);
+
+		frontend.createSqlSchema();
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void ThrowsInvaidArgumentExceptionOnInvalidFilePath() {
+		ISqlSchemaFrontend frontend = new SqliteSchemaFrontend("dadidadam");
+
+		frontend.createSqlSchema();
 	}
 
 	@After

@@ -197,15 +197,18 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 	}
 
 	private ZFromItem getTableFromQuery(ZQuery query, String tableName) {
+		ZFromItem result = null;
+
 		for (Object item : query.getFrom()) {
 			ZFromItem tableItem = (ZFromItem) item;
 			
 			if (tableItem.getTable().equals(tableName)) {
-				return tableItem;
+				result = tableItem;
+				break;
 			}
 		}
 
-		return null;
+		return result;
 	}
 
 	private Set<String> getTablesContainingColumn(Set<ZFromItem> tables, String columnName) {
