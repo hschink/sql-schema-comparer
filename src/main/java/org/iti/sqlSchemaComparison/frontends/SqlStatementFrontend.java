@@ -93,16 +93,24 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 	private Graph<ISqlElement, DefaultEdge> createGraphFromQuery(ZQuery query) {
 		Graph<ISqlElement, DefaultEdge> schema = new SimpleGraph<ISqlElement, DefaultEdge>(DefaultEdge.class);
 
-		for (Object item : query.getFrom()) {
-			ZFromItem fromItem = (ZFromItem) item;
-			
-			createTableSchema(schema, query, fromItem);
-		}
+		createTables(query, schema);
+		
+		createTableColumns(query, schema);
 		
 		return schema;
 	}
 
-	private void createTableSchema(Graph<ISqlElement, DefaultEdge> schema,
+	private void createTables(ZQuery query,
+			Graph<ISqlElement, DefaultEdge> schema) {
+
+		for (Object item : query.getFrom()) {
+			ZFromItem fromItem = (ZFromItem) item;
+			
+			createTable(schema, query, fromItem);
+		}
+	}
+
+	private void createTable(Graph<ISqlElement, DefaultEdge> schema,
 			ZQuery query, ZFromItem fromItem) {
 		if (databaseSchema != null) {
 			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, fromItem.getTable(), databaseSchema.vertexSet());
@@ -110,82 +118,101 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 			if (table == null)
 				throw new IllegalArgumentException(String.format("Table %s does not exist in schema!", fromItem.getTable()));
 		}
-		
+
 		ISqlElement table = SqlElementFactory.createSqlElement(SqlElementType.Table, fromItem.getTable());
-		
+
 		table.setSourceElement(fromItem);
-		
+
 		schema.addVertex(table);
-		
+	}
+
+	private void createTableColumns(ZQuery query,
+			Graph<ISqlElement, DefaultEdge> schema) {
+
 		for (Object item : query.getSelect()) {
 			ZSelectItem selectItem = (ZSelectItem) item;
 			
-			if (tableReferencedInQuery(fromItem, selectItem)
-					|| columnMatchesTable(query, fromItem, selectItem)
-					|| query.getFrom().size() == 1) {
-				ISqlElement column = new SqlColumnVertex(selectItem.getColumn(), null, table.getSqlElementId());
-				
-				column.setSourceElement(selectItem);
-				
-				schema.addVertex(column);
-				schema.addEdge(table, column, new TableHasColumnEdge(table, column));
-			}
+			ZFromItem tableItem = getColumnTable(query, selectItem);
+			
+			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, tableItem.getTable(), schema.vertexSet());
+			ISqlElement column = new SqlColumnVertex(selectItem.getColumn(), null, table.getSqlElementId());
+			
+			column.setSourceElement(selectItem);
+			
+			schema.addVertex(column);
+			schema.addEdge(table, column, new TableHasColumnEdge(table, column));
 		}
 	}
+	
+	private ZFromItem getColumnTable(ZQuery query, ZSelectItem selectItem) {
+		if (selectItem.getTable() != null) {
+			return getColumnTableFromQuery(query, selectItem);
+		} else if (databaseSchema != null) {
+			return getColumnTableFromDatabaseSchema(query, selectItem);
+		} else if (query.getFrom().size() == 1) {
+			return (ZFromItem) query.getFrom().get(0);
+		}
+		
+		throw new IllegalArgumentException("No matching table for column " + selectItem.getColumn() + " exists!");
+	}
 
-	private boolean columnMatchesTable(ZQuery query, ZFromItem fromItem,
-			ZSelectItem selectItem) {
-		String tableForColumn = selectItem.getTable();
-
-		if (databaseSchema != null) {
-			if (tableForColumn == null) {
-				Set<String> tables = getTablesFromQuery(query);
-				Set<String> matchingTables = getTablesContainingColumn(tables, selectItem.getColumn());
-
-				if (matchingTables.size() > 1)
-					throw new IllegalArgumentException("Column " + selectItem.getColumn() + " is part of more than one table!");
-
-				if (matchingTables.size() == 0)
-					throw new IllegalArgumentException("No matching table for column " + selectItem.getColumn() + " exists!");
-
-				return matchingTables.contains(fromItem.getTable());
-
-			} else {
-				Set<String> tables = new HashSet<>();
-
-				if (fromItem.getAlias() != null && tableForColumn.equals(fromItem.getAlias()))
-					tableForColumn = fromItem.getTable();
-
-				tables.add(tableForColumn);
-
-				Set<String> matchingTables = getTablesContainingColumn(tables, selectItem.getColumn());
-
-				return matchingTables.contains(fromItem.getTable());
+	private ZFromItem getColumnTableFromQuery(ZQuery query, ZSelectItem selectItem) {
+		String tableName = selectItem.getTable();
+		
+		for (Object item : query.getFrom()) {
+			ZFromItem tableItem = (ZFromItem)item;
+			
+			if (tableItem.getTable().equals(tableName)
+					|| (tableItem.getAlias() != null && tableItem.getAlias().equals(tableName))) {
+				return tableItem;
 			}
 		}
-
-		return false;
+		
+		throw new IllegalArgumentException("Table " + selectItem.getTable()
+				   + " for column " + selectItem.getColumn()
+				   + " does not exist!");
 	}
 
-	private boolean tableReferencedInQuery(ZFromItem fromItem,
+	private ZFromItem getColumnTableFromDatabaseSchema(ZQuery query,
 			ZSelectItem selectItem) {
-		return fromItem.getTable().equals(selectItem.getTable())
-				|| (fromItem.getAlias() != null) && fromItem.getAlias().equals(selectItem.getTable());
-	}
+		Set<ZFromItem> tables = getTablesFromQuery(query);
+		Set<String> matchingTables = getTablesContainingColumn(tables, selectItem.getColumn());
 
-	private Set<String> getTablesFromQuery(ZQuery query) {
-		Set<String> tables = new HashSet<>();
+		if (matchingTables.size() > 1)
+			throw new IllegalArgumentException("Column " + selectItem.getColumn() + " is part of more than one table!");
+
+		if (matchingTables.size() == 0)
+			throw new IllegalArgumentException("No matching table for column " + selectItem.getColumn() + " exists!");
+
+		return getTableFromQuery(query, (String) matchingTables.toArray()[0]);
+	}
+	
+	private Set<ZFromItem> getTablesFromQuery(ZQuery query) {
+		Set<ZFromItem> tables = new HashSet<>();
 		
 		for (Object item : query.getFrom())
-			tables.add(((ZFromItem) item).getTable());
+			tables.add((ZFromItem) item);
 		
 		return tables;
 	}
 
-	private Set<String> getTablesContainingColumn(Set<String> tables, String columnName) {
+	private ZFromItem getTableFromQuery(ZQuery query, String tableName) {
+		for (Object item : query.getFrom()) {
+			ZFromItem tableItem = (ZFromItem) item;
+			
+			if (tableItem.getTable().equals(tableName)) {
+				return tableItem;
+			}
+		}
+
+		return null;
+	}
+
+	private Set<String> getTablesContainingColumn(Set<ZFromItem> tables, String columnName) {
 		Set<String> matchingTables = new HashSet<>();
 
-		for (String tableName : tables) {
+		for (ZFromItem tableItem : tables) {
+			String tableName = tableItem.getTable();
 			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, tableName, databaseSchema.vertexSet());
 			
 			
