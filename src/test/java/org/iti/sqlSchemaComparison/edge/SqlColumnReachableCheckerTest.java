@@ -57,7 +57,7 @@ public class SqlColumnReachableCheckerTest {
 	private static ISqlElement c5 = new SqlColumnVertex("c231", "", t1.getSqlElementId());
 	
 	@BeforeClass
-	public static void Init() throws Exception {
+	public static void init() throws Exception {
 		schema1.addVertex(t1);
 		schema1.addVertex(t2);
 		schema2.addVertex(t1);
@@ -98,7 +98,7 @@ public class SqlColumnReachableCheckerTest {
 	public void setUp() { }
 	
 	@Test
-	public void ReachableColumnDetectedCorrectly() {
+	public void reachableColumnDetectedCorrectly() {
 		ISqlElementReachabilityChecker checker = new SqlColumnReachableChecker(schema1, t1, c1);
 		
 		assertTrue(checker.isReachable());
@@ -108,7 +108,7 @@ public class SqlColumnReachableCheckerTest {
 	}
 	
 	@Test
-	public void ReachableForeignColumnDetectedCorrectly() {
+	public void reachableForeignColumnDetectedCorrectly() {
 		ISqlElementReachabilityChecker checker = new SqlColumnReachableChecker(schema2, t1, c1);
 		
 		assertTrue(checker.isReachable());
@@ -121,7 +121,7 @@ public class SqlColumnReachableCheckerTest {
 	}
 	
 	@Test
-	public void ReachableForeignColumnWithOneIndirectionDetectedCorrectly() {
+	public void reachableForeignColumnWithOneIndirectionDetectedCorrectly() {
 		ISqlElementReachabilityChecker checker = new SqlColumnReachableChecker(schema3, t1, c1);
 		
 		assertTrue(checker.isReachable());

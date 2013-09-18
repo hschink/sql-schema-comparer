@@ -46,7 +46,7 @@ public class JPASchemaFrontendTest {
 	public void setUp() { }
 	
 	@Test
-	public void DatabaseConnectionEstablishedCorrectly() {
+	public void databaseConnectionEstablishedCorrectly() {
 		ISqlSchemaFrontend frontend = new JPASchemaFrontend(JPA_FILE_PATH);
 		Graph<ISqlElement, DefaultEdge> schema = frontend.createSqlSchema();
 		
@@ -59,7 +59,7 @@ public class JPASchemaFrontendTest {
 	}
 	
 	@Test
-	public void DirectoryProcessing() {
+	public void directoryProcessing() {
 		ISqlSchemaFrontend frontend = new JPASchemaFrontend(JPA_FOLDER);
 		Graph<ISqlElement, DefaultEdge> schema = frontend.createSqlSchema();
 		

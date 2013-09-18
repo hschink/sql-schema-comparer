@@ -21,12 +21,15 @@
 
 package org.iti.sqlSchemaComparison.frontends.database;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.nio.file.InvalidPathException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.iti.sqlSchemaComparison.SchemaModification;
 import org.iti.sqlSchemaComparison.SqlSchemaColumnComparisonResult;
@@ -34,7 +37,6 @@ import org.iti.sqlSchemaComparison.SqlSchemaComparer;
 import org.iti.sqlSchemaComparison.SqlSchemaComparisonResult;
 import org.iti.sqlSchemaComparison.edge.ForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
-import org.iti.sqlSchemaComparison.frontends.database.SqliteSchemaFrontend;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
@@ -76,7 +78,7 @@ public class SqliteSchemaFrontendTest {
 	public void setUp() { }
 	
 	@Test
-	public void DatabaseConnectionEstablishedCorrectly() {
+	public void databaseConnectionEstablishedCorrectly() {
 		ISqlSchemaFrontend frontend = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
 		Graph<ISqlElement, DefaultEdge> schema = frontend.createSqlSchema();
 		
@@ -88,7 +90,7 @@ public class SqliteSchemaFrontendTest {
 	}
 	
 	@Test
-	public void ForeignKeysEstablishedCorrectly() {
+	public void foreignKeysEstablishedCorrectly() {
 		ISqlSchemaFrontend frontend = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
 		Graph<ISqlElement, DefaultEdge> schema = frontend.createSqlSchema();
 		int foreignKeyEdges = 0;
@@ -106,19 +108,19 @@ public class SqliteSchemaFrontendTest {
 		List<ISqlElement> columns = new ArrayList<>();
 		
 		for (ISqlElement e : sqlElementsOfType) {
-			if (e instanceof SqlColumnVertex)
-				for (IColumnConstraint c : ((SqlColumnVertex) e).getConstraints())
-					if (constraintType.isAssignableFrom(c.getClass())) {
-						columns.add(e);
-						break;
-					}
+			for (IColumnConstraint c : ((SqlColumnVertex) e).getConstraints()) {
+				if (constraintType.isAssignableFrom(c.getClass())) {
+					columns.add(e);
+					break;
+				}
+			}
 		}
 		
 		return columns;
 	}
 	
 	@Test
-	public void DroppedColumnDetectedCorrectly() {
+	public void droppedColumnDetectedCorrectly() {
 		ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
 		ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(DROPPED_COLUMN_DATABASE_FILE_PATH);
 		Graph<ISqlElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
@@ -128,17 +130,18 @@ public class SqliteSchemaFrontendTest {
 		
 		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
 		assertEquals(30, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
-
+		
+		ISqlElement elements = null;
+		
 		for (Entry<ISqlElement, SchemaModification> entry : result.getModifications().entrySet()) {
-			if (entry.getValue() == SchemaModification.RENAME_COLUMN) {
-				assertEquals(SchemaModification.RENAME_COLUMN, entry.getValue());
-				assertEquals(DROPPED_COLUMN_NAME, entry.getKey().getSqlElementId());
-			}
+			elements = entry.getKey();
 		}
+
+		assertEquals(DROPPED_COLUMN_NAME, elements.getSqlElementId());
 	}
 	
 	@Test
-	public void DroppedTableDetectedCorrectly() {
+	public void droppedTableDetectedCorrectly() {
 		ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
 		ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(DROPPED_TABLE_DATABASE_FILE_PATH);
 		Graph<ISqlElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
@@ -158,7 +161,7 @@ public class SqliteSchemaFrontendTest {
 	}
 	
 	@Test
-	public void MoveColumnDetectedCorrectly() {
+	public void moveColumnDetectedCorrectly() {
 		ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
 		ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(MOVE_COLUMN_DATABASE_FILE_PATH);
 		Graph<ISqlElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
@@ -176,7 +179,7 @@ public class SqliteSchemaFrontendTest {
 	}
 	
 	@Test
-	public void RenameColumnDetectedCorrectly() {
+	public void renameColumnDetectedCorrectly() {
 		ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
 		ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(RENAME_COLUMN_DATABASE_FILE_PATH);
 		Graph<ISqlElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
@@ -194,7 +197,7 @@ public class SqliteSchemaFrontendTest {
 	}
 	
 	@Test
-	public void RenameTableDetectedCorrectly() {
+	public void renameTableDetectedCorrectly() {
 		ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
 		ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(RENAME_TABLE_DATABASE_FILE_PATH);
 		Graph<ISqlElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
@@ -213,7 +216,7 @@ public class SqliteSchemaFrontendTest {
 	}
 	
 	@Test
-	public void ReplaceColumnDetectedCorrectly() {
+	public void replaceColumnDetectedCorrectly() {
 		ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
 		ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(REPLACE_COLUMN_DATABASE_FILE_PATH);
 		Graph<ISqlElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
@@ -225,7 +228,6 @@ public class SqliteSchemaFrontendTest {
 		for (ISqlElement element : result.getColumnComparisonResults().keySet()) {
 			if (element.getSqlElementId().equals(REPLACE_COLUMN_NAME)) {
 				column = result.getColumnComparisonResults().get(element);
-				break;
 			}
 		}
 		
@@ -241,7 +243,7 @@ public class SqliteSchemaFrontendTest {
 	}
 	
 	@Test
-	public void ReplaceLobWithTable() {
+	public void replaceLobWithTable() {
 		ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
 		ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(REPLACE_LOB_WITH_TABLE_DATABASE_FILE_PATH);
 		Graph<ISqlElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
@@ -257,10 +259,31 @@ public class SqliteSchemaFrontendTest {
 				assertEquals(REPLACE_LOB_WITH_TABLE, entry.getKey().getSqlElementId());
 			}
 
-			if (entry.getValue() == SchemaModification.RENAME_COLUMN) {
+			if (entry.getValue() == SchemaModification.DELETE_COLUMN) {
 				assertEquals(REPLACE_LOB_WITH_COLUMN, entry.getKey().getSqlElementId());
 			}
 		}
+	}
+
+	@Test(expected=InvalidPathException.class)
+	public void throwsInvaidFilePathExceptionForEmptyString() {
+		ISqlSchemaFrontend frontend = new SqliteSchemaFrontend("");
+
+		frontend.createSqlSchema();
+	}
+
+	@Test(expected=InvalidPathException.class)
+	public void throwsInvaidFilePathExceptionForNull() {
+		ISqlSchemaFrontend frontend = new SqliteSchemaFrontend(null);
+
+		frontend.createSqlSchema();
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void throwsInvaidArgumentExceptionOnInvalidFilePath() {
+		ISqlSchemaFrontend frontend = new SqliteSchemaFrontend("dadidadam");
+
+		frontend.createSqlSchema();
 	}
 
 	@After

@@ -23,6 +23,7 @@ package org.iti.sqlSchemaComparison.frontends.database;
 
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -83,6 +84,8 @@ public class SqliteSchemaFrontend implements ISqlSchemaFrontend {
 		
 		try {
 			schema = tryCreateSqlSchema();
+		} catch (IllegalArgumentException ex) {
+			throw ex;
 		} catch (Exception ex) {
 			ex.printStackTrace(System.err);
 		}
@@ -210,7 +213,7 @@ public class SqliteSchemaFrontend implements ISqlSchemaFrontend {
 	
 	public SqliteSchemaFrontend(String filePath) {
 		if (filePath == null || filePath == "")
-			throw new NullPointerException("Path to SQLite database file must not be null or empty!");
+			throw new InvalidPathException("", "Path to SQLite database file must not be null or empty!");
 		
 		this.filePath = filePath;
 	}

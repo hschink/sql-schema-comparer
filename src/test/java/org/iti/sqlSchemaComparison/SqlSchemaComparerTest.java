@@ -83,7 +83,7 @@ public class SqlSchemaComparerTest {
 	private static IColumnConstraint constraint2 = new NotNullColumnConstraint("", c112);
 	
 	@BeforeClass
-	public static void Init() throws Exception {		
+	public static void init() throws Exception {		
 		schema1.addVertex(t1);
 		schema2.addVertex(t1);
 		schema2.addVertex(t2);
@@ -175,14 +175,14 @@ public class SqlSchemaComparerTest {
 	public void setUp() { }
 
 	@Test
-	public void IsomorphicGraphsAreDetectedCorrectly()  {
+	public void isomorphicGraphsAreDetectedCorrectly()  {
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema2, schema3);
 		
 		assertTrue(comparer.isIsomorphic());
 	}
 	
 	@Test
-	public void IsomorphismMapsVerticesCorrectly()  {
+	public void isomorphismMapsVerticesCorrectly()  {
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema2, schema3);
 
 		assertTrue(comparer.isIsomorphic());
@@ -205,7 +205,7 @@ public class SqlSchemaComparerTest {
 	}
 	
 	@Test
-	public void NewTableIsDetectedCorrectly()  {
+	public void newTableIsDetectedCorrectly()  {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema1, schema5);
 		
 		assertFalse(comparer1.isIsomorphic());
@@ -221,7 +221,7 @@ public class SqlSchemaComparerTest {
 	}
 	
 	@Test
-	public void RemovedTableIsDetectedCorrectly()  {
+	public void removedTableIsDetectedCorrectly()  {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema1, schema8);
 		
 		assertFalse(comparer1.isIsomorphic());
@@ -237,7 +237,7 @@ public class SqlSchemaComparerTest {
 	}
 	
 	@Test
-	public void RenamedTableIsDetectedCorrectly()  {
+	public void renamedTableIsDetectedCorrectly()  {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema1, schema9);
 		
 		assertFalse(comparer1.isIsomorphic());
@@ -253,7 +253,7 @@ public class SqlSchemaComparerTest {
 	}
 	
 	@Test
-	public void NewColumnIsDetectedCorrectly()  {
+	public void newColumnIsDetectedCorrectly()  {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema7, schema1);
 		
 		assertFalse(comparer1.isIsomorphic());
@@ -269,7 +269,7 @@ public class SqlSchemaComparerTest {
 	}
 	
 	@Test
-	public void RemovedColumnIsDetectedCorrectly()  {
+	public void removedColumnIsDetectedCorrectly()  {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema1, schema7);
 		
 		assertFalse(comparer1.isIsomorphic());
@@ -285,7 +285,7 @@ public class SqlSchemaComparerTest {
 	}
 	
 	@Test
-	public void RenamedColumnIsDetectedCorrectly()  {
+	public void renamedColumnIsDetectedCorrectly()  {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema1, schema6);
 		
 		assertFalse(comparer1.isIsomorphic());
@@ -301,7 +301,7 @@ public class SqlSchemaComparerTest {
 	}
 	
 	@Test
-	public void MovedColumnIsDetectedCorrectly()  {
+	public void movedColumnIsDetectedCorrectly()  {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema4, schema5);
 		
 		assertFalse(comparer1.isIsomorphic());
@@ -317,7 +317,7 @@ public class SqlSchemaComparerTest {
 	}
 	
 	@Test
-	public void UnchangedColumnAttributesDetectedCorrectly() {
+	public void unchangedColumnAttributesDetectedCorrectly() {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema11, schema11);
 		SqlSchemaColumnComparisonResult.ColumnConstraintComparisonResult cccr = comparer1.comparisonResult.getColumnComparisonResults().get(c111).getConstraintComparisonResult();		
 		
@@ -329,14 +329,14 @@ public class SqlSchemaComparerTest {
 	}
 	
 	@Test
-	public void ChangedColumnTypeDetectedCorrectly() {
+	public void changedColumnTypeDetectedCorrectly() {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema11, schema12);		
 
 		assertTrue(comparer1.comparisonResult.getColumnComparisonResults().get(c112).hasColumnTypeChanged());
 	}
 	
 	@Test
-	public void AddedColumnConstraintDetectedCorrectly() {
+	public void addedColumnConstraintDetectedCorrectly() {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema11, schema12);		
 		SqlSchemaColumnComparisonResult.ColumnConstraintComparisonResult cccr = comparer1.comparisonResult.getColumnComparisonResults().get(c112).getConstraintComparisonResult();
 		
@@ -344,7 +344,7 @@ public class SqlSchemaComparerTest {
 	}
 	
 	@Test
-	public void RemovedColumnConstraintDetectedCorrectly() {
+	public void removedColumnConstraintDetectedCorrectly() {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema11, schema13);		
 		SqlSchemaColumnComparisonResult.ColumnConstraintComparisonResult cccr = comparer1.comparisonResult.getColumnComparisonResults().get(c113).getConstraintComparisonResult();
 		
@@ -352,7 +352,7 @@ public class SqlSchemaComparerTest {
 	}
 	
 	@Test
-	public void NoChangeInForeignKeyRelationsDetectedCorrectly() {
+	public void noChangeInForeignKeyRelationsDetectedCorrectly() {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema31, schema31);
 		SqlSchemaComparisonResult result = comparer1.comparisonResult;
 		
@@ -362,7 +362,7 @@ public class SqlSchemaComparerTest {
 	}
 	
 	@Test
-	public void AddedForeignKeyRelationDetectedCorrectly() {
+	public void addedForeignKeyRelationDetectedCorrectly() {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema3, schema31);
 		SqlSchemaComparisonResult result = comparer1.comparisonResult;
 		
@@ -372,7 +372,7 @@ public class SqlSchemaComparerTest {
 	}
 	
 	@Test
-	public void RemovedForeignKeyRelationDetectedCorrectly() {
+	public void removedForeignKeyRelationDetectedCorrectly() {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema31, schema3);
 		SqlSchemaComparisonResult result = comparer1.comparisonResult;
 		
