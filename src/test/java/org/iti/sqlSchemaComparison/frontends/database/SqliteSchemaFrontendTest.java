@@ -78,7 +78,7 @@ public class SqliteSchemaFrontendTest {
 	public void setUp() { }
 	
 	@Test
-	public void DatabaseConnectionEstablishedCorrectly() {
+	public void databaseConnectionEstablishedCorrectly() {
 		ISqlSchemaFrontend frontend = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
 		Graph<ISqlElement, DefaultEdge> schema = frontend.createSqlSchema();
 		
@@ -90,7 +90,7 @@ public class SqliteSchemaFrontendTest {
 	}
 	
 	@Test
-	public void ForeignKeysEstablishedCorrectly() {
+	public void foreignKeysEstablishedCorrectly() {
 		ISqlSchemaFrontend frontend = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
 		Graph<ISqlElement, DefaultEdge> schema = frontend.createSqlSchema();
 		int foreignKeyEdges = 0;
@@ -120,7 +120,7 @@ public class SqliteSchemaFrontendTest {
 	}
 	
 	@Test
-	public void DroppedColumnDetectedCorrectly() {
+	public void droppedColumnDetectedCorrectly() {
 		ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
 		ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(DROPPED_COLUMN_DATABASE_FILE_PATH);
 		Graph<ISqlElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
@@ -141,7 +141,7 @@ public class SqliteSchemaFrontendTest {
 	}
 	
 	@Test
-	public void DroppedTableDetectedCorrectly() {
+	public void droppedTableDetectedCorrectly() {
 		ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
 		ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(DROPPED_TABLE_DATABASE_FILE_PATH);
 		Graph<ISqlElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
@@ -161,7 +161,7 @@ public class SqliteSchemaFrontendTest {
 	}
 	
 	@Test
-	public void MoveColumnDetectedCorrectly() {
+	public void moveColumnDetectedCorrectly() {
 		ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
 		ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(MOVE_COLUMN_DATABASE_FILE_PATH);
 		Graph<ISqlElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
@@ -179,7 +179,7 @@ public class SqliteSchemaFrontendTest {
 	}
 	
 	@Test
-	public void RenameColumnDetectedCorrectly() {
+	public void renameColumnDetectedCorrectly() {
 		ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
 		ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(RENAME_COLUMN_DATABASE_FILE_PATH);
 		Graph<ISqlElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
@@ -197,7 +197,7 @@ public class SqliteSchemaFrontendTest {
 	}
 	
 	@Test
-	public void RenameTableDetectedCorrectly() {
+	public void renameTableDetectedCorrectly() {
 		ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
 		ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(RENAME_TABLE_DATABASE_FILE_PATH);
 		Graph<ISqlElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
@@ -216,7 +216,7 @@ public class SqliteSchemaFrontendTest {
 	}
 	
 	@Test
-	public void ReplaceColumnDetectedCorrectly() {
+	public void replaceColumnDetectedCorrectly() {
 		ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
 		ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(REPLACE_COLUMN_DATABASE_FILE_PATH);
 		Graph<ISqlElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
@@ -243,7 +243,7 @@ public class SqliteSchemaFrontendTest {
 	}
 	
 	@Test
-	public void ReplaceLobWithTable() {
+	public void replaceLobWithTable() {
 		ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
 		ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(REPLACE_LOB_WITH_TABLE_DATABASE_FILE_PATH);
 		Graph<ISqlElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
@@ -266,21 +266,21 @@ public class SqliteSchemaFrontendTest {
 	}
 
 	@Test(expected=InvalidPathException.class)
-	public void ThrowsInvaidFilePathExceptionForEmptyString() {
+	public void throwsInvaidFilePathExceptionForEmptyString() {
 		ISqlSchemaFrontend frontend = new SqliteSchemaFrontend("");
 
 		frontend.createSqlSchema();
 	}
 
 	@Test(expected=InvalidPathException.class)
-	public void ThrowsInvaidFilePathExceptionForNull() {
+	public void throwsInvaidFilePathExceptionForNull() {
 		ISqlSchemaFrontend frontend = new SqliteSchemaFrontend(null);
 
 		frontend.createSqlSchema();
 	}
 
 	@Test(expected=IllegalArgumentException.class)
-	public void ThrowsInvaidArgumentExceptionOnInvalidFilePath() {
+	public void throwsInvaidArgumentExceptionOnInvalidFilePath() {
 		ISqlSchemaFrontend frontend = new SqliteSchemaFrontend("dadidadam");
 
 		frontend.createSqlSchema();

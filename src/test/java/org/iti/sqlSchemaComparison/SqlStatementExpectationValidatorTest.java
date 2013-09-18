@@ -60,7 +60,7 @@ public class SqlStatementExpectationValidatorTest {
 	private static Graph<ISqlElement, DefaultEdge> sqliteSchema;
 	
 	@BeforeClass
-	public static void Init() {
+	public static void init() {
 		ISqlSchemaFrontend sqliteFrontend = new SqliteSchemaFrontend(SqliteSchemaFrontendTest.DATABASE_FILE_PATH);
 		
 		sqliteSchema = sqliteFrontend.createSqlSchema();
@@ -70,7 +70,7 @@ public class SqlStatementExpectationValidatorTest {
 	public void setUp() { }
 	
 	@Test
-	public void SingleTableQueryIsValid() {
+	public void singleTableQueryIsValid() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(SqlStatementFrontendTest.SINGLE_TABLE_QUERY, null);
 		Graph<ISqlElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
@@ -81,7 +81,7 @@ public class SqlStatementExpectationValidatorTest {
 	}
 	
 	@Test
-	public void QueryWithMissingColumn() {
+	public void queryWithMissingColumn() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_MISSING_COLUMN, null);
 		Graph<ISqlElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
@@ -94,7 +94,7 @@ public class SqlStatementExpectationValidatorTest {
 	}
 	
 	@Test
-	public void QueryWithTwoMissingColumns() {
+	public void queryWithTwoMissingColumns() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_TWO_MISSING_COLUMNS, null);
 		Graph<ISqlElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
@@ -114,7 +114,7 @@ public class SqlStatementExpectationValidatorTest {
 	}
 	
 	@Test
-	public void QueryWithMissingTable() {
+	public void queryWithMissingTable() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_MISSING_TABLE, null);
 		Graph<ISqlElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
@@ -127,7 +127,7 @@ public class SqlStatementExpectationValidatorTest {
 	}
 	
 	@Test
-	public void QueryWithTwoMissingTables() {
+	public void queryWithTwoMissingTables() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_TWO_MISSING_TABLES, null);
 		Graph<ISqlElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
@@ -147,7 +147,7 @@ public class SqlStatementExpectationValidatorTest {
 	}
 	
 	@Test
-	public void QueryWithForeignTableReference() {
+	public void queryWithForeignTableReference() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_FOREIGN_TABLE_REFERENCE, null);
 		Graph<ISqlElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
@@ -163,7 +163,7 @@ public class SqlStatementExpectationValidatorTest {
 	}
 	
 	@Test
-	public void SourceElementIsNotEmptyForMissingColumn() {
+	public void sourceElementIsNotEmptyForMissingColumn() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_MISSING_COLUMN, null);
 		Graph<ISqlElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
@@ -177,7 +177,7 @@ public class SqlStatementExpectationValidatorTest {
 	}
 	
 	@Test
-	public void SourceElementIsNotEmptyForMissingTable() {
+	public void sourceElementIsNotEmptyForMissingTable() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_MISSING_TABLE, null);
 		Graph<ISqlElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
@@ -191,7 +191,7 @@ public class SqlStatementExpectationValidatorTest {
 	}
 	
 	@Test
-	public void QueryWithTablePrefixedColumnsAndMissingColumn() {
+	public void queryWithTablePrefixedColumnsAndMissingColumn() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_TABLE_PREFIXED_COLUMNS_AND_MISSING_COLUMN, null);
 		Graph<ISqlElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);

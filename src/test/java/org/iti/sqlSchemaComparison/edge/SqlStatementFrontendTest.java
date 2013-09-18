@@ -60,7 +60,7 @@ public class SqlStatementFrontendTest {
 	public ExpectedException exception = ExpectedException.none();
 	
 	@BeforeClass
-	public static void Init() {
+	public static void init() {
 		ISqlSchemaFrontend sqliteFrontend = new SqliteSchemaFrontend(SqliteSchemaFrontendTest.DATABASE_FILE_PATH);
 		
 		sqliteSchema = sqliteFrontend.createSqlSchema();
@@ -70,7 +70,7 @@ public class SqlStatementFrontendTest {
 	public void setUp() { }
 	
 	@Test
-	public void SingleTableQuery() {
+	public void singleTableQuery() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(SINGLE_TABLE_QUERY, null);
 		Graph<ISqlElement, DefaultEdge> schema = frontend.createSqlSchema();
 		
@@ -79,7 +79,7 @@ public class SqlStatementFrontendTest {
 	}
 	
 	@Test
-	public void JoinTablQuery() {
+	public void joinTablQuery() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(JOIN_TABLE_QUERY, sqliteSchema);
 		Graph<ISqlElement, DefaultEdge> schema = frontend.createSqlSchema();
 		
@@ -88,7 +88,7 @@ public class SqlStatementFrontendTest {
 	}
 	
 	@Test
-	public void JoinTablWithAliasQuery() {
+	public void joinTablWithAliasQuery() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(JOIN_TABLE_WITH_ALIAS_QUERY, sqliteSchema);
 		Graph<ISqlElement, DefaultEdge> schema = frontend.createSqlSchema();
 		
@@ -97,7 +97,7 @@ public class SqlStatementFrontendTest {
 	}
 	
 	@Test
-	public void JoinTablWithTableReferenceQuery() {
+	public void joinTablWithTableReferenceQuery() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(JOIN_TABLE_WITH_TABLE_REFERENCE_QUERY, sqliteSchema);
 		Graph<ISqlElement, DefaultEdge> schema = frontend.createSqlSchema();
 		
@@ -106,35 +106,35 @@ public class SqlStatementFrontendTest {
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
-	public void QueryOnNonExistingTable() {
+	public void queryOnNonExistingTable() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(TABLE_DOES_NOT_EXIST_QUERY, sqliteSchema);
 
 		frontend.createSqlSchema();
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
-	public void QueryOnNonExistingColumn() {
+	public void queryOnNonExistingColumn() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(COLUMN_DOES_NOT_EXIST_QUERY, sqliteSchema);
 
 		frontend.createSqlSchema();
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
-	public void QueryWithMultipleMatchingColumns() {
+	public void queryWithMultipleMatchingColumns() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(MULTIPLE_MATCHING_COLUMNS_QUERY, sqliteSchema);
 
 		frontend.createSqlSchema();
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
-	public void QueryWithTablePrefixedColumnsAndWrongTable() {
+	public void queryWithTablePrefixedColumnsAndWrongTable() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_TABLE_PREFIXED_COLUMNS_AND_WRONG_TABLE, null);
 
 		frontend.createSqlSchema();
 	}
 
 	@Test(expected=IllegalArgumentException.class)
-	public void QueryWithTablePrefixedColumnsAndAmbiguousTables() {
+	public void queryWithTablePrefixedColumnsAndAmbiguousTables() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_TABLE_PREFIXED_COLUMNS_AND_AMBIGUOUS_TABLES, null);
 
 		frontend.createSqlSchema();

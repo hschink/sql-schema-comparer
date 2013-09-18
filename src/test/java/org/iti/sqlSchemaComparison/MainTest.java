@@ -36,7 +36,7 @@ public class MainTest {
 	public void setUp() { }
 	
 	@Test
-	public void DatabaseSchemaComparison() {
+	public void databaseSchemaComparison() {
 		String[] args = new String[] { 
 			SqliteSchemaFrontendTest.DATABASE_FILE_PATH,
 			SqliteSchemaFrontendTest.DATABASE_FILE_PATH,
@@ -59,7 +59,7 @@ public class MainTest {
 	}
 	
 	@Test
-	public void StatementValidation() {
+	public void statementValidation() {
 		String[] args = new String[] {
 			"-statement",
 			SqlStatementFrontendTest.SINGLE_TABLE_QUERY,
@@ -70,7 +70,7 @@ public class MainTest {
 	}
 	
 	@Test
-	public void StatementValidationMissingColumn() {
+	public void statementValidationMissingColumn() {
 		String[] args = new String[] {
 			"-statement",
 			SqlStatementExpectationValidatorTest.QUERY_WITH_MISSING_COLUMN,
@@ -81,7 +81,7 @@ public class MainTest {
 	}
 	
 	@Test
-	public void StatementValidationMissingButReachableColumn() {
+	public void statementValidationMissingButReachableColumn() {
 		String[] args = new String[] {
 			"-statement",
 			SqlStatementExpectationValidatorTest.QUERY_WITH_FOREIGN_TABLE_REFERENCE,
