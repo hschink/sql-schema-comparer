@@ -199,11 +199,8 @@ public class SqlStatementExpectationValidatorTest {
 		SqlStatementExpectationValidationResult result = validator.computeGraphMatching(expectedSchema);
 
 		assertFalse(result.isStatementValid());
-		assertEquals(1, result.getMissingButReachableColumns().size());
-
-		for (ISqlElement element : result.getMissingTables()) {
-			assertEquals("name", element.getSqlElementId());
-		}
+		assertEquals(1, result.getMissingButReachableColumns().size());		
+		assertEquals("name", result.getMissingButReachableColumns().keySet().iterator().next().getSqlElementId());
 	}
 
 	@After
