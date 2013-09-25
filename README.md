@@ -47,6 +47,25 @@ Please refer to the [unit tests] [ut] to get a detailed description of how to us
 
 [ut]: https://github.com/hschink/sql-schema-comparer/tree/master/test
 
+### Eclipse Plug-In ###
+
+If you want to know how `sql-schema-comparer` works within an IDE, have a look on the
+[sql-schema-comparer eclipse plug-in][sscp].
+
+[sscp]: https://github.com/hschink/sql-schema-comparer-eclipse-plugin
+
+### Commandline Usage ###
+
+The following examples assume that you created a [stand-alone JAR](#stand-alone-jar).
+
+**Compare two SQLite database files**
+
+`> java -jar sql-schema-comparer-standalone.jar file1.sqlite file2.sqlite`
+
+**Compare an SQLite database file with an SQL statement**
+
+`> java -jar sql-schema-comparer-standalone.jar -statement $STATEMENT file.sqlite`
+
 ## Development ##
 
 If you like to join sql-schema-comparer development you may just want to use [Eclipse IDE][eclipse].
@@ -63,18 +82,6 @@ Happy programming! :smile:
 You create a stand-alone JAR with [gradle][]: ``gradle standaloneJar``. You'll find the JAR in ``build/libs``.
 
 [gradle]: http://www.gradle.org
-
-## Commandline Usage ##
-
-The following examples assume that you created a [stand-alone JAR](#stand-alone-jar).
-
-**Compare two SQLite database files**
-
-`> java -jar sql-schema-comparer-standalone.jar file1.sqlite file2.sqlite`
-
-**Compare an SQLite database file with an SQL statement**
-
-`> java -jar sql-schema-comparer-standalone.jar -statement $STATEMENT file.sqlite`
 
 ## License ##
 
