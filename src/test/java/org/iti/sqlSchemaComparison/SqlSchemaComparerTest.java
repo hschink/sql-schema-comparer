@@ -212,12 +212,10 @@ public class SqlSchemaComparerTest {
 		assertNotNull(comparer1.matching);
 		assertNotNull(comparer1.comparisonResult);
 
-		for (Entry<ISqlElement, SchemaModification> entry : comparer1.comparisonResult.getModifications().entrySet()) {
-			if (entry.getValue() == SchemaModification.CREATE_TABLE) {
-				assertEquals(SchemaModification.CREATE_TABLE, entry.getValue());
-				assertEquals(t2.getSqlElementId(), entry.getKey().getSqlElementId());
-			}
-		}
+		Entry<ISqlElement, SchemaModification> entry = comparer1.comparisonResult.getModifications().entrySet().iterator().next();
+
+		assertEquals(SchemaModification.CREATE_TABLE, entry.getValue());
+		assertEquals(t2.getSqlElementId(), entry.getKey().getSqlElementId());
 	}
 	
 	@Test
@@ -228,12 +226,10 @@ public class SqlSchemaComparerTest {
 		assertNotNull(comparer1.matching);
 		assertNotNull(comparer1.comparisonResult);
 
-		for (Entry<ISqlElement, SchemaModification> entry : comparer1.comparisonResult.getModifications().entrySet()) {
-			if (entry.getValue() == SchemaModification.DELETE_TABLE) {
-				assertEquals(SchemaModification.DELETE_TABLE, entry.getValue());
-				assertEquals(t1.getSqlElementId(), entry.getKey().getSqlElementId());
-			}
-		}
+		Entry<ISqlElement, SchemaModification> entry = comparer1.comparisonResult.getModifications().entrySet().iterator().next();
+
+		assertEquals(SchemaModification.DELETE_TABLE, entry.getValue());
+		assertEquals(t1.getSqlElementId(), entry.getKey().getSqlElementId());
 	}
 	
 	@Test
@@ -244,12 +240,10 @@ public class SqlSchemaComparerTest {
 		assertNotNull(comparer1.matching);
 		assertNotNull(comparer1.comparisonResult);
 
-		for (Entry<ISqlElement, SchemaModification> entry : comparer1.comparisonResult.getModifications().entrySet()) {
-			if (entry.getValue() == SchemaModification.RENAME_TABLE) {
-				assertEquals(SchemaModification.RENAME_TABLE, entry.getValue());
-				assertEquals(t1.getSqlElementId(), entry.getKey().getSqlElementId());
-			}
-		}
+		Entry<ISqlElement, SchemaModification> entry = comparer1.comparisonResult.getModifications().entrySet().iterator().next();
+
+		assertEquals(SchemaModification.RENAME_TABLE, entry.getValue());
+		assertEquals(t1.getSqlElementId(), entry.getKey().getSqlElementId());
 	}
 	
 	@Test
@@ -260,12 +254,10 @@ public class SqlSchemaComparerTest {
 		assertNotNull(comparer1.matching);
 		assertNotNull(comparer1.comparisonResult);
 
-		for (Entry<ISqlElement, SchemaModification> entry : comparer1.comparisonResult.getModifications().entrySet()) {
-			if (entry.getValue() == SchemaModification.CREATE_COLUMN) {
-				assertEquals(SchemaModification.CREATE_COLUMN, entry.getValue());
-				assertEquals(c1.getSqlElementId(), entry.getKey().getSqlElementId());
-			}
-		}
+		Entry<ISqlElement, SchemaModification> entry = comparer1.comparisonResult.getModifications().entrySet().iterator().next();
+
+		assertEquals(SchemaModification.CREATE_COLUMN, entry.getValue());
+		assertEquals(c1.getSqlElementId(), entry.getKey().getSqlElementId());
 	}
 	
 	@Test
@@ -276,12 +268,10 @@ public class SqlSchemaComparerTest {
 		assertNotNull(comparer1.matching);
 		assertNotNull(comparer1.comparisonResult);
 
-		for (Entry<ISqlElement, SchemaModification> entry : comparer1.comparisonResult.getModifications().entrySet()) {
-			if (entry.getValue() == SchemaModification.DELETE_COLUMN) {
-				assertEquals(SchemaModification.DELETE_COLUMN, entry.getValue());
-				assertEquals(c1.getSqlElementId(), entry.getKey().getSqlElementId());
-			}
-		}
+		Entry<ISqlElement, SchemaModification> entry = comparer1.comparisonResult.getModifications().entrySet().iterator().next();
+
+		assertEquals(SchemaModification.DELETE_COLUMN, entry.getValue());
+		assertEquals(c1.getSqlElementId(), entry.getKey().getSqlElementId());
 	}
 	
 	@Test
@@ -292,12 +282,10 @@ public class SqlSchemaComparerTest {
 		assertNotNull(comparer1.matching);
 		assertNotNull(comparer1.comparisonResult);
 
-		for (Entry<ISqlElement, SchemaModification> entry : comparer1.comparisonResult.getModifications().entrySet()) {
-			if (entry.getValue() == SchemaModification.RENAME_COLUMN) {
-				assertEquals(SchemaModification.RENAME_COLUMN, entry.getValue());
-				assertEquals(c1.getSqlElementId(), entry.getKey().getSqlElementId());
-			}
-		}
+		Entry<ISqlElement, SchemaModification> entry = comparer1.comparisonResult.getModifications().entrySet().iterator().next();
+
+		assertEquals(SchemaModification.RENAME_COLUMN, entry.getValue());
+		assertEquals(c1.getSqlElementId(), entry.getKey().getSqlElementId());
 	}
 	
 	@Test
@@ -308,12 +296,10 @@ public class SqlSchemaComparerTest {
 		assertNotNull(comparer1.matching);
 		assertNotNull(comparer1.comparisonResult);
 
-		for (Entry<ISqlElement, SchemaModification> entry : comparer1.comparisonResult.getModifications().entrySet()) {
-			if (entry.getValue() == SchemaModification.MOVE_COLUMN) {
-				assertEquals(SchemaModification.MOVE_COLUMN, entry.getValue());
-				assertEquals(c1.getSqlElementId(), entry.getKey().getSqlElementId());
-			}
-		}
+		Entry<ISqlElement, SchemaModification> entry = comparer1.comparisonResult.getModifications().entrySet().iterator().next();
+
+		assertEquals(SchemaModification.MOVE_COLUMN, entry.getValue());
+		assertEquals(c1.getSqlElementId(), entry.getKey().getSqlElementId());
 	}
 	
 	@Test
