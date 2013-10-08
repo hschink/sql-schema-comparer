@@ -21,9 +21,13 @@
 
 package org.iti.sqlSchemaComparison;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -33,6 +37,7 @@ import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlElementType;
+import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.DefaultColumnConstraint;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.NotNullColumnConstraint;
@@ -207,12 +212,21 @@ public class SqlSchemaComparerTest {
 	@Test
 	public void newTableIsDetectedCorrectly()  {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema1, schema5);
+		Entry<ISqlElement, SchemaModification> entry = null;
 		
 		assertFalse(comparer1.isIsomorphic());
 		assertNotNull(comparer1.matching);
 		assertNotNull(comparer1.comparisonResult);
 
-		Entry<ISqlElement, SchemaModification> entry = comparer1.comparisonResult.getModifications().entrySet().iterator().next();
+		Iterator<Entry<ISqlElement, SchemaModification>> iter = comparer1.comparisonResult.getModifications().entrySet().iterator();
+
+		while (entry == null && iter.hasNext()) {
+			Entry<ISqlElement, SchemaModification> candidate = iter.next();
+			
+			if (candidate.getKey() instanceof SqlTableVertex) {
+				entry = candidate;
+			}
+		}
 
 		assertEquals(SchemaModification.CREATE_TABLE, entry.getValue());
 		assertEquals(t2.getSqlElementId(), entry.getKey().getSqlElementId());
