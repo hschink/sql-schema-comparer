@@ -21,6 +21,7 @@
 
 package org.iti.sqlSchemaComparison;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +31,9 @@ import java.util.Map.Entry;
 import org.iti.sqlSchemaComparison.edge.IForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 
-public class SqlSchemaComparisonResult {
+public class SqlSchemaComparisonResult implements Serializable {
+
+	private static final long serialVersionUID = 4042979283395718780L;
 
 	private Map<ISqlElement, SchemaModification> modifications = new HashMap<>();
 	
