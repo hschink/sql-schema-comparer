@@ -24,6 +24,8 @@ package org.iti.sqlSchemaComparison.vertex;
 
 public class SqlTableVertex implements ISqlElement {
 
+	private static final long serialVersionUID = 5594278073539735449L;
+
 	private Object sourceElement = null;
 	
 	@Override
