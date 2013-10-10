@@ -28,6 +28,8 @@ import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
 
 public class SqlColumnVertex implements ISqlElement {
 
+	private static final long serialVersionUID = 2813536717531181481L;
+
 	private Object sourceElement = null;
 	
 	@Override
