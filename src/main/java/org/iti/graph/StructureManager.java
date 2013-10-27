@@ -1,5 +1,6 @@
 package org.iti.graph;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -122,5 +123,18 @@ public class StructureManager implements IStructureManager {
 		List<IStructureElement> pathElements = getElementPathElements(element);
 
 		return getPathString(pathElements, false);
+	}
+
+	@Override
+	public List<IStructureElement> getStructureElements(String path) {
+		List<IStructureElement> list = new ArrayList<>();
+
+		for (IStructureElement element : elementsByIdentifer.values()) {
+			if (getPath(element).startsWith(path)) {
+				list.add(element);
+			}
+		}
+
+		return list;
 	}
 }
