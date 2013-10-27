@@ -249,15 +249,21 @@ public class SqlSchemaComparerTest {
 	@Test
 	public void renamedTableIsDetectedCorrectly()  {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema1, schema9);
+		Entry<ISqlElement, SchemaModification> renameEntry = null;
 		
 		assertFalse(comparer1.isIsomorphic());
 		assertNotNull(comparer1.matching);
 		assertNotNull(comparer1.comparisonResult);
 
-		Entry<ISqlElement, SchemaModification> entry = comparer1.comparisonResult.getModifications().entrySet().iterator().next();
+		for (Entry<ISqlElement, SchemaModification> entry : comparer1.comparisonResult.getModifications().entrySet()) {
+			if (entry.getValue() == SchemaModification.RENAME_TABLE) {
+				renameEntry = entry;
+				break;
+			}
+		}
 
-		assertEquals(SchemaModification.RENAME_TABLE, entry.getValue());
-		assertEquals(t1.getSqlElementId(), entry.getKey().getSqlElementId());
+		assertNotNull(renameEntry);
+		assertEquals(t1.getSqlElementId(), renameEntry.getKey().getSqlElementId());
 	}
 	
 	@Test
