@@ -113,11 +113,29 @@ public class StructureManagerTest {
 		identifiers.put(cn4, "re.Edge1(cn1.Edge3(cn4))");
 		identifiers.put(cn5, "re.Edge4(cn2.Edge5(cn5))");
 		identifiers.put(cn6, "re.Edge4(cn2.Edge6(cn6))");
-		
+
 		for (Entry<IStructureElement, String> entry : identifiers.entrySet()) {
-			assertEquals(String.format("Cannot find %s in graph!", entry.getValue()),
+			assertEquals(String.format("Cannot find path %s in graph!", entry.getValue()),
 					entry.getKey(),
 					manager.getStructureElement(entry.getValue()));
+		}
+	}
+
+	@Test
+	public void getIdentifer() {
+		Map<String, IStructureElement> structureElements = new HashMap<>();
+		structureElements.put("re", re);
+		structureElements.put("re.Edge1(cn1)", cn1);
+		structureElements.put("re.Edge4(cn2)", cn2);
+		structureElements.put("re.Edge1(cn1.Edge2(cn3))", cn3);
+		structureElements.put("re.Edge1(cn1.Edge3(cn4))", cn4);
+		structureElements.put("re.Edge4(cn2.Edge5(cn5))", cn5);
+		structureElements.put("re.Edge4(cn2.Edge6(cn6))", cn6);
+
+		for (Entry<String, IStructureElement> entry : structureElements.entrySet()) {
+			assertEquals(String.format("Cannot find element %s in graph!", entry.getValue()),
+					entry.getKey(),
+					manager.getIdentifier(entry.getValue()));
 		}
 	}
 }

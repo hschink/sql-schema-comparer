@@ -30,12 +30,6 @@ public class StructureManager implements IStructureManager {
 		}
 	}
 
-	private String getIdentifier(IStructureElement element) {
-		List<IStructureElement> pathElements = getElementPathElements(element);
-
-		return getPathString(pathElements);
-	}
-
 	private List<IStructureElement> getElementPathElements(IStructureElement element) {
 		IStructureElement currentElement = element; 
 		LinkedList<IStructureElement> elements = new LinkedList<>();
@@ -99,5 +93,12 @@ public class StructureManager implements IStructureManager {
 	@Override
 	public IStructureElement getStructureElement(String identifier) {
 		return elementsByIdentifer.get(identifier);
+	}
+
+	@Override
+	public String getIdentifier(IStructureElement element) {
+		List<IStructureElement> pathElements = getElementPathElements(element);
+
+		return getPathString(pathElements);
 	}
 }
