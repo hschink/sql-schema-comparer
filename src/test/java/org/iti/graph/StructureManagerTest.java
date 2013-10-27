@@ -138,4 +138,22 @@ public class StructureManagerTest {
 					manager.getIdentifier(entry.getValue()));
 		}
 	}
+
+	@Test
+	public void getPath() {
+		Map<IStructureElement, String> paths = new HashMap<>();
+		paths.put(re, "");
+		paths.put(cn1, "re.Edge1");
+		paths.put(cn2, "re.Edge4");
+		paths.put(cn3, "re.Edge1(cn1.Edge2)");
+		paths.put(cn4, "re.Edge1(cn1.Edge3)");
+		paths.put(cn5, "re.Edge4(cn2.Edge5)");
+		paths.put(cn6, "re.Edge4(cn2.Edge6)");
+
+		for (Entry<IStructureElement, String> entry : paths.entrySet()) {
+			assertEquals(String.format("Cannot find path %s in graph!", entry.getValue()),
+					entry.getValue(),
+					manager.getPath(entry.getKey()));
+		}
+	}
 }

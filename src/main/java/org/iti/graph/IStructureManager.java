@@ -7,4 +7,6 @@ public interface IStructureManager {
 	IStructureElement getStructureElement(String identifier);
 
 	String getIdentifier(IStructureElement structureElement);
+
+	String getPath(IStructureElement structureElement);
 }

@@ -65,22 +65,37 @@ public class StructureManager implements IStructureManager {
 	}
 
 	private String getPathString(List<IStructureElement> pathElements) {
+		return getPathString(pathElements, true);
+	}
+
+	private String getPathString(List<IStructureElement> pathElements,
+			boolean includeLastElement) {
 		StringBuilder identifier = new StringBuilder();
+		int closingBracketCount = pathElements.size() - 1 - ((includeLastElement) ? 0 : 1);
 
 		for (int x = 0; x < pathElements.size(); x++) {
-			boolean successorExists = x + 1 < pathElements.size();
-			IStructureElement element1 = pathElements.get(x);
-			IStructureElement element2 = (successorExists) ? pathElements.get(x + 1) : null;
-			DefaultEdge edge = (successorExists) ? getEdge(element1, element2) : null;
+			boolean isLastElement = x == pathElements.size() - 1;
+			boolean isNextToLastElement = x == pathElements.size() - 2;
 
-			identifier.append(element1.getIdentifier());
+			if (!isLastElement || includeLastElement) {
+				boolean successorExists = x + 1 < pathElements.size();
+				IStructureElement element1 = pathElements.get(x);
+				IStructureElement element2 = (successorExists) ? pathElements.get(x + 1) : null;
+				DefaultEdge edge = (successorExists) ? getEdge(element1, element2) : null;
 
-			if (successorExists) {
-				identifier.append("." + edge.getClass().getSimpleName() + "(");
+				identifier.append(element1.getIdentifier());
+
+				if (successorExists) {
+					identifier.append("." + edge.getClass().getSimpleName());
+
+					if (!isNextToLastElement || includeLastElement) {
+						identifier.append("(");
+					}
+				}
 			}
 		}
 
-		identifier.append(StringUtils.repeat(")", pathElements.size() - 1));
+		identifier.append(StringUtils.repeat(")", closingBracketCount));
 
 		return identifier.toString();
 	}
@@ -100,5 +115,12 @@ public class StructureManager implements IStructureManager {
 		List<IStructureElement> pathElements = getElementPathElements(element);
 
 		return getPathString(pathElements);
+	}
+
+	@Override
+	public String getPath(IStructureElement element) {
+		List<IStructureElement> pathElements = getElementPathElements(element);
+
+		return getPathString(pathElements, false);
 	}
 }
