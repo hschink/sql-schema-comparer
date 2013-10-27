@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -127,14 +128,45 @@ public class StructureManager implements IStructureManager {
 
 	@Override
 	public List<IStructureElement> getStructureElements(String path) {
-		List<IStructureElement> list = new ArrayList<>();
+		return getStructureElements(path, false);
+	}
+
+	@Override
+	public List<IStructureElement> getStructureElements(String path,
+			boolean directAncestorsOnly) {
+		Map<IStructureElement, Integer> list = new HashMap<>();
 
 		for (IStructureElement element : elementsByIdentifer.values()) {
 			if (getPath(element).startsWith(path)) {
-				list.add(element);
+				list.put(element, getElementPathElements(element).size());
 			}
 		}
 
-		return list;
+		if (list.size() > 0 && directAncestorsOnly) {
+			removeIndirectAncestors(list);
+		}
+
+		return new ArrayList<IStructureElement>(list.keySet());
+	}
+
+	private void removeIndirectAncestors(Map<IStructureElement, Integer> list) {
+		List<IStructureElement> elementsToRemove = new ArrayList<>();
+		int minimalElementsCount = Integer.MAX_VALUE;
+
+		for (Integer i : list.values()) {
+			if (minimalElementsCount > i) {
+				minimalElementsCount = i;
+			}
+		}
+
+		for (Entry<IStructureElement, Integer> entry : list.entrySet()) {
+			if (entry.getValue() > minimalElementsCount) {
+				elementsToRemove.add(entry.getKey());
+			}
+		}
+
+		for (IStructureElement elementToRemove : elementsToRemove) {
+			list.remove(elementToRemove);
+		}
 	}
 }

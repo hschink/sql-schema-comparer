@@ -13,4 +13,6 @@ public interface IStructureManager {
 	String getPath(IStructureElement structureElement);
 
 	List<IStructureElement> getStructureElements(String path);
+
+	List<IStructureElement> getStructureElements(String path, boolean directAncestorsOnly);
 }
