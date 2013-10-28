@@ -169,4 +169,9 @@ public class StructureGraph implements IStructureGraph {
 			list.remove(elementToRemove);
 		}
 	}
+
+	@Override
+	public List<String> getIdentifiers() {
+		return new ArrayList<String>(elementsByIdentifer.keySet());
+	}
 }

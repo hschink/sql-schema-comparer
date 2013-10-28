@@ -12,6 +12,8 @@ public interface IStructureGraph {
 
 	String getPath(IStructureElement structureElement);
 
+	List<String> getIdentifiers();
+
 	List<IStructureElement> getStructureElements(String path);
 
 	List<IStructureElement> getStructureElements(String path, boolean directAncestorsOnly);

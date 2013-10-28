@@ -1,8 +1,11 @@
 package org.iti.graph;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -154,6 +157,23 @@ public class StructureGraphTest {
 			assertEquals(String.format("Cannot find path %s in graph!", entry.getValue()),
 					entry.getValue(),
 					manager.getPath(entry.getKey()));
+		}
+	}
+
+	@Test
+	public void getIdentifiers() {
+		List<String> identifiers = new ArrayList<>();
+		identifiers.add("re");
+		identifiers.add("re.Edge1(cn1)");
+		identifiers.add("re.Edge4(cn2)");
+		identifiers.add("re.Edge1(cn1.Edge2(cn3))");
+		identifiers.add("re.Edge1(cn1.Edge3(cn4))");
+		identifiers.add("re.Edge4(cn2.Edge5(cn5))");
+		identifiers.add("re.Edge4(cn2.Edge6(cn6))");
+
+		for (String identifier : identifiers) {
+			assertTrue(String.format("Cannot find identifier %s in list!", identifier),
+					manager.getIdentifiers().contains(identifier));
 		}
 	}
 
