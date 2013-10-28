@@ -13,13 +13,13 @@ import org.iti.graph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
-public class StructureManager implements IStructureManager {
+public class StructureGraph implements IStructureGraph {
 
 	private DirectedGraph<IStructureElement, DefaultEdge> graph;
 	
 	private Map<String, IStructureElement> elementsByIdentifer = new HashMap<>();
 	
-	public StructureManager(DirectedGraph<IStructureElement, DefaultEdge> graph) {
+	public StructureGraph(DirectedGraph<IStructureElement, DefaultEdge> graph) {
 		this.graph = graph;
 		
 		loadElementsByIdentifier();

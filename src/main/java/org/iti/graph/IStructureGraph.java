@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.iti.graph.nodes.IStructureElement;
 
-public interface IStructureManager {
+public interface IStructureGraph {
 
 	IStructureElement getStructureElement(String identifier);
 

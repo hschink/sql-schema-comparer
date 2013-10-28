@@ -16,7 +16,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
-public class StructureManagerTest {
+public class StructureGraphTest {
 
 	private static class Element implements IStructureElement {
 		private String identifier = "";
@@ -52,7 +52,7 @@ public class StructureManagerTest {
 		private static final long serialVersionUID = 1644621201081668624L;
 	}
 	
-	private static StructureManager manager;
+	private static StructureGraph manager;
 	
 	private static Element re = new Element("re");
 	private static Element cn1 = new Element("cn1");
@@ -100,7 +100,7 @@ public class StructureManagerTest {
 		graph2.addEdge(cn2, cn5, new Edge5());
 		graph2.addEdge(cn2, cn6, new Edge6());
 		
-		manager = new StructureManager(graph1);
+		manager = new StructureGraph(graph1);
 	}
 
 	@Test
