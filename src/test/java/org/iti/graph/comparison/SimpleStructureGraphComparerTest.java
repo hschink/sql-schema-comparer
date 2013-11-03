@@ -110,7 +110,7 @@ public class SimpleStructureGraphComparerTest {
 	}
 
 	@Test
-	public void detectsRemovedNodes() {
+	public void detectsRemovedNodes() throws StructureGraphComparisonException {
 		Map<IStructureElement, StructureElementModification> expectedModifications = new HashMap<>();
 		expectedModifications.put(cn3, StructureElementModification.NodeDeleted);
 		expectedModifications.put(cn2, StructureElementModification.NodeDeleted);
@@ -132,7 +132,7 @@ public class SimpleStructureGraphComparerTest {
 	}
 
 	@Test
-	public void detectsAddedNodes() {
+	public void detectsAddedNodes() throws StructureGraphComparisonException {
 		Map<IStructureElement, StructureElementModification> expectedModifications = new HashMap<>();
 		expectedModifications.put(cn7, StructureElementModification.NodeAdded);
 		expectedModifications.put(cn8, StructureElementModification.NodeAdded);
@@ -153,7 +153,7 @@ public class SimpleStructureGraphComparerTest {
 	}
 
 	@Test
-	public void detectsAddedAndRemovedNodes() {
+	public void detectsAddedAndRemovedNodes() throws StructureGraphComparisonException {
 		Map<IStructureElement, StructureElementModification> expectedModifications = new HashMap<>();
 		expectedModifications.put(cn3, StructureElementModification.NodeDeleted);
 		expectedModifications.put(cn2, StructureElementModification.NodeDeleted);

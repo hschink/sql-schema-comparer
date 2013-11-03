@@ -22,9 +22,7 @@
 package org.iti.graph.comparison;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.iti.graph.IStructureGraph;
 import org.iti.graph.nodes.IStructureElement;
@@ -36,8 +34,6 @@ public class SimpleStructureGraphComparer implements IStructureGraphComparer {
 		StructureGraphComparisonResult result = new StructureGraphComparisonResult();
 		List<String> removedNodeIds = getMissingNodeIds(oldGraph, newGraph);
 		List<String> addedNodeIds = getMissingNodeIds(newGraph, oldGraph);
-//		Map<String, List<IStructureElement>> removedNodesByPath = getNodesByPath(oldGraph, removedNodeIds);
-//		Map<String, List<IStructureElement>> addedNodesByPath = getNodesByPath(newGraph, addedNodeIds);
 
 		addNodesWithModificationToResult(getNodes(oldGraph, removedNodeIds),
 				StructureElementModification.NodeDeleted,
@@ -77,24 +73,5 @@ public class SimpleStructureGraphComparer implements IStructureGraphComparer {
 		for (IStructureElement element : elements) {
 			result.addModification(element, modification);
 		}
-	}
-
-	private static Map<String, List<IStructureElement>> getNodesByPath(
-			IStructureGraph graph,
-			List<String> nodeIds) {
-		Map<String, List<IStructureElement>> missingNodesByPath = new HashMap<>();
-
-		for (String identifier : nodeIds) {
-			IStructureElement element = graph.getStructureElement(identifier);
-			String path = graph.getPath(element);
-
-			if (!missingNodesByPath.containsKey(path)) {
-				missingNodesByPath.put(path, new ArrayList<IStructureElement>());
-			}
-
-			missingNodesByPath.get(path).add(element);
-		}
-
-		return missingNodesByPath;
 	}
 }

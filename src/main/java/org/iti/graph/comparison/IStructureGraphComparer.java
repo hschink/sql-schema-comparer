@@ -25,5 +25,6 @@ import org.iti.graph.IStructureGraph;
 
 public interface IStructureGraphComparer {
 
-	StructureGraphComparisonResult compare(IStructureGraph oldGraph, IStructureGraph newGraph);
+	StructureGraphComparisonResult compare(IStructureGraph oldGraph,
+			IStructureGraph newGraph) throws StructureGraphComparisonException;
 }
