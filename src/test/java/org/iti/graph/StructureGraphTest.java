@@ -9,6 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.iti.graph.helper.Edge1;
+import org.iti.graph.helper.Edge2;
+import org.iti.graph.helper.Edge3;
+import org.iti.graph.helper.Edge4;
+import org.iti.graph.helper.Edge5;
+import org.iti.graph.helper.Edge6;
+import org.iti.graph.helper.Element;
 import org.iti.graph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -21,41 +28,7 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class StructureGraphTest {
 
-	private static class Element implements IStructureElement {
-		private String identifier = "";
-		
-		public Element(String identifier) {
-			this.identifier = identifier;
-		}
-
-		@Override
-		public String getIdentifier() {
-			return identifier;
-		}
-	}
-	
-	private static class Edge1 extends DefaultEdge {
-		private static final long serialVersionUID = -3077628654425380054L;
-	}
-	private static class Edge2 extends DefaultEdge {
-		private static final long serialVersionUID = -1379475009596156583L;
-	}
-	private static class Edge3 extends DefaultEdge {
-
-		private static final long serialVersionUID = 5858860053015006782L;
-	}
-	private static class Edge4 extends DefaultEdge {
-
-		private static final long serialVersionUID = 6290153527153548731L;
-	}
-	private static class Edge5 extends DefaultEdge {
-		private static final long serialVersionUID = -3583903991701633094L;
-	}
-	private static class Edge6 extends DefaultEdge {
-		private static final long serialVersionUID = 1644621201081668624L;
-	}
-	
-	private static StructureGraph manager;
+	private static StructureGraph structureGraph;
 	
 	private static Element re = new Element("re");
 	private static Element cn1 = new Element("cn1");
@@ -66,12 +39,10 @@ public class StructureGraphTest {
 	private static Element cn6 = new Element("cn6");
 	
 	private static DirectedGraph<IStructureElement, DefaultEdge> graph1;
-	private static DirectedGraph<IStructureElement, DefaultEdge> graph2;
 	
 	@BeforeClass
 	public static void init() throws Exception {
 		graph1 = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
-		graph2 = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
 		
 		graph1.addVertex(re);
 		graph1.addVertex(cn1);
@@ -88,22 +59,7 @@ public class StructureGraphTest {
 		graph1.addEdge(cn2, cn5, new Edge5());
 		graph1.addEdge(cn2, cn6, new Edge6());
 		
-		graph2.addVertex(re);
-		graph2.addVertex(cn1);
-		graph2.addVertex(cn2);
-		graph2.addVertex(cn3);
-		graph2.addVertex(cn4);
-		graph2.addVertex(cn5);
-		graph2.addVertex(cn6);
-		
-		graph2.addEdge(re, cn1, new Edge1());
-		graph2.addEdge(cn1, cn3, new Edge2());
-		graph2.addEdge(cn1, cn4, new Edge3());
-		graph2.addEdge(re, cn2, new Edge4());
-		graph2.addEdge(cn2, cn5, new Edge5());
-		graph2.addEdge(cn2, cn6, new Edge6());
-		
-		manager = new StructureGraph(graph1);
+		structureGraph = new StructureGraph(graph1);
 	}
 
 	@Test
@@ -120,7 +76,7 @@ public class StructureGraphTest {
 		for (Entry<IStructureElement, String> entry : identifiers.entrySet()) {
 			assertEquals(String.format("Cannot find path %s in graph!", entry.getValue()),
 					entry.getKey(),
-					manager.getStructureElement(entry.getValue()));
+					structureGraph.getStructureElement(entry.getValue()));
 		}
 	}
 
@@ -138,7 +94,7 @@ public class StructureGraphTest {
 		for (Entry<String, IStructureElement> entry : structureElements.entrySet()) {
 			assertEquals(String.format("Cannot find element %s in graph!", entry.getValue()),
 					entry.getKey(),
-					manager.getIdentifier(entry.getValue()));
+					structureGraph.getIdentifier(entry.getValue()));
 		}
 	}
 
@@ -156,7 +112,7 @@ public class StructureGraphTest {
 		for (Entry<IStructureElement, String> entry : paths.entrySet()) {
 			assertEquals(String.format("Cannot find path %s in graph!", entry.getValue()),
 					entry.getValue(),
-					manager.getPath(entry.getKey()));
+					structureGraph.getPath(entry.getKey()));
 		}
 	}
 
@@ -173,7 +129,7 @@ public class StructureGraphTest {
 
 		for (String identifier : identifiers) {
 			assertTrue(String.format("Cannot find identifier %s in list!", identifier),
-					manager.getIdentifiers().contains(identifier));
+					structureGraph.getIdentifiers().contains(identifier));
 		}
 	}
 
@@ -192,7 +148,7 @@ public class StructureGraphTest {
 		for (Entry<String, Integer> entry : structureElements.entrySet()) {
 			assertEquals(String.format("Cannot find element %s in graph!", entry.getKey()),
 					entry.getValue().intValue(),
-					manager.getStructureElements(entry.getKey()).size());
+					structureGraph.getStructureElements(entry.getKey()).size());
 		}
 	}
 
@@ -211,7 +167,7 @@ public class StructureGraphTest {
 		for (Entry<String, Integer> entry : structureElements.entrySet()) {
 			assertEquals(String.format("Cannot find element %s in graph!", entry.getKey()),
 					entry.getValue().intValue(),
-					manager.getStructureElements(entry.getKey(), true).size());
+					structureGraph.getStructureElements(entry.getKey(), true).size());
 		}
 	}
 }
