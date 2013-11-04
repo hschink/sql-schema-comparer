@@ -25,7 +25,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.iti.graph.StructureGraph;
 import org.iti.graph.helper.Edge1;
@@ -111,11 +110,11 @@ public class SimpleStructureGraphComparerTest {
 
 	@Test
 	public void detectsRemovedNodes() throws StructureGraphComparisonException {
-		Map<IStructureElement, StructureElementModification> expectedModifications = new HashMap<>();
-		expectedModifications.put(cn3, StructureElementModification.NodeDeleted);
-		expectedModifications.put(cn2, StructureElementModification.NodeDeleted);
-		expectedModifications.put(cn5, StructureElementModification.NodeDeleted);
-		expectedModifications.put(cn6, StructureElementModification.NodeDeleted);
+		Map<String, StructureElementModification> expectedModifications = new HashMap<>();
+		expectedModifications.put(structureGraphOriginal.getIdentifier(cn3), StructureElementModification.NodeDeleted);
+		expectedModifications.put(structureGraphOriginal.getIdentifier(cn2), StructureElementModification.NodeDeleted);
+		expectedModifications.put(structureGraphOriginal.getIdentifier(cn5), StructureElementModification.NodeDeleted);
+		expectedModifications.put(structureGraphOriginal.getIdentifier(cn6), StructureElementModification.NodeDeleted);
 
 		currentGraph.removeVertex(cn3);
 		currentGraph.removeVertex(cn2);
@@ -128,15 +127,11 @@ public class SimpleStructureGraphComparerTest {
 
 		assertEquals(4, result.getModifications().size());
 
-		assertNodeModificationExpectations(expectedModifications, result);
+		StructureGraphComparerTestHelper.assertNodeModificationExpectations(expectedModifications, result);
 	}
 
 	@Test
 	public void detectsAddedNodes() throws StructureGraphComparisonException {
-		Map<IStructureElement, StructureElementModification> expectedModifications = new HashMap<>();
-		expectedModifications.put(cn7, StructureElementModification.NodeAdded);
-		expectedModifications.put(cn8, StructureElementModification.NodeAdded);
-
 		currentGraph.addVertex(cn7);
 		currentGraph.addVertex(cn8);
 
@@ -145,23 +140,19 @@ public class SimpleStructureGraphComparerTest {
 
 		StructureGraph structureGraphCurrent = new StructureGraph(currentGraph);
 
+		Map<String, StructureElementModification> expectedModifications = new HashMap<>();
+		expectedModifications.put(structureGraphCurrent.getIdentifier(cn7), StructureElementModification.NodeAdded);
+		expectedModifications.put(structureGraphCurrent.getIdentifier(cn8), StructureElementModification.NodeAdded);
+
 		StructureGraphComparisonResult result = comparer.compare(structureGraphOriginal, structureGraphCurrent);
 
 		assertEquals(2, result.getModifications().size());
 
-		assertNodeModificationExpectations(expectedModifications, result);
+		StructureGraphComparerTestHelper.assertNodeModificationExpectations(expectedModifications, result);
 	}
 
 	@Test
 	public void detectsAddedAndRemovedNodes() throws StructureGraphComparisonException {
-		Map<IStructureElement, StructureElementModification> expectedModifications = new HashMap<>();
-		expectedModifications.put(cn3, StructureElementModification.NodeDeleted);
-		expectedModifications.put(cn2, StructureElementModification.NodeDeleted);
-		expectedModifications.put(cn5, StructureElementModification.NodeDeleted);
-		expectedModifications.put(cn6, StructureElementModification.NodeDeleted);
-		expectedModifications.put(cn7, StructureElementModification.NodeAdded);
-		expectedModifications.put(cn8, StructureElementModification.NodeAdded);
-
 		currentGraph.removeVertex(cn3);
 		currentGraph.removeVertex(cn2);
 		currentGraph.removeVertex(cn5);
@@ -175,19 +166,59 @@ public class SimpleStructureGraphComparerTest {
 
 		StructureGraph structureGraphCurrent = new StructureGraph(currentGraph);
 
+		Map<String, StructureElementModification> expectedModifications = new HashMap<>();
+		expectedModifications.put(structureGraphOriginal.getIdentifier(cn3), StructureElementModification.NodeDeleted);
+		expectedModifications.put(structureGraphOriginal.getIdentifier(cn2), StructureElementModification.NodeDeleted);
+		expectedModifications.put(structureGraphOriginal.getIdentifier(cn5), StructureElementModification.NodeDeleted);
+		expectedModifications.put(structureGraphOriginal.getIdentifier(cn6), StructureElementModification.NodeDeleted);
+		expectedModifications.put(structureGraphCurrent.getIdentifier(cn7), StructureElementModification.NodeAdded);
+		expectedModifications.put(structureGraphCurrent.getIdentifier(cn8), StructureElementModification.NodeAdded);
+
 		StructureGraphComparisonResult result = comparer.compare(structureGraphOriginal, structureGraphCurrent);
 
 		assertEquals(6, result.getModifications().size());
 
-		assertNodeModificationExpectations(expectedModifications, result);
+		StructureGraphComparerTestHelper.assertNodeModificationExpectations(expectedModifications, result);
 	}
 
-	private static void assertNodeModificationExpectations(
-			Map<IStructureElement, StructureElementModification> expectedModifications,
-			StructureGraphComparisonResult result) {
-		for (Entry<IStructureElement, StructureElementModification> expectation : expectedModifications.entrySet()) {
-			assertEquals(expectation.getValue(), result.getModifications().get(expectation.getKey()));
-			
-		}
+	@Test
+	public void detectsRenamedNodes() throws StructureGraphComparisonException {
+		Element renamedElement = new Element("cn3r");
+
+		currentGraph.removeVertex(cn3);
+		currentGraph.addVertex(renamedElement);
+
+		currentGraph.addEdge(cn1, renamedElement, new Edge2());
+
+		StructureGraph structureGraphCurrent = new StructureGraph(currentGraph);
+
+		Map<String, StructureElementModification> expectedModifications = new HashMap<>();
+		expectedModifications.put(structureGraphOriginal.getIdentifier(cn3), StructureElementModification.NodeDeleted);
+		expectedModifications.put(structureGraphCurrent.getIdentifier(renamedElement), StructureElementModification.NodeAdded);
+
+		StructureGraphComparisonResult result = comparer.compare(structureGraphOriginal, structureGraphCurrent);
+
+		assertEquals(expectedModifications.size(), result.getModifications().size());
+
+		StructureGraphComparerTestHelper.assertNodeModificationExpectations(expectedModifications, result);
+	}
+
+	@Test
+	public void detectsMovedNodes() throws StructureGraphComparisonException {
+		currentGraph.removeEdge(cn2, cn6);
+
+		currentGraph.addEdge(cn4, cn6, new Edge6());
+
+		StructureGraph structureGraphCurrent = new StructureGraph(currentGraph);
+
+		Map<String, StructureElementModification> expectedModifications = new HashMap<>();
+		expectedModifications.put(structureGraphOriginal.getIdentifier(cn6), StructureElementModification.NodeDeleted);
+		expectedModifications.put(structureGraphCurrent.getIdentifier(cn6), StructureElementModification.NodeAdded);
+
+		StructureGraphComparisonResult result = comparer.compare(structureGraphOriginal, structureGraphCurrent);
+
+		assertEquals(expectedModifications.size(), result.getModifications().size());
+
+		StructureGraphComparerTestHelper.assertNodeModificationExpectations(expectedModifications, result);
 	}
 }

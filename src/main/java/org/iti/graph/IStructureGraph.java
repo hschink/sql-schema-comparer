@@ -27,6 +27,8 @@ import org.iti.graph.nodes.IStructureElement;
 
 public interface IStructureGraph {
 
+	boolean containsElementWithPath(String path);
+
 	IStructureElement getStructureElement(String identifier);
 
 	String getIdentifier(IStructureElement structureElement);

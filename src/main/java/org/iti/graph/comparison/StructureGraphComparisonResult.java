@@ -21,21 +21,84 @@
 
 package org.iti.graph.comparison;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.iti.graph.IStructureGraph;
 import org.iti.graph.nodes.IStructureElement;
 
 public class StructureGraphComparisonResult {
 
-	private Map<IStructureElement, StructureElementModification> modifications = new HashMap<>();
+	private IStructureGraph oldGraph;
 
-	public Map<IStructureElement, StructureElementModification> getModifications() {
+	public IStructureGraph getOldGraph() {
+		return oldGraph;
+	}
+
+	private IStructureGraph newGraph;
+
+	public IStructureGraph getNewGraph() {
+		return newGraph;
+	}
+
+	private Map<String, StructureElementModification> modifications = new HashMap<>();
+
+	public Map<String, StructureElementModification> getModifications() {
 		return modifications;
 	}
 
-	public void addModification(IStructureElement element,
+	public void addModification(String path, StructureElementModification modification) {
+		modifications.put(path, modification);
+	}
+
+	public void removeModification(String fullIdentifier) {
+		modifications.remove(fullIdentifier);
+	}
+
+	public StructureGraphComparisonResult(IStructureGraph oldGraph,
+			IStructureGraph newGraph) {
+		this.oldGraph = oldGraph;
+		this.newGraph = newGraph;
+	}
+
+	public Collection<IStructureElement> getElementsByModification(StructureElementModification modification) {
+		List<IStructureElement> elements = new ArrayList<>();
+
+		for (Entry<String, StructureElementModification> m : modifications.entrySet()) {
+			if (m.getValue() == modification) {
+				elements.add(getElementByPath(m.getKey()));
+			}
+		}
+
+		return elements;
+	}
+
+	private IStructureElement getElementByPath(String path) {
+		if (oldGraph.containsElementWithPath(path)) {
+			return oldGraph.getStructureElement(path);
+		} else if (newGraph.containsElementWithPath(path)) {
+			return newGraph.getStructureElement(path);
+		}
+
+		return null;
+	}
+
+	public Collection<IStructureElement> getElementsByIdentifier(String identifier,
 			StructureElementModification modification) {
-		modifications.put(element, modification);
+		List<IStructureElement> elements = new ArrayList<>();
+
+		for (Entry<String, StructureElementModification> m : modifications.entrySet()) {
+			IStructureElement element = getElementByPath(m.getKey());
+
+			if (m.getValue() == modification && element.getIdentifier().equals(identifier)) {
+				elements.add(getElementByPath(m.getKey()));
+			}
+		}
+
+		return elements;
 	}
 }

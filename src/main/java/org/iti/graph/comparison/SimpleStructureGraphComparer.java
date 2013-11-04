@@ -31,14 +31,17 @@ public class SimpleStructureGraphComparer implements IStructureGraphComparer {
 
 	public StructureGraphComparisonResult compare(IStructureGraph oldGraph,
 			IStructureGraph newGraph) {
-		StructureGraphComparisonResult result = new StructureGraphComparisonResult();
+		StructureGraphComparisonResult result = new StructureGraphComparisonResult(oldGraph, newGraph);
 		List<String> removedNodeIds = getMissingNodeIds(oldGraph, newGraph);
 		List<String> addedNodeIds = getMissingNodeIds(newGraph, oldGraph);
 
-		addNodesWithModificationToResult(getNodes(oldGraph, removedNodeIds),
+		addNodesWithModificationToResult(oldGraph,
+				removedNodeIds,
 				StructureElementModification.NodeDeleted,
 				result);
-		addNodesWithModificationToResult(getNodes(newGraph, addedNodeIds),
+		addNodesWithModificationToResult(
+				newGraph,
+				addedNodeIds,
 				StructureElementModification.NodeAdded,
 				result);
 
@@ -55,6 +58,17 @@ public class SimpleStructureGraphComparer implements IStructureGraphComparer {
 		return oldNodes;
 	}	
 
+	private static void addNodesWithModificationToResult(IStructureGraph graph,
+			List<String> nodeIds,
+			StructureElementModification modification,
+			StructureGraphComparisonResult result) {
+		List<IStructureElement> elements = getNodes(graph, nodeIds);
+
+		for (IStructureElement element : elements) {
+			result.addModification(graph.getIdentifier(element), modification);
+		}
+	}
+
 	private static List<IStructureElement> getNodes(IStructureGraph graph,
 			List<String> nodeIds) {
 		List<IStructureElement> nodes = new ArrayList<>();
@@ -64,14 +78,5 @@ public class SimpleStructureGraphComparer implements IStructureGraphComparer {
 		}
 
 		return nodes;
-	}
-
-	private void addNodesWithModificationToResult(
-			List<IStructureElement> elements,
-			StructureElementModification modification,
-			StructureGraphComparisonResult result) {
-		for (IStructureElement element : elements) {
-			result.addModification(element, modification);
-		}
 	}
 }
