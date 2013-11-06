@@ -29,6 +29,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.iti.graph.IStructureGraph;
+import org.iti.graph.comparison.StructureElementModification.Type;
+import org.iti.graph.comparison.result.IModificationDetail;
+import org.iti.graph.comparison.result.OriginalStructureElement;
 import org.iti.graph.nodes.IStructureElement;
 
 public class StructureGraphComparer implements IStructureGraphComparer {
@@ -68,8 +71,8 @@ public class StructureGraphComparer implements IStructureGraphComparer {
 	}
 
 	private void groupAddedAndRemovedNodesByPath() {
-		Collection<IStructureElement> removedNodes = result.getElementsByModification(StructureElementModification.Type.NodeDeleted);
-		Collection<IStructureElement> addedNodes = result.getElementsByModification(StructureElementModification.Type.NodeAdded);
+		Collection<IStructureElement> removedNodes = result.getElementsByModification(Type.NodeDeleted);
+		Collection<IStructureElement> addedNodes = result.getElementsByModification(Type.NodeAdded);
 
 		removedNodesByPath = getNodesByPath(oldGraph, removedNodes);
 		addedNodesByPath = getNodesByPath(newGraph, addedNodes);
@@ -98,7 +101,7 @@ public class StructureGraphComparer implements IStructureGraphComparer {
 			for (IStructureElement removedElement : removedInPath.getValue()) {
 				IStructureElement renamedElement = findRenamedElement(removedInPath.getKey(), removedElement);
 
-				exchangeNode(removedElement, renamedElement, StructureElementModification.Type.NodeRenamed);
+				exchangeNode(removedElement, renamedElement, Type.NodeRenamed);
 			}
 		}
 	}
@@ -123,17 +126,34 @@ public class StructureGraphComparer implements IStructureGraphComparer {
 
 	private void exchangeNode(IStructureElement removedElement,
 			IStructureElement addedElement,
-			StructureElementModification.Type type) {
+			Type type) {
 		if (addedElement != null) {
-			String identifier = result.getNewGraph().getIdentifier(addedElement);
-			String path = result.getNewGraph().getPath(addedElement);
-			StructureElementModification modification = new StructureElementModification(path, addedElement.getIdentifier(), type);
+			String fullIdentifier = result.getNewGraph().getIdentifier(addedElement);
+			IModificationDetail detail = getModificationDetail(result.getOldGraph(), removedElement);
+			StructureElementModification modification = getModification(result.getNewGraph(), addedElement, type, detail);
 
 			result.removeModification(oldGraph.getIdentifier(removedElement));
 			result.removeModification(newGraph.getIdentifier(addedElement));
 
-			result.addModification(identifier, modification);
+			result.addModification(fullIdentifier, modification);
 		}
+	}
+
+	private IModificationDetail getModificationDetail(
+			IStructureGraph graph,
+			IStructureElement element) {
+		String path = graph.getPath(element);
+
+		return new OriginalStructureElement(path, element.getIdentifier());
+	}
+
+	private StructureElementModification getModification(IStructureGraph graph,
+			IStructureElement element,
+			Type type,
+			IModificationDetail detail) {
+		String path = graph.getPath(element);
+
+		return new StructureElementModification(path, element.getIdentifier(), type, detail);
 	}
 
 	private void setMovedNodes() throws AmbiguousMoveException {
@@ -141,7 +161,7 @@ public class StructureGraphComparer implements IStructureGraphComparer {
 			for (IStructureElement removedElement : removedInPath.getValue()) {
 				IStructureElement movedElement = findMovedElement(removedElement);
 				
-				exchangeNode(removedElement, movedElement, StructureElementModification.Type.NodeMoved);
+				exchangeNode(removedElement, movedElement, Type.NodeMoved);
 			}
 		}
 	}
@@ -149,7 +169,7 @@ public class StructureGraphComparer implements IStructureGraphComparer {
 	private IStructureElement findMovedElement(IStructureElement element) throws AmbiguousMoveException {
 		Collection<IStructureElement> addedElements;
 		
-		addedElements = result.getElementsByIdentifier(element.getIdentifier(), StructureElementModification.Type.NodeAdded);
+		addedElements = result.getElementsByIdentifier(element.getIdentifier(), Type.NodeAdded);
 
 		switch (addedElements.size()) {
 			case 0: return null;

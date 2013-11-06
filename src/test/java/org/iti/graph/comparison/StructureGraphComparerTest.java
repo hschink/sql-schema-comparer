@@ -30,6 +30,8 @@ import org.iti.graph.StructureGraph;
 import org.iti.graph.comparison.StructureElementModification.Type;
 import org.iti.graph.comparison.StructureGraphComparer.AmbiguousMoveException;
 import org.iti.graph.comparison.StructureGraphComparer.AmbiguousRenameException;
+import org.iti.graph.comparison.result.IModificationDetail;
+import org.iti.graph.comparison.result.OriginalStructureElement;
 import org.iti.graph.helper.Edge1;
 import org.iti.graph.helper.Edge2;
 import org.iti.graph.helper.Edge3;
@@ -119,6 +121,12 @@ public class StructureGraphComparerTest {
 		expectedModifications.put(structureGraphOriginal.getIdentifier(cn5), Type.NodeDeleted);
 		expectedModifications.put(structureGraphOriginal.getIdentifier(cn6), Type.NodeDeleted);
 
+		Map<String, IModificationDetail> expectedModificationDetails = new HashMap<>();
+		expectedModificationDetails.put(structureGraphOriginal.getIdentifier(cn3), null);
+		expectedModificationDetails.put(structureGraphOriginal.getIdentifier(cn2), null);
+		expectedModificationDetails.put(structureGraphOriginal.getIdentifier(cn5), null);
+		expectedModificationDetails.put(structureGraphOriginal.getIdentifier(cn6), null);
+
 		currentGraph.removeVertex(cn3);
 		currentGraph.removeVertex(cn2);
 		currentGraph.removeVertex(cn5);
@@ -131,6 +139,7 @@ public class StructureGraphComparerTest {
 		assertEquals(expectedModifications.size(), result.getModifications().size());
 
 		StructureGraphComparerTestHelper.assertNodeModificationExpectations(expectedModifications, result);
+		StructureGraphComparerTestHelper.assertNodeModificationDetailExpectations(expectedModificationDetails, result);
 	}
 
 	@Test
@@ -147,11 +156,16 @@ public class StructureGraphComparerTest {
 		expectedModifications.put(structureGraphCurrent.getIdentifier(cn7), Type.NodeAdded);
 		expectedModifications.put(structureGraphCurrent.getIdentifier(cn8), Type.NodeAdded);
 
+		Map<String, IModificationDetail> expectedModificationDetails = new HashMap<>();
+		expectedModificationDetails.put(structureGraphCurrent.getIdentifier(cn7), null);
+		expectedModificationDetails.put(structureGraphCurrent.getIdentifier(cn8), null);
+
 		StructureGraphComparisonResult result = comparer.compare(structureGraphOriginal, structureGraphCurrent);
 
 		assertEquals(expectedModifications.size(), result.getModifications().size());
 
 		StructureGraphComparerTestHelper.assertNodeModificationExpectations(expectedModifications, result);
+		StructureGraphComparerTestHelper.assertNodeModificationDetailExpectations(expectedModificationDetails, result);
 	}
 
 	@Test
@@ -177,11 +191,20 @@ public class StructureGraphComparerTest {
 		expectedModifications.put(structureGraphCurrent.getIdentifier(cn7), Type.NodeAdded);
 		expectedModifications.put(structureGraphCurrent.getIdentifier(cn8), Type.NodeAdded);
 
+		Map<String, IModificationDetail> expectedModificationDetails = new HashMap<>();
+		expectedModificationDetails.put(structureGraphOriginal.getIdentifier(cn3), null);
+		expectedModificationDetails.put(structureGraphOriginal.getIdentifier(cn2), null);
+		expectedModificationDetails.put(structureGraphOriginal.getIdentifier(cn5), null);
+		expectedModificationDetails.put(structureGraphOriginal.getIdentifier(cn6), null);
+		expectedModificationDetails.put(structureGraphCurrent.getIdentifier(cn7), null);
+		expectedModificationDetails.put(structureGraphCurrent.getIdentifier(cn8), null);
+
 		StructureGraphComparisonResult result = comparer.compare(structureGraphOriginal, structureGraphCurrent);
 
 		assertEquals(expectedModifications.size(), result.getModifications().size());
 
 		StructureGraphComparerTestHelper.assertNodeModificationExpectations(expectedModifications, result);
+		StructureGraphComparerTestHelper.assertNodeModificationDetailExpectations(expectedModificationDetails, result);
 	}
 
 	@Test
@@ -198,11 +221,16 @@ public class StructureGraphComparerTest {
 		Map<String, Type> expectedModifications = new HashMap<>();
 		expectedModifications.put(structureGraphCurrent.getIdentifier(renamedElement), Type.NodeRenamed);
 
+		Map<String, IModificationDetail> expectedModificationDetails = new HashMap<>();
+		expectedModificationDetails.put(structureGraphCurrent.getIdentifier(renamedElement),
+				new OriginalStructureElement(structureGraphOriginal.getIdentifier(cn3), cn3.getIdentifier()));
+
 		StructureGraphComparisonResult result = comparer.compare(structureGraphOriginal, structureGraphCurrent);
 
 		assertEquals(expectedModifications.size(), result.getModifications().size());
 
 		StructureGraphComparerTestHelper.assertNodeModificationExpectations(expectedModifications, result);
+		StructureGraphComparerTestHelper.assertNodeModificationDetailExpectations(expectedModificationDetails, result);
 	}
 
 	@Test
@@ -216,11 +244,16 @@ public class StructureGraphComparerTest {
 		Map<String, Type> expectedModifications = new HashMap<>();
 		expectedModifications.put(structureGraphCurrent.getIdentifier(cn6), Type.NodeMoved);
 
+		Map<String, IModificationDetail> expectedModificationDetails = new HashMap<>();
+		expectedModificationDetails.put(structureGraphCurrent.getIdentifier(cn6),
+				new OriginalStructureElement(structureGraphOriginal.getIdentifier(cn6), cn6.getIdentifier()));
+
 		StructureGraphComparisonResult result = comparer.compare(structureGraphOriginal, structureGraphCurrent);
 
 		assertEquals(expectedModifications.size(), result.getModifications().size());
 
 		StructureGraphComparerTestHelper.assertNodeModificationExpectations(expectedModifications, result);
+		StructureGraphComparerTestHelper.assertNodeModificationDetailExpectations(expectedModificationDetails, result);
 	}
 
 	@Test
