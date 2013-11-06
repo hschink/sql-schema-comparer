@@ -37,12 +37,12 @@ public class SimpleStructureGraphComparer implements IStructureGraphComparer {
 
 		addNodesWithModificationToResult(oldGraph,
 				removedNodeIds,
-				StructureElementModification.NodeDeleted,
+				StructureElementModification.Type.NodeDeleted,
 				result);
 		addNodesWithModificationToResult(
 				newGraph,
 				addedNodeIds,
-				StructureElementModification.NodeAdded,
+				StructureElementModification.Type.NodeAdded,
 				result);
 
 		return result;
@@ -60,12 +60,17 @@ public class SimpleStructureGraphComparer implements IStructureGraphComparer {
 
 	private static void addNodesWithModificationToResult(IStructureGraph graph,
 			List<String> nodeIds,
-			StructureElementModification modification,
+			StructureElementModification.Type type,
 			StructureGraphComparisonResult result) {
 		List<IStructureElement> elements = getNodes(graph, nodeIds);
 
+
 		for (IStructureElement element : elements) {
-			result.addModification(graph.getIdentifier(element), modification);
+			String fullIdentifier = graph.getIdentifier(element);
+			String path = graph.getPath(element);
+			StructureElementModification modification =  new StructureElementModification(path, element.getIdentifier(), type);
+
+			result.addModification(fullIdentifier, modification);
 		}
 	}
 

@@ -110,11 +110,11 @@ public class SimpleStructureGraphComparerTest {
 
 	@Test
 	public void detectsRemovedNodes() throws StructureGraphComparisonException {
-		Map<String, StructureElementModification> expectedModifications = new HashMap<>();
-		expectedModifications.put(structureGraphOriginal.getIdentifier(cn3), StructureElementModification.NodeDeleted);
-		expectedModifications.put(structureGraphOriginal.getIdentifier(cn2), StructureElementModification.NodeDeleted);
-		expectedModifications.put(structureGraphOriginal.getIdentifier(cn5), StructureElementModification.NodeDeleted);
-		expectedModifications.put(structureGraphOriginal.getIdentifier(cn6), StructureElementModification.NodeDeleted);
+		Map<String, StructureElementModification.Type> expectedModifications = new HashMap<>();
+		expectedModifications.put(structureGraphOriginal.getIdentifier(cn3), StructureElementModification.Type.NodeDeleted);
+		expectedModifications.put(structureGraphOriginal.getIdentifier(cn2), StructureElementModification.Type.NodeDeleted);
+		expectedModifications.put(structureGraphOriginal.getIdentifier(cn5), StructureElementModification.Type.NodeDeleted);
+		expectedModifications.put(structureGraphOriginal.getIdentifier(cn6), StructureElementModification.Type.NodeDeleted);
 
 		currentGraph.removeVertex(cn3);
 		currentGraph.removeVertex(cn2);
@@ -140,9 +140,9 @@ public class SimpleStructureGraphComparerTest {
 
 		StructureGraph structureGraphCurrent = new StructureGraph(currentGraph);
 
-		Map<String, StructureElementModification> expectedModifications = new HashMap<>();
-		expectedModifications.put(structureGraphCurrent.getIdentifier(cn7), StructureElementModification.NodeAdded);
-		expectedModifications.put(structureGraphCurrent.getIdentifier(cn8), StructureElementModification.NodeAdded);
+		Map<String, StructureElementModification.Type> expectedModifications = new HashMap<>();
+		expectedModifications.put(structureGraphCurrent.getIdentifier(cn7), StructureElementModification.Type.NodeAdded);
+		expectedModifications.put(structureGraphCurrent.getIdentifier(cn8), StructureElementModification.Type.NodeAdded);
 
 		StructureGraphComparisonResult result = comparer.compare(structureGraphOriginal, structureGraphCurrent);
 
@@ -166,13 +166,13 @@ public class SimpleStructureGraphComparerTest {
 
 		StructureGraph structureGraphCurrent = new StructureGraph(currentGraph);
 
-		Map<String, StructureElementModification> expectedModifications = new HashMap<>();
-		expectedModifications.put(structureGraphOriginal.getIdentifier(cn3), StructureElementModification.NodeDeleted);
-		expectedModifications.put(structureGraphOriginal.getIdentifier(cn2), StructureElementModification.NodeDeleted);
-		expectedModifications.put(structureGraphOriginal.getIdentifier(cn5), StructureElementModification.NodeDeleted);
-		expectedModifications.put(structureGraphOriginal.getIdentifier(cn6), StructureElementModification.NodeDeleted);
-		expectedModifications.put(structureGraphCurrent.getIdentifier(cn7), StructureElementModification.NodeAdded);
-		expectedModifications.put(structureGraphCurrent.getIdentifier(cn8), StructureElementModification.NodeAdded);
+		Map<String, StructureElementModification.Type> expectedModifications = new HashMap<>();
+		expectedModifications.put(structureGraphOriginal.getIdentifier(cn3), StructureElementModification.Type.NodeDeleted);
+		expectedModifications.put(structureGraphOriginal.getIdentifier(cn2), StructureElementModification.Type.NodeDeleted);
+		expectedModifications.put(structureGraphOriginal.getIdentifier(cn5), StructureElementModification.Type.NodeDeleted);
+		expectedModifications.put(structureGraphOriginal.getIdentifier(cn6), StructureElementModification.Type.NodeDeleted);
+		expectedModifications.put(structureGraphCurrent.getIdentifier(cn7), StructureElementModification.Type.NodeAdded);
+		expectedModifications.put(structureGraphCurrent.getIdentifier(cn8), StructureElementModification.Type.NodeAdded);
 
 		StructureGraphComparisonResult result = comparer.compare(structureGraphOriginal, structureGraphCurrent);
 
@@ -192,9 +192,9 @@ public class SimpleStructureGraphComparerTest {
 
 		StructureGraph structureGraphCurrent = new StructureGraph(currentGraph);
 
-		Map<String, StructureElementModification> expectedModifications = new HashMap<>();
-		expectedModifications.put(structureGraphOriginal.getIdentifier(cn3), StructureElementModification.NodeDeleted);
-		expectedModifications.put(structureGraphCurrent.getIdentifier(renamedElement), StructureElementModification.NodeAdded);
+		Map<String, StructureElementModification.Type> expectedModifications = new HashMap<>();
+		expectedModifications.put(structureGraphOriginal.getIdentifier(cn3), StructureElementModification.Type.NodeDeleted);
+		expectedModifications.put(structureGraphCurrent.getIdentifier(renamedElement), StructureElementModification.Type.NodeAdded);
 
 		StructureGraphComparisonResult result = comparer.compare(structureGraphOriginal, structureGraphCurrent);
 
@@ -211,9 +211,9 @@ public class SimpleStructureGraphComparerTest {
 
 		StructureGraph structureGraphCurrent = new StructureGraph(currentGraph);
 
-		Map<String, StructureElementModification> expectedModifications = new HashMap<>();
-		expectedModifications.put(structureGraphOriginal.getIdentifier(cn6), StructureElementModification.NodeDeleted);
-		expectedModifications.put(structureGraphCurrent.getIdentifier(cn6), StructureElementModification.NodeAdded);
+		Map<String, StructureElementModification.Type> expectedModifications = new HashMap<>();
+		expectedModifications.put(structureGraphOriginal.getIdentifier(cn6), StructureElementModification.Type.NodeDeleted);
+		expectedModifications.put(structureGraphCurrent.getIdentifier(cn6), StructureElementModification.Type.NodeAdded);
 
 		StructureGraphComparisonResult result = comparer.compare(structureGraphOriginal, structureGraphCurrent);
 

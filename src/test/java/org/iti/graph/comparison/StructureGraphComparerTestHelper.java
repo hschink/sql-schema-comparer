@@ -8,12 +8,12 @@ import java.util.Map.Entry;
 public class StructureGraphComparerTestHelper {
 
 	static void assertNodeModificationExpectations(
-			Map<String, StructureElementModification> expectedModifications,
+			Map<String, StructureElementModification.Type> expectedModifications,
 			StructureGraphComparisonResult result) {
-		for (Entry<String, StructureElementModification> expectation : expectedModifications.entrySet()) {
+		for (Entry<String, StructureElementModification.Type> expectation : expectedModifications.entrySet()) {
 			assertEquals(expectation.getKey(),
 					expectation.getValue(),
-					result.getModifications().get(expectation.getKey()));
+					result.getModifications().get(expectation.getKey()).getType());
 		}
 	}
 

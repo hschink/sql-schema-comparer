@@ -65,11 +65,11 @@ public class StructureGraphComparisonResult {
 		this.newGraph = newGraph;
 	}
 
-	public Collection<IStructureElement> getElementsByModification(StructureElementModification modification) {
+	public Collection<IStructureElement> getElementsByModification(StructureElementModification.Type type) {
 		List<IStructureElement> elements = new ArrayList<>();
 
 		for (Entry<String, StructureElementModification> m : modifications.entrySet()) {
-			if (m.getValue() == modification) {
+			if (m.getValue().getType() == type) {
 				elements.add(getElementByPath(m.getKey()));
 			}
 		}
@@ -88,13 +88,13 @@ public class StructureGraphComparisonResult {
 	}
 
 	public Collection<IStructureElement> getElementsByIdentifier(String identifier,
-			StructureElementModification modification) {
+			StructureElementModification.Type type) {
 		List<IStructureElement> elements = new ArrayList<>();
 
 		for (Entry<String, StructureElementModification> m : modifications.entrySet()) {
 			IStructureElement element = getElementByPath(m.getKey());
 
-			if (m.getValue() == modification && element.getIdentifier().equals(identifier)) {
+			if (m.getValue().getType() == type && element.getIdentifier().equals(identifier)) {
 				elements.add(getElementByPath(m.getKey()));
 			}
 		}

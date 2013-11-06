@@ -68,8 +68,8 @@ public class StructureGraphComparer implements IStructureGraphComparer {
 	}
 
 	private void groupAddedAndRemovedNodesByPath() {
-		Collection<IStructureElement> removedNodes = result.getElementsByModification(StructureElementModification.NodeDeleted);
-		Collection<IStructureElement> addedNodes = result.getElementsByModification(StructureElementModification.NodeAdded);
+		Collection<IStructureElement> removedNodes = result.getElementsByModification(StructureElementModification.Type.NodeDeleted);
+		Collection<IStructureElement> addedNodes = result.getElementsByModification(StructureElementModification.Type.NodeAdded);
 
 		removedNodesByPath = getNodesByPath(oldGraph, removedNodes);
 		addedNodesByPath = getNodesByPath(newGraph, addedNodes);
@@ -98,7 +98,7 @@ public class StructureGraphComparer implements IStructureGraphComparer {
 			for (IStructureElement removedElement : removedInPath.getValue()) {
 				IStructureElement renamedElement = findRenamedElement(removedInPath.getKey(), removedElement);
 
-				exchangeNode(removedElement, renamedElement, StructureElementModification.NodeRenamed);
+				exchangeNode(removedElement, renamedElement, StructureElementModification.Type.NodeRenamed);
 			}
 		}
 	}
@@ -123,12 +123,16 @@ public class StructureGraphComparer implements IStructureGraphComparer {
 
 	private void exchangeNode(IStructureElement removedElement,
 			IStructureElement addedElement,
-			StructureElementModification modification) {
+			StructureElementModification.Type type) {
 		if (addedElement != null) {
+			String identifier = result.getNewGraph().getIdentifier(addedElement);
+			String path = result.getNewGraph().getPath(addedElement);
+			StructureElementModification modification = new StructureElementModification(path, addedElement.getIdentifier(), type);
+
 			result.removeModification(oldGraph.getIdentifier(removedElement));
 			result.removeModification(newGraph.getIdentifier(addedElement));
 
-			result.addModification(result.getNewGraph().getIdentifier(addedElement), modification);
+			result.addModification(identifier, modification);
 		}
 	}
 
@@ -137,7 +141,7 @@ public class StructureGraphComparer implements IStructureGraphComparer {
 			for (IStructureElement removedElement : removedInPath.getValue()) {
 				IStructureElement movedElement = findMovedElement(removedElement);
 				
-				exchangeNode(removedElement, movedElement, StructureElementModification.NodeMoved);
+				exchangeNode(removedElement, movedElement, StructureElementModification.Type.NodeMoved);
 			}
 		}
 	}
@@ -145,7 +149,7 @@ public class StructureGraphComparer implements IStructureGraphComparer {
 	private IStructureElement findMovedElement(IStructureElement element) throws AmbiguousMoveException {
 		Collection<IStructureElement> addedElements;
 		
-		addedElements = result.getElementsByIdentifier(element.getIdentifier(), StructureElementModification.NodeAdded);
+		addedElements = result.getElementsByIdentifier(element.getIdentifier(), StructureElementModification.Type.NodeAdded);
 
 		switch (addedElements.size()) {
 			case 0: return null;

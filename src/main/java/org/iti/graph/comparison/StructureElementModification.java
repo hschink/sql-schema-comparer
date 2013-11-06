@@ -21,11 +21,53 @@
 
 package org.iti.graph.comparison;
 
-public enum StructureElementModification {
-	
-	None,
-	NodeAdded,
-	NodeMoved,
-	NodeRenamed,
-	NodeDeleted,
+import org.iti.graph.comparison.result.IModificationDetail;
+
+public class StructureElementModification {
+	public enum Type {
+		None,
+		NodeAdded,
+		NodeMoved,
+		NodeRenamed,
+		NodeDeleted,
+	}
+
+	private String path;
+
+	public String getPath() {
+		return path;
+	}
+
+	private String identifier;
+
+	public String getIdentifier() {
+		return identifier;
+	}
+
+	private Type type;
+
+	public Type getType() {
+		return type;
+	}
+
+	private IModificationDetail modificationDetail;
+
+	public IModificationDetail getModificationDetail() {
+		return modificationDetail;
+	}
+
+	public StructureElementModification(String path, String identifier, Type type) {
+		this.path = path;
+		this.identifier = identifier;
+		this.type = type;
+	}
+
+	public StructureElementModification(String path,
+			String identifier,
+			Type type,
+			IModificationDetail modificationDetail) {
+		this(path, identifier, type);
+
+		this.modificationDetail = modificationDetail;
+	}
 }
