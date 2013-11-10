@@ -31,110 +31,51 @@ import org.iti.graph.comparison.StructureElementModification.Type;
 import org.iti.graph.comparison.StructureGraphComparer.AmbiguousMoveException;
 import org.iti.graph.comparison.StructureGraphComparer.AmbiguousRenameException;
 import org.iti.graph.comparison.result.IModificationDetail;
-import org.iti.graph.comparison.result.OriginalStructureElement;
-import org.iti.graph.helper.Edge1;
 import org.iti.graph.helper.Edge2;
-import org.iti.graph.helper.Edge3;
-import org.iti.graph.helper.Edge4;
-import org.iti.graph.helper.Edge5;
 import org.iti.graph.helper.Edge6;
-import org.iti.graph.helper.Edge7;
-import org.iti.graph.helper.Edge8;
 import org.iti.graph.helper.Element;
 import org.iti.graph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.SimpleDirectedGraph;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class StructureGraphComparerTest {
 
-	private static IStructureGraphComparer comparer;
+	private static IStructureGraphComparer comparer = new StructureGraphComparer();
 
 	private static StructureGraph structureGraphOriginal;
 	
-	private static Element re = new Element("re");
-	private static Element cn1 = new Element("cn1");
-	private static Element cn2 = new Element("cn2");
-	private static Element cn3 = new Element("cn3");
-	private static Element cn4 = new Element("cn4");
-	private static Element cn5 = new Element("cn5");
-	private static Element cn6 = new Element("cn6");
-	private static Element cn7 = new Element("cn7");
-	private static Element cn8 = new Element("cn8");
-	
-	private static DirectedGraph<IStructureElement, DefaultEdge> originalGraph;
-
 	private DirectedGraph<IStructureElement, DefaultEdge> currentGraph;
-	
+
+	private Map<String, Type> expectedModifications = new HashMap<>();
+	private Map<String, IModificationDetail> expectedModificationDetails = new HashMap<>();
+
+	private StructureGraphComparisonResult result;
+
 	@BeforeClass
 	public static void init() throws Exception {
-		comparer = new StructureGraphComparer();
-
-		originalGraph = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
-		
-		originalGraph.addVertex(re);
-		originalGraph.addVertex(cn1);
-		originalGraph.addVertex(cn2);
-		originalGraph.addVertex(cn3);
-		originalGraph.addVertex(cn4);
-		originalGraph.addVertex(cn5);
-		originalGraph.addVertex(cn6);
-		
-		originalGraph.addEdge(re, cn1, new Edge1());
-		originalGraph.addEdge(cn1, cn3, new Edge2());
-		originalGraph.addEdge(cn1, cn4, new Edge3());
-		originalGraph.addEdge(re, cn2, new Edge4());
-		originalGraph.addEdge(cn2, cn5, new Edge5());
-		originalGraph.addEdge(cn2, cn6, new Edge6());
-
-		structureGraphOriginal = new StructureGraph(originalGraph);
+		structureGraphOriginal = StructureGraphComparerTestHelper.getOriginal();
 	}
 
 	@Before
 	public void setUp() throws Exception {
-		currentGraph = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
+		currentGraph = StructureGraphComparerTestHelper.getCurrentGraph();
 
-		currentGraph.addVertex(re);
-		currentGraph.addVertex(cn1);
-		currentGraph.addVertex(cn2);
-		currentGraph.addVertex(cn3);
-		currentGraph.addVertex(cn4);
-		currentGraph.addVertex(cn5);
-		currentGraph.addVertex(cn6);
-		
-		currentGraph.addEdge(re, cn1, new Edge1());
-		currentGraph.addEdge(cn1, cn3, new Edge2());
-		currentGraph.addEdge(cn1, cn4, new Edge3());
-		currentGraph.addEdge(re, cn2, new Edge4());
-		currentGraph.addEdge(cn2, cn5, new Edge5());
-		currentGraph.addEdge(cn2, cn6, new Edge6());
+		expectedModifications.clear();
+		expectedModificationDetails.clear();
+
+		result = null;
 	}
 
 	@Test
 	public void detectsRemovedNodes() throws StructureGraphComparisonException {
-		Map<String, Type> expectedModifications = new HashMap<>();
-		expectedModifications.put(structureGraphOriginal.getIdentifier(cn3), Type.NodeDeleted);
-		expectedModifications.put(structureGraphOriginal.getIdentifier(cn2), Type.NodeDeleted);
-		expectedModifications.put(structureGraphOriginal.getIdentifier(cn5), Type.NodeDeleted);
-		expectedModifications.put(structureGraphOriginal.getIdentifier(cn6), Type.NodeDeleted);
+		StructureGraphComparerTestHelper.givenRemovedNodes(currentGraph);
+		StructureGraphComparerTestHelper.givenExpectRemoval(structureGraphOriginal, expectedModifications);
+		StructureGraphComparerTestHelper.givenExpectRemovalDetails(structureGraphOriginal, expectedModificationDetails);
 
-		Map<String, IModificationDetail> expectedModificationDetails = new HashMap<>();
-		expectedModificationDetails.put(structureGraphOriginal.getIdentifier(cn3), null);
-		expectedModificationDetails.put(structureGraphOriginal.getIdentifier(cn2), null);
-		expectedModificationDetails.put(structureGraphOriginal.getIdentifier(cn5), null);
-		expectedModificationDetails.put(structureGraphOriginal.getIdentifier(cn6), null);
-
-		currentGraph.removeVertex(cn3);
-		currentGraph.removeVertex(cn2);
-		currentGraph.removeVertex(cn5);
-		currentGraph.removeVertex(cn6);
-
-		StructureGraph structureGraphCurrent = new StructureGraph(currentGraph);
-
-		StructureGraphComparisonResult result = comparer.compare(structureGraphOriginal, structureGraphCurrent);
+		whenComparisonResultIsCreated();
 
 		assertEquals(expectedModifications.size(), result.getModifications().size());
 
@@ -144,23 +85,11 @@ public class StructureGraphComparerTest {
 
 	@Test
 	public void detectsAddedNodes() throws StructureGraphComparisonException {
-		currentGraph.addVertex(cn7);
-		currentGraph.addVertex(cn8);
+		StructureGraphComparerTestHelper.givenAddedNodes(currentGraph);
+		StructureGraphComparerTestHelper.givenExpectAddition(currentGraph, expectedModifications);
+		StructureGraphComparerTestHelper.givenExpectAdditionDetails(currentGraph, expectedModificationDetails);
 
-		currentGraph.addEdge(cn1, cn7, new Edge7());
-		currentGraph.addEdge(re, cn8, new Edge8());
-
-		StructureGraph structureGraphCurrent = new StructureGraph(currentGraph);
-
-		Map<String, Type> expectedModifications = new HashMap<>();
-		expectedModifications.put(structureGraphCurrent.getIdentifier(cn7), Type.NodeAdded);
-		expectedModifications.put(structureGraphCurrent.getIdentifier(cn8), Type.NodeAdded);
-
-		Map<String, IModificationDetail> expectedModificationDetails = new HashMap<>();
-		expectedModificationDetails.put(structureGraphCurrent.getIdentifier(cn7), null);
-		expectedModificationDetails.put(structureGraphCurrent.getIdentifier(cn8), null);
-
-		StructureGraphComparisonResult result = comparer.compare(structureGraphOriginal, structureGraphCurrent);
+		whenComparisonResultIsCreated();
 
 		assertEquals(expectedModifications.size(), result.getModifications().size());
 
@@ -170,36 +99,14 @@ public class StructureGraphComparerTest {
 
 	@Test
 	public void detectsAddedAndRemovedNodes() throws StructureGraphComparisonException {
-		currentGraph.removeVertex(cn3);
-		currentGraph.removeVertex(cn2);
-		currentGraph.removeVertex(cn5);
-		currentGraph.removeVertex(cn6);
+		StructureGraphComparerTestHelper.givenRemovedNodes(currentGraph);
+		StructureGraphComparerTestHelper.givenAddedNodes(currentGraph);
+		StructureGraphComparerTestHelper.givenExpectAddition(currentGraph, expectedModifications);
+		StructureGraphComparerTestHelper.givenExpectRemoval(structureGraphOriginal, expectedModifications);
+		StructureGraphComparerTestHelper.givenExpectAdditionDetails(currentGraph, expectedModificationDetails);
+		StructureGraphComparerTestHelper.givenExpectRemovalDetails(structureGraphOriginal, expectedModificationDetails);
 
-		currentGraph.addVertex(cn7);
-		currentGraph.addVertex(cn8);
-
-		currentGraph.addEdge(cn1, cn7, new Edge7());
-		currentGraph.addEdge(re, cn8, new Edge8());
-
-		StructureGraph structureGraphCurrent = new StructureGraph(currentGraph);
-
-		Map<String, Type> expectedModifications = new HashMap<>();
-		expectedModifications.put(structureGraphOriginal.getIdentifier(cn3), Type.NodeDeleted);
-		expectedModifications.put(structureGraphOriginal.getIdentifier(cn2), Type.NodeDeleted);
-		expectedModifications.put(structureGraphOriginal.getIdentifier(cn5), Type.NodeDeleted);
-		expectedModifications.put(structureGraphOriginal.getIdentifier(cn6), Type.NodeDeleted);
-		expectedModifications.put(structureGraphCurrent.getIdentifier(cn7), Type.NodeAdded);
-		expectedModifications.put(structureGraphCurrent.getIdentifier(cn8), Type.NodeAdded);
-
-		Map<String, IModificationDetail> expectedModificationDetails = new HashMap<>();
-		expectedModificationDetails.put(structureGraphOriginal.getIdentifier(cn3), null);
-		expectedModificationDetails.put(structureGraphOriginal.getIdentifier(cn2), null);
-		expectedModificationDetails.put(structureGraphOriginal.getIdentifier(cn5), null);
-		expectedModificationDetails.put(structureGraphOriginal.getIdentifier(cn6), null);
-		expectedModificationDetails.put(structureGraphCurrent.getIdentifier(cn7), null);
-		expectedModificationDetails.put(structureGraphCurrent.getIdentifier(cn8), null);
-
-		StructureGraphComparisonResult result = comparer.compare(structureGraphOriginal, structureGraphCurrent);
+		whenComparisonResultIsCreated();
 
 		assertEquals(expectedModifications.size(), result.getModifications().size());
 
@@ -209,23 +116,11 @@ public class StructureGraphComparerTest {
 
 	@Test
 	public void detectsRenamedNodes() throws StructureGraphComparisonException {
-		Element renamedElement = new Element("cn3r");
+		StructureGraphComparerTestHelper.givenRenamedNode(currentGraph);
+		StructureGraphComparerTestHelper.givenExpectRename(expectedModifications);
+		StructureGraphComparerTestHelper.givenExpectRenameDetail(expectedModificationDetails);
 
-		currentGraph.removeVertex(cn3);
-		currentGraph.addVertex(renamedElement);
-
-		currentGraph.addEdge(cn1, renamedElement, new Edge2());
-
-		StructureGraph structureGraphCurrent = new StructureGraph(currentGraph);
-
-		Map<String, Type> expectedModifications = new HashMap<>();
-		expectedModifications.put(structureGraphCurrent.getIdentifier(renamedElement), Type.NodeRenamed);
-
-		Map<String, IModificationDetail> expectedModificationDetails = new HashMap<>();
-		expectedModificationDetails.put(structureGraphCurrent.getIdentifier(renamedElement),
-				new OriginalStructureElement(structureGraphOriginal.getIdentifier(cn3), cn3.getIdentifier()));
-
-		StructureGraphComparisonResult result = comparer.compare(structureGraphOriginal, structureGraphCurrent);
+		whenComparisonResultIsCreated();
 
 		assertEquals(expectedModifications.size(), result.getModifications().size());
 
@@ -235,20 +130,11 @@ public class StructureGraphComparerTest {
 
 	@Test
 	public void detectsMovedNodes() throws StructureGraphComparisonException {
-		currentGraph.removeEdge(cn2, cn6);
+		StructureGraphComparerTestHelper.givenMovedNode(currentGraph);
+		StructureGraphComparerTestHelper.givenExpectMove(expectedModifications);
+		StructureGraphComparerTestHelper.givenExpectMoveDetail(expectedModificationDetails);
 
-		currentGraph.addEdge(cn4, cn6, new Edge6());
-
-		StructureGraph structureGraphCurrent = new StructureGraph(currentGraph);
-
-		Map<String, Type> expectedModifications = new HashMap<>();
-		expectedModifications.put(structureGraphCurrent.getIdentifier(cn6), Type.NodeMoved);
-
-		Map<String, IModificationDetail> expectedModificationDetails = new HashMap<>();
-		expectedModificationDetails.put(structureGraphCurrent.getIdentifier(cn6),
-				new OriginalStructureElement(structureGraphOriginal.getIdentifier(cn6), cn6.getIdentifier()));
-
-		StructureGraphComparisonResult result = comparer.compare(structureGraphOriginal, structureGraphCurrent);
+		whenComparisonResultIsCreated();
 
 		assertEquals(expectedModifications.size(), result.getModifications().size());
 
@@ -258,22 +144,14 @@ public class StructureGraphComparerTest {
 
 	@Test
 	public void detectsRenamedMovedNodes() throws StructureGraphComparisonException {
-		Element renamedElement = new Element("cn3r");
+		StructureGraphComparerTestHelper.givenRenamedNode(currentGraph);
+		StructureGraphComparerTestHelper.givenMovedNode(currentGraph);
+		StructureGraphComparerTestHelper.givenExpectRename(expectedModifications);
+		StructureGraphComparerTestHelper.givenExpectRenameDetail(expectedModificationDetails);
+		StructureGraphComparerTestHelper.givenExpectMove(expectedModifications);
+		StructureGraphComparerTestHelper.givenExpectMoveDetail(expectedModificationDetails);
 
-		currentGraph.removeEdge(cn2, cn6);
-		currentGraph.removeVertex(cn3);
-		currentGraph.addVertex(renamedElement);
-
-		currentGraph.addEdge(cn1, renamedElement, new Edge2());
-		currentGraph.addEdge(cn4, cn6, new Edge6());
-
-		StructureGraph structureGraphCurrent = new StructureGraph(currentGraph);
-
-		Map<String, Type> expectedModifications = new HashMap<>();
-		expectedModifications.put(structureGraphCurrent.getIdentifier(cn6), Type.NodeMoved);
-		expectedModifications.put(structureGraphCurrent.getIdentifier(renamedElement), Type.NodeRenamed);
-
-		StructureGraphComparisonResult result = comparer.compare(structureGraphOriginal, structureGraphCurrent);
+		whenComparisonResultIsCreated();
 
 		assertEquals(expectedModifications.size(), result.getModifications().size());
 
@@ -285,12 +163,12 @@ public class StructureGraphComparerTest {
 		Element renamedElement1 = new Element("cn3r1");
 		Element renamedElement2 = new Element("cn3r2");
 
-		currentGraph.removeVertex(cn3);
+		currentGraph.removeVertex(StructureGraphComparerTestHelper.cn3);
 		currentGraph.addVertex(renamedElement1);
 		currentGraph.addVertex(renamedElement2);
 
-		currentGraph.addEdge(cn1, renamedElement1, new Edge2());
-		currentGraph.addEdge(cn1, renamedElement2, new Edge2());
+		currentGraph.addEdge(StructureGraphComparerTestHelper.cn1, renamedElement1, new Edge2());
+		currentGraph.addEdge(StructureGraphComparerTestHelper.cn1, renamedElement2, new Edge2());
 
 		StructureGraph structureGraphCurrent = new StructureGraph(currentGraph);
 
@@ -303,13 +181,19 @@ public class StructureGraphComparerTest {
 
 		currentGraph.addVertex(movedElement);
 
-		currentGraph.removeEdge(cn2, cn6);
+		currentGraph.removeEdge(StructureGraphComparerTestHelper.cn2, StructureGraphComparerTestHelper.cn6);
 
-		currentGraph.addEdge(cn4, cn6, new Edge6());
-		currentGraph.addEdge(cn3, movedElement, new Edge6());
+		currentGraph.addEdge(StructureGraphComparerTestHelper.cn4, StructureGraphComparerTestHelper.cn6, new Edge6());
+		currentGraph.addEdge(StructureGraphComparerTestHelper.cn3, movedElement, new Edge6());
 
 		StructureGraph structureGraphCurrent = new StructureGraph(currentGraph);
 
 		comparer.compare(structureGraphOriginal, structureGraphCurrent);
+	}
+
+	private void whenComparisonResultIsCreated() throws StructureGraphComparisonException {
+		StructureGraph structureGraphCurrent = new StructureGraph(currentGraph);
+
+		result = comparer.compare(structureGraphOriginal, structureGraphCurrent);
 	}
 }
