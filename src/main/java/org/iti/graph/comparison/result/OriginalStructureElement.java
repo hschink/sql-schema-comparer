@@ -3,13 +3,6 @@ package org.iti.graph.comparison.result;
 
 public class OriginalStructureElement implements IModificationDetail {
 
-	private String path;
-
-	@Override
-	public String getPath() {
-		return path;
-	}
-
 	private String identifier;
 
 	@Override
@@ -17,8 +10,7 @@ public class OriginalStructureElement implements IModificationDetail {
 		return identifier;
 	}
 
-	public OriginalStructureElement(String path, String identifier) {
-		this.path = path;
+	public OriginalStructureElement(String identifier) {
 		this.identifier = identifier;
 	}
 }

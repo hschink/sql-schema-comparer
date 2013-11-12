@@ -24,19 +24,21 @@ package org.iti.sqlSchemaComparison.reachability;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.iti.graph.nodes.IStructureElement;
 import org.iti.sqlSchemaComparison.edge.IForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.edge.ITableHasColumnEdge;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
-import org.jgrapht.Graph;
+import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.DijkstraShortestPath;
+import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
 public class SqlColumnReachableChecker implements
 		ISqlElementReachabilityChecker {
 
-	private Graph<ISqlElement, DefaultEdge> schema;
+	private DirectedGraph<IStructureElement, DefaultEdge> schema;
 	private SqlTableVertex sourceTable;
 	private SqlColumnVertex targetColumn;
 	
@@ -54,7 +56,9 @@ public class SqlColumnReachableChecker implements
 		return path;
 	}
 	
-	public SqlColumnReachableChecker(Graph<ISqlElement, DefaultEdge> schema, ISqlElement sourceTable, ISqlElement targetColumn) {
+	public SqlColumnReachableChecker(DirectedGraph<IStructureElement, DefaultEdge> schema,
+			ISqlElement sourceTable,
+			ISqlElement targetColumn) {
 		this.schema = schema;
 		this.sourceTable = (SqlTableVertex) sourceTable;
 		this.targetColumn = (SqlColumnVertex) targetColumn;
@@ -63,7 +67,11 @@ public class SqlColumnReachableChecker implements
 	}
 	
 	private void CheckReachability() {
-		DijkstraShortestPath<ISqlElement, DefaultEdge> inspector = new DijkstraShortestPath<ISqlElement, DefaultEdge>(schema, sourceTable, targetColumn);
+		AsUndirectedGraph<IStructureElement, DefaultEdge> undirectedGraph = new AsUndirectedGraph<>(schema);
+		DijkstraShortestPath<IStructureElement, DefaultEdge> inspector
+			= new DijkstraShortestPath<IStructureElement, DefaultEdge>(undirectedGraph,
+																	   (IStructureElement)sourceTable,
+																	   (IStructureElement)targetColumn);
 		
 		reachable = inspector.getPath() != null;
 		
@@ -88,5 +96,4 @@ public class SqlColumnReachableChecker implements
 			}
 		}
 	}
-
 }

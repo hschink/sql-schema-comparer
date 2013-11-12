@@ -23,11 +23,12 @@ package org.iti.sqlSchemaComparison;
 
 import java.util.List;
 
+import org.iti.graph.comparison.StructureGraphComparisonException;
+import org.iti.graph.nodes.IStructureElement;
 import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
 import org.iti.sqlSchemaComparison.frontends.SqlStatementFrontend;
 import org.iti.sqlSchemaComparison.frontends.database.SqliteSchemaFrontend;
-import org.iti.sqlSchemaComparison.vertex.ISqlElement;
-import org.jgrapht.Graph;
+import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
@@ -51,7 +52,7 @@ public class Main {
 		private List<String> databases;
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws StructureGraphComparisonException {
 		CommandLineOption option = new CommandLineOption();
 		CmdLineParser parser = new CmdLineParser(option);
 		
@@ -89,16 +90,16 @@ public class Main {
 
 	private static void compareDatabaseStatement(String statement,
 			List<String> databases) {
-		Graph<ISqlElement, DefaultEdge> baseSchema = getBaseSchema(databases);
+		DirectedGraph<IStructureElement, DefaultEdge> baseSchema = getBaseSchema(databases);
 		ISqlSchemaFrontend statementFrontend = new SqlStatementFrontend(statement, baseSchema);
-		Graph<ISqlElement, DefaultEdge> statementSchema = statementFrontend.createSqlSchema();
+		DirectedGraph<IStructureElement, DefaultEdge> statementSchema = statementFrontend.createSqlSchema();
 		
 		compareDatabaseStatement(statement, statementSchema, databases);
 	}
 
-	private static Graph<ISqlElement, DefaultEdge> getBaseSchema(
+	private static DirectedGraph<IStructureElement, DefaultEdge> getBaseSchema(
 			List<String> databases) {
-		Graph<ISqlElement, DefaultEdge> baseSchema = null;
+		DirectedGraph<IStructureElement, DefaultEdge> baseSchema = null;
 		
 		if (databases.size() > 1) {
 			String baseDatabaseFilePath = databases.remove(0);
@@ -113,14 +114,14 @@ public class Main {
 
 	private static void compareDatabaseStatement(
 			String statement,
-			Graph<ISqlElement, DefaultEdge> statementSchema,
+			DirectedGraph<IStructureElement, DefaultEdge> statementSchema,
 			List<String> databases) {
 		if (databases.size() > 0) {
 			String databaseFilePath = databases.remove(0);
 			
 			ISqlSchemaFrontend frontend = new SqliteSchemaFrontend(databaseFilePath);
 			
-			Graph<ISqlElement, DefaultEdge> schema = frontend.createSqlSchema();
+			DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
 			
 			SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(schema);
 			SqlStatementExpectationValidationResult result = validator.computeGraphMatching(statementSchema);
@@ -132,7 +133,7 @@ public class Main {
 		}
 	}
 
-	private static void compareDatabaseSchemas(List<String> databases) {
+	private static void compareDatabaseSchemas(List<String> databases) throws StructureGraphComparisonException {
 		if (databases.size() > 1) {
 			String baseDatabaseFilePath = databases.remove(0);
 			String nextDatabaseFilePath = databases.get(0);
@@ -140,8 +141,8 @@ public class Main {
 			ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(baseDatabaseFilePath);
 			ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(nextDatabaseFilePath);
 			
-			Graph<ISqlElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
-			Graph<ISqlElement, DefaultEdge> schema2 = frontend2.createSqlSchema();
+			DirectedGraph<IStructureElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
+			DirectedGraph<IStructureElement, DefaultEdge> schema2 = frontend2.createSqlSchema();
 			
 			SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
 			

@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.iti.graph.nodes.IStructureElement;
 import org.iti.sqlSchemaComparison.edge.ForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.edge.TableHasColumnEdge;
 import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
@@ -46,9 +47,9 @@ import org.iti.sqlSchemaComparison.vertex.sqlColumn.DefaultColumnConstraint;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.NotNullColumnConstraint;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.PrimaryKeyColumnConstraint;
-import org.jgrapht.Graph;
+import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.SimpleGraph;
+import org.jgrapht.graph.SimpleDirectedGraph;
 
 public class SqliteSchemaFrontend implements ISqlSchemaFrontend {
 
@@ -79,8 +80,8 @@ public class SqliteSchemaFrontend implements ISqlSchemaFrontend {
 	private String filePath;
 	
 	@Override
-	public Graph<ISqlElement, DefaultEdge> createSqlSchema() {
-		Graph<ISqlElement, DefaultEdge> schema = null;
+	public DirectedGraph<IStructureElement, DefaultEdge> createSqlSchema() {
+		DirectedGraph<IStructureElement, DefaultEdge> schema = null;
 		
 		try {
 			schema = tryCreateSqlSchema();
@@ -92,8 +93,8 @@ public class SqliteSchemaFrontend implements ISqlSchemaFrontend {
 		return schema;
 	}
 
-	private Graph<ISqlElement, DefaultEdge> tryCreateSqlSchema() throws SQLException {
-		Graph<ISqlElement, DefaultEdge> schema = new SimpleGraph<ISqlElement, DefaultEdge>(DefaultEdge.class);
+	private DirectedGraph<IStructureElement, DefaultEdge> tryCreateSqlSchema() throws SQLException {
+		DirectedGraph<IStructureElement, DefaultEdge> schema = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
 		Connection connection = null;
 		
 		try {
@@ -137,7 +138,7 @@ public class SqliteSchemaFrontend implements ISqlSchemaFrontend {
 		return tables;
 	}
 
-	private void createTableSchema(Connection connection, Graph<ISqlElement, DefaultEdge> schema,
+	private void createTableSchema(Connection connection, DirectedGraph<IStructureElement, DefaultEdge> schema,
 			String tableName) throws SQLException {
 		ISqlElement table = SqlElementFactory.createSqlElement(SqlElementType.Table, tableName);
 		schema.addVertex(table);
@@ -186,7 +187,7 @@ public class SqliteSchemaFrontend implements ISqlSchemaFrontend {
 		}
 	}
 
-	private void createForeignKeyRelation(Connection connection, Graph<ISqlElement, DefaultEdge> schema) throws SQLException {
+	private void createForeignKeyRelation(Connection connection, DirectedGraph<IStructureElement, DefaultEdge> schema) throws SQLException {
 		Set<ISqlElement> tables = SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet());
 		Statement stm = connection.createStatement();
 		

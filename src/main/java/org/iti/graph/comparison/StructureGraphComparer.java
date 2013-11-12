@@ -142,9 +142,9 @@ public class StructureGraphComparer implements IStructureGraphComparer {
 	private IModificationDetail getModificationDetail(
 			IStructureGraph graph,
 			IStructureElement element) {
-		String path = graph.getPath(element);
+		String fullIdentifier = graph.getIdentifier(element);
 
-		return new OriginalStructureElement(path, element.getIdentifier());
+		return new OriginalStructureElement(fullIdentifier);
 	}
 
 	private StructureElementModification getModification(IStructureGraph graph,

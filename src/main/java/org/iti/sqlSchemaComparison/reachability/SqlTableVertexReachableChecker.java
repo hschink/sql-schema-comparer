@@ -25,17 +25,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.iti.graph.nodes.IStructureElement;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlElementType;
 import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
-import org.jgrapht.Graph;
+import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
 public class SqlTableVertexReachableChecker implements
 		ISqlElementReachabilityChecker {
 
-	private Graph<ISqlElement, DefaultEdge> schema;
+	private DirectedGraph<IStructureElement, DefaultEdge> schema;
 	private SqlTableVertex table;
 	
 	private boolean reachable = false;
@@ -52,7 +53,7 @@ public class SqlTableVertexReachableChecker implements
 		return path;
 	}
 
-	public SqlTableVertexReachableChecker(Graph<ISqlElement, DefaultEdge> schema, ISqlElement table) {
+	public SqlTableVertexReachableChecker(DirectedGraph<IStructureElement, DefaultEdge> schema, ISqlElement table) {
 		this.schema = schema;
 		this.table = (SqlTableVertex) table;
 		

@@ -27,9 +27,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.iti.graph.nodes.IStructureElement;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.PrimaryKeyColumnConstraint;
-import org.jgrapht.Graph;
+import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
 public abstract class SqlElementFactory {
@@ -73,10 +74,12 @@ public abstract class SqlElementFactory {
 		return t.getSqlElementId().hashCode() + t.getSqlElementType().hashCode();
 	}
 	
-	public static Set<ISqlElement> getSqlElementsOfType(SqlElementType type, Collection<ISqlElement> vertices) {
+	public static Set<ISqlElement> getSqlElementsOfType(SqlElementType type, Collection<IStructureElement> vertices) {
 		Set<ISqlElement> verticesOfType = new HashSet<>();
 		
-		for (ISqlElement t : vertices) {
+		for (IStructureElement element : vertices) {
+			ISqlElement t = (ISqlElement)element;
+
 			if (t.getSqlElementType() == type)
 				verticesOfType.add(t);
 		}
@@ -84,18 +87,23 @@ public abstract class SqlElementFactory {
 		return verticesOfType;
 	}
 
-	public static ISqlElement getMatchingSqlElement(ISqlElement vertex, Set<ISqlElement> vertices) {
+	public static ISqlElement getMatchingSqlElement(ISqlElement vertex, Set<IStructureElement> vertices) {
 
-		for (ISqlElement v : vertices)
+		for (IStructureElement element : vertices) {
+			ISqlElement v = (ISqlElement)element;
+
 			if (v.equals(vertex))
 				return v;
+		}
 		
 		return null;
 	}
 	
-	public static ISqlElement getMatchingSqlElement(SqlElementType type, String id, Collection<ISqlElement> vertices) {
+	public static ISqlElement getMatchingSqlElement(SqlElementType type, String id, Collection<IStructureElement> vertices) {
 		
-		for (ISqlElement v : vertices)
+		for (IStructureElement element : vertices) {
+			ISqlElement v = (ISqlElement)element;
+		
 			if (v.getSqlElementType().equals(type)) {
 				if (type == SqlElementType.Column) {
 					String otherTable = ((SqlColumnVertex) v).getTable();
@@ -108,11 +116,12 @@ public abstract class SqlElementFactory {
 				} else if (v.getSqlElementId().equals(id))
 					return v;
 			}
+		}
 		
 		return null;
 	}
 	
-	public static List<ISqlElement> getMatchingSqlColumns(String id, Collection<ISqlElement> vertices, boolean matchColumnTable) {
+	public static List<ISqlElement> getMatchingSqlColumns(String id, Collection<IStructureElement> vertices, boolean matchColumnTable) {
 		Set<ISqlElement> columns = SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, vertices);
 		List<ISqlElement> matchingColumns = new ArrayList<>();
 		
@@ -127,7 +136,7 @@ public abstract class SqlElementFactory {
 		return matchingColumns;
 	}
 
-	public static ISqlElement getPrimaryKey(ISqlElement table, Graph<ISqlElement, DefaultEdge> schema) {
+	public static ISqlElement getPrimaryKey(ISqlElement table, DirectedGraph<IStructureElement, DefaultEdge> schema) {
 		Set<ISqlElement> columns = getColumnsOfTable(table, schema.vertexSet());
 		
 		for (ISqlElement e : columns) {
@@ -140,7 +149,7 @@ public abstract class SqlElementFactory {
 		return null;
 	}
 
-	private static Set<ISqlElement> getColumnsOfTable(ISqlElement table, Collection<ISqlElement> vertices) {
+	private static Set<ISqlElement> getColumnsOfTable(ISqlElement table, Collection<IStructureElement> vertices) {
 		Set<ISqlElement> columns = SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, vertices);
 		Set<ISqlElement> columnsOfTable = new HashSet<>();
 		
