@@ -21,16 +21,16 @@
 
 package org.iti.sqlSchemaComparison.edge;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
+import org.iti.graph.nodes.IStructureElement;
 import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
 import org.iti.sqlSchemaComparison.frontends.SqlStatementFrontend;
 import org.iti.sqlSchemaComparison.frontends.database.SqliteSchemaFrontend;
 import org.iti.sqlSchemaComparison.frontends.database.SqliteSchemaFrontendTest;
-import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlElementType;
-import org.jgrapht.Graph;
+import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.junit.After;
 import org.junit.Before;
@@ -54,7 +54,7 @@ public class SqlStatementFrontendTest {
 	private static final String QUERY_WITH_TABLE_PREFIXED_COLUMNS_AND_WRONG_TABLE = "SELECT customers.firstname, department.name FROM customers, departments;";
 	private static final String QUERY_WITH_TABLE_PREFIXED_COLUMNS_AND_AMBIGUOUS_TABLES = "SELECT firstname, name FROM customers, departments;";
 	
-	private static Graph<ISqlElement, DefaultEdge> sqliteSchema;
+	private static DirectedGraph<IStructureElement, DefaultEdge> sqliteSchema;
 	
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
@@ -72,7 +72,7 @@ public class SqlStatementFrontendTest {
 	@Test
 	public void singleTableQuery() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(SINGLE_TABLE_QUERY, null);
-		Graph<ISqlElement, DefaultEdge> schema = frontend.createSqlSchema();
+		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
 		
 		assertEquals(1, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
 		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
@@ -81,7 +81,7 @@ public class SqlStatementFrontendTest {
 	@Test
 	public void joinTablQuery() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(JOIN_TABLE_QUERY, sqliteSchema);
-		Graph<ISqlElement, DefaultEdge> schema = frontend.createSqlSchema();
+		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
 		
 		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
 		assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
@@ -90,7 +90,7 @@ public class SqlStatementFrontendTest {
 	@Test
 	public void joinTablWithAliasQuery() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(JOIN_TABLE_WITH_ALIAS_QUERY, sqliteSchema);
-		Graph<ISqlElement, DefaultEdge> schema = frontend.createSqlSchema();
+		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
 		
 		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
 		assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
@@ -99,7 +99,7 @@ public class SqlStatementFrontendTest {
 	@Test
 	public void joinTablWithTableReferenceQuery() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(JOIN_TABLE_WITH_TABLE_REFERENCE_QUERY, sqliteSchema);
-		Graph<ISqlElement, DefaultEdge> schema = frontend.createSqlSchema();
+		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
 		
 		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
 		assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());

@@ -31,6 +31,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.iti.graph.comparison.StructureGraphComparisonException;
+import org.iti.graph.nodes.IStructureElement;
 import org.iti.sqlSchemaComparison.edge.ForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.edge.TableHasColumnEdge;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
@@ -41,10 +43,9 @@ import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.DefaultColumnConstraint;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.NotNullColumnConstraint;
-import org.jgrapht.Graph;
-import org.jgrapht.experimental.isomorphism.IsomorphismRelation;
+import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.SimpleGraph;
+import org.jgrapht.graph.SimpleDirectedGraph;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -55,21 +56,21 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class SqlSchemaComparerTest {
 
-	private static Graph<ISqlElement, DefaultEdge> schema1 = new SimpleGraph<ISqlElement, DefaultEdge>(DefaultEdge.class);
-	private static Graph<ISqlElement, DefaultEdge> schema2 = new SimpleGraph<ISqlElement, DefaultEdge>(DefaultEdge.class);
-	private static Graph<ISqlElement, DefaultEdge> schema3 = new SimpleGraph<ISqlElement, DefaultEdge>(DefaultEdge.class);
-	private static Graph<ISqlElement, DefaultEdge> schema4 = new SimpleGraph<ISqlElement, DefaultEdge>(DefaultEdge.class);
-	private static Graph<ISqlElement, DefaultEdge> schema5 = new SimpleGraph<ISqlElement, DefaultEdge>(DefaultEdge.class);
-	private static Graph<ISqlElement, DefaultEdge> schema6 = new SimpleGraph<ISqlElement, DefaultEdge>(DefaultEdge.class);
-	private static Graph<ISqlElement, DefaultEdge> schema7 = new SimpleGraph<ISqlElement, DefaultEdge>(DefaultEdge.class);
-	private static Graph<ISqlElement, DefaultEdge> schema8 = new SimpleGraph<ISqlElement, DefaultEdge>(DefaultEdge.class);
-	private static Graph<ISqlElement, DefaultEdge> schema9 = new SimpleGraph<ISqlElement, DefaultEdge>(DefaultEdge.class);
+	private static DirectedGraph<IStructureElement, DefaultEdge> schema1 = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
+	private static DirectedGraph<IStructureElement, DefaultEdge> schema2 = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
+	private static DirectedGraph<IStructureElement, DefaultEdge> schema3 = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
+	private static DirectedGraph<IStructureElement, DefaultEdge> schema4 = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
+	private static DirectedGraph<IStructureElement, DefaultEdge> schema5 = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
+	private static DirectedGraph<IStructureElement, DefaultEdge> schema6 = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
+	private static DirectedGraph<IStructureElement, DefaultEdge> schema7 = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
+	private static DirectedGraph<IStructureElement, DefaultEdge> schema8 = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
+	private static DirectedGraph<IStructureElement, DefaultEdge> schema9 = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
 	
-	private static Graph<ISqlElement, DefaultEdge> schema11 = new SimpleGraph<ISqlElement, DefaultEdge>(DefaultEdge.class);
-	private static Graph<ISqlElement, DefaultEdge> schema12 = new SimpleGraph<ISqlElement, DefaultEdge>(DefaultEdge.class);
-	private static Graph<ISqlElement, DefaultEdge> schema13 = new SimpleGraph<ISqlElement, DefaultEdge>(DefaultEdge.class);
+	private static DirectedGraph<IStructureElement, DefaultEdge> schema11 = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
+	private static DirectedGraph<IStructureElement, DefaultEdge> schema12 = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
+	private static DirectedGraph<IStructureElement, DefaultEdge> schema13 = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
 	
-	private static Graph<ISqlElement, DefaultEdge> schema31 = new SimpleGraph<ISqlElement, DefaultEdge>(DefaultEdge.class);
+	private static DirectedGraph<IStructureElement, DefaultEdge> schema31 = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
 	
 	private static ISqlElement t1 = SqlElementFactory.createSqlElement(SqlElementType.Table, "t1");
 	private static ISqlElement t2 = SqlElementFactory.createSqlElement(SqlElementType.Table, "t2");
@@ -180,42 +181,18 @@ public class SqlSchemaComparerTest {
 	public void setUp() { }
 
 	@Test
-	public void isomorphicGraphsAreDetectedCorrectly()  {
+	public void isomorphicGraphsAreDetectedCorrectly() throws StructureGraphComparisonException  {
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema2, schema3);
 		
 		assertTrue(comparer.isIsomorphic());
 	}
 	
 	@Test
-	public void isomorphismMapsVerticesCorrectly()  {
-		SqlSchemaComparer comparer = new SqlSchemaComparer(schema2, schema3);
-
-		assertTrue(comparer.isIsomorphic());
-		
-		for (IsomorphismRelation<ISqlElement, Graph<ISqlElement, DefaultEdge>> isomorphism : comparer.getIsomorphisms()) {
-			assertEquals(t1, isomorphism.getVertexCorrespondence(t1, false));
-			assertEquals(t1, isomorphism.getVertexCorrespondence(t1, true));
-			assertEquals(t2, isomorphism.getVertexCorrespondence(t2, false));
-			assertEquals(t2, isomorphism.getVertexCorrespondence(t2, true));
-			
-			assertEquals(c1, isomorphism.getVertexCorrespondence(c1, false));
-			assertEquals(c1, isomorphism.getVertexCorrespondence(c1, true));
-			assertEquals(c12, isomorphism.getVertexCorrespondence(c12, false));
-			assertEquals(c12, isomorphism.getVertexCorrespondence(c12, true));
-			assertEquals(c2, isomorphism.getVertexCorrespondence(c2, false));
-			assertEquals(c2, isomorphism.getVertexCorrespondence(c2, true));
-			assertEquals(c22, isomorphism.getVertexCorrespondence(c22, false));
-			assertEquals(c22, isomorphism.getVertexCorrespondence(c22, true));
-		}
-	}
-	
-	@Test
-	public void newTableIsDetectedCorrectly()  {
+	public void newTableIsDetectedCorrectly() throws StructureGraphComparisonException  {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema1, schema5);
 		Entry<ISqlElement, SchemaModification> entry = null;
 		
 		assertFalse(comparer1.isIsomorphic());
-		assertNotNull(comparer1.matching);
 		assertNotNull(comparer1.comparisonResult);
 
 		Iterator<Entry<ISqlElement, SchemaModification>> iter = comparer1.comparisonResult.getModifications().entrySet().iterator();
@@ -233,26 +210,27 @@ public class SqlSchemaComparerTest {
 	}
 	
 	@Test
-	public void removedTableIsDetectedCorrectly()  {
+	public void removedTableIsDetectedCorrectly() throws StructureGraphComparisonException  {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema1, schema8);
 		
 		assertFalse(comparer1.isIsomorphic());
-		assertNotNull(comparer1.matching);
 		assertNotNull(comparer1.comparisonResult);
+		assertTrue(comparer1.comparisonResult.getModifications().size() > 0);
 
-		Entry<ISqlElement, SchemaModification> entry = comparer1.comparisonResult.getModifications().entrySet().iterator().next();
-
-		assertEquals(SchemaModification.DELETE_TABLE, entry.getValue());
-		assertEquals(t1.getSqlElementId(), entry.getKey().getSqlElementId());
+		for (Entry<ISqlElement, SchemaModification> entry : comparer1.comparisonResult.getModifications().entrySet()) {
+			if (entry.getValue() == SchemaModification.DELETE_TABLE) {
+				assertEquals(t1.getSqlElementId(), entry.getKey().getSqlElementId());
+				break;
+			}
+		}
 	}
 	
 	@Test
-	public void renamedTableIsDetectedCorrectly()  {
+	public void renamedTableIsDetectedCorrectly() throws StructureGraphComparisonException  {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema1, schema9);
 		Entry<ISqlElement, SchemaModification> renameEntry = null;
 		
 		assertFalse(comparer1.isIsomorphic());
-		assertNotNull(comparer1.matching);
 		assertNotNull(comparer1.comparisonResult);
 
 		for (Entry<ISqlElement, SchemaModification> entry : comparer1.comparisonResult.getModifications().entrySet()) {
@@ -263,15 +241,14 @@ public class SqlSchemaComparerTest {
 		}
 
 		assertNotNull(renameEntry);
-		assertEquals(t1.getSqlElementId(), renameEntry.getKey().getSqlElementId());
+		assertEquals(t2.getSqlElementId(), renameEntry.getKey().getSqlElementId());
 	}
 	
 	@Test
-	public void newColumnIsDetectedCorrectly()  {
+	public void newColumnIsDetectedCorrectly() throws StructureGraphComparisonException  {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema7, schema1);
 		
 		assertFalse(comparer1.isIsomorphic());
-		assertNotNull(comparer1.matching);
 		assertNotNull(comparer1.comparisonResult);
 
 		Entry<ISqlElement, SchemaModification> entry = comparer1.comparisonResult.getModifications().entrySet().iterator().next();
@@ -281,11 +258,10 @@ public class SqlSchemaComparerTest {
 	}
 	
 	@Test
-	public void removedColumnIsDetectedCorrectly()  {
+	public void removedColumnIsDetectedCorrectly() throws StructureGraphComparisonException  {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema1, schema7);
 		
 		assertFalse(comparer1.isIsomorphic());
-		assertNotNull(comparer1.matching);
 		assertNotNull(comparer1.comparisonResult);
 
 		Entry<ISqlElement, SchemaModification> entry = comparer1.comparisonResult.getModifications().entrySet().iterator().next();
@@ -295,25 +271,23 @@ public class SqlSchemaComparerTest {
 	}
 	
 	@Test
-	public void renamedColumnIsDetectedCorrectly()  {
+	public void renamedColumnIsDetectedCorrectly() throws StructureGraphComparisonException  {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema1, schema6);
 		
 		assertFalse(comparer1.isIsomorphic());
-		assertNotNull(comparer1.matching);
 		assertNotNull(comparer1.comparisonResult);
 
 		Entry<ISqlElement, SchemaModification> entry = comparer1.comparisonResult.getModifications().entrySet().iterator().next();
 
 		assertEquals(SchemaModification.RENAME_COLUMN, entry.getValue());
-		assertEquals(c1.getSqlElementId(), entry.getKey().getSqlElementId());
+		assertEquals(c2.getSqlElementId(), entry.getKey().getSqlElementId());
 	}
 	
 	@Test
-	public void movedColumnIsDetectedCorrectly()  {
+	public void movedColumnIsDetectedCorrectly() throws StructureGraphComparisonException  {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema4, schema5);
 		
 		assertFalse(comparer1.isIsomorphic());
-		assertNotNull(comparer1.matching);
 		assertNotNull(comparer1.comparisonResult);
 
 		Entry<ISqlElement, SchemaModification> entry = comparer1.comparisonResult.getModifications().entrySet().iterator().next();
@@ -323,7 +297,7 @@ public class SqlSchemaComparerTest {
 	}
 	
 	@Test
-	public void unchangedColumnAttributesDetectedCorrectly() {
+	public void unchangedColumnAttributesDetectedCorrectly() throws StructureGraphComparisonException {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema11, schema11);
 		SqlSchemaColumnComparisonResult.ColumnConstraintComparisonResult cccr = comparer1.comparisonResult.getColumnComparisonResults().get(c111).getConstraintComparisonResult();		
 		
@@ -335,14 +309,14 @@ public class SqlSchemaComparerTest {
 	}
 	
 	@Test
-	public void changedColumnTypeDetectedCorrectly() {
+	public void changedColumnTypeDetectedCorrectly() throws StructureGraphComparisonException {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema11, schema12);		
 
 		assertTrue(comparer1.comparisonResult.getColumnComparisonResults().get(c112).hasColumnTypeChanged());
 	}
 	
 	@Test
-	public void addedColumnConstraintDetectedCorrectly() {
+	public void addedColumnConstraintDetectedCorrectly() throws StructureGraphComparisonException {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema11, schema12);		
 		SqlSchemaColumnComparisonResult.ColumnConstraintComparisonResult cccr = comparer1.comparisonResult.getColumnComparisonResults().get(c112).getConstraintComparisonResult();
 		
@@ -350,7 +324,7 @@ public class SqlSchemaComparerTest {
 	}
 	
 	@Test
-	public void removedColumnConstraintDetectedCorrectly() {
+	public void removedColumnConstraintDetectedCorrectly() throws StructureGraphComparisonException {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema11, schema13);		
 		SqlSchemaColumnComparisonResult.ColumnConstraintComparisonResult cccr = comparer1.comparisonResult.getColumnComparisonResults().get(c113).getConstraintComparisonResult();
 		
@@ -358,7 +332,7 @@ public class SqlSchemaComparerTest {
 	}
 	
 	@Test
-	public void noChangeInForeignKeyRelationsDetectedCorrectly() {
+	public void noChangeInForeignKeyRelationsDetectedCorrectly() throws StructureGraphComparisonException {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema31, schema31);
 		SqlSchemaComparisonResult result = comparer1.comparisonResult;
 		
@@ -368,7 +342,7 @@ public class SqlSchemaComparerTest {
 	}
 	
 	@Test
-	public void addedForeignKeyRelationDetectedCorrectly() {
+	public void addedForeignKeyRelationDetectedCorrectly() throws StructureGraphComparisonException {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema3, schema31);
 		SqlSchemaComparisonResult result = comparer1.comparisonResult;
 		
@@ -378,7 +352,7 @@ public class SqlSchemaComparerTest {
 	}
 	
 	@Test
-	public void removedForeignKeyRelationDetectedCorrectly() {
+	public void removedForeignKeyRelationDetectedCorrectly() throws StructureGraphComparisonException {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema31, schema3);
 		SqlSchemaComparisonResult result = comparer1.comparisonResult;
 		

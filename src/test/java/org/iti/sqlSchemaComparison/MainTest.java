@@ -21,6 +21,7 @@
 
 package org.iti.sqlSchemaComparison;
 
+import org.iti.graph.comparison.StructureGraphComparisonException;
 import org.iti.sqlSchemaComparison.edge.SqlStatementFrontendTest;
 import org.iti.sqlSchemaComparison.frontends.database.SqliteSchemaFrontendTest;
 import org.junit.After;
@@ -36,7 +37,7 @@ public class MainTest {
 	public void setUp() { }
 	
 	@Test
-	public void databaseSchemaComparison() {
+	public void databaseSchemaComparison() throws StructureGraphComparisonException {
 		String[] args = new String[] { 
 			SqliteSchemaFrontendTest.DATABASE_FILE_PATH,
 			SqliteSchemaFrontendTest.DATABASE_FILE_PATH,
@@ -59,7 +60,7 @@ public class MainTest {
 	}
 	
 	@Test
-	public void statementValidation() {
+	public void statementValidation() throws StructureGraphComparisonException {
 		String[] args = new String[] {
 			"-statement",
 			SqlStatementFrontendTest.SINGLE_TABLE_QUERY,
@@ -70,7 +71,7 @@ public class MainTest {
 	}
 	
 	@Test
-	public void statementValidationMissingColumn() {
+	public void statementValidationMissingColumn() throws StructureGraphComparisonException {
 		String[] args = new String[] {
 			"-statement",
 			SqlStatementExpectationValidatorTest.QUERY_WITH_MISSING_COLUMN,
@@ -81,7 +82,7 @@ public class MainTest {
 	}
 	
 	@Test
-	public void statementValidationMissingButReachableColumn() {
+	public void statementValidationMissingButReachableColumn() throws StructureGraphComparisonException {
 		String[] args = new String[] {
 			"-statement",
 			SqlStatementExpectationValidatorTest.QUERY_WITH_FOREIGN_TABLE_REFERENCE,

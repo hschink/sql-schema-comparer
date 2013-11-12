@@ -161,7 +161,7 @@ public class StructureGraphComparerTestHelper {
 
 	static void givenExpectRenameDetail(Map<String, IModificationDetail> expectedModificationDetails) {
 		expectedModificationDetails.put("re.Edge1(cn1.Edge2(cn3r))",
-				new OriginalStructureElement("re.Edge1(cn1.Edge2(cn3))", cn3.getIdentifier()));
+				new OriginalStructureElement("re.Edge1(cn1.Edge2(cn3))"));
 	}
 
 	static void givenExpectMove(Map<String, Type> expectedModifications) {
@@ -170,7 +170,7 @@ public class StructureGraphComparerTestHelper {
 
 	static IModificationDetail givenExpectMoveDetail(Map<String, IModificationDetail> expectedModificationDetails) {
 		return expectedModificationDetails.put("re.Edge1(cn1.Edge3(cn4.Edge6(cn6)))",
-				new OriginalStructureElement("re.Edge4(cn2.Edge6(cn6))", cn6.getIdentifier()));
+				new OriginalStructureElement("re.Edge4(cn2.Edge6(cn6))"));
 	}
 
 	static void assertNodeModificationExpectations(
@@ -193,7 +193,6 @@ public class StructureGraphComparerTestHelper {
 			if (detail == null) {
 				assertNull(expectation.getKey(), actualDetail);;
 			} else {
-				assertEquals(expectation.getKey(), detail.getPath(), detail.getPath());
 				assertEquals(expectation.getKey(), detail.getIdentifier(), detail.getIdentifier());
 			}
 		}
