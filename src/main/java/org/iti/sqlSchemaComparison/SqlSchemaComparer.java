@@ -79,7 +79,6 @@ public class SqlSchemaComparer {
 		for (Entry<String, StructureElementModification> entry : result.getModifications().entrySet()) {
 			Type type = entry.getValue().getType();
 			ISqlElement currentSqlElement = getCurrentSqlElement(entry.getKey(), type);
-//			ISqlElement originalSqlElement = getOriginalSqlElement(entry.getValue());
 
 			comparisonResult.addModification(currentSqlElement, getModificationType(currentSqlElement, type));
 		}
@@ -149,18 +148,6 @@ public class SqlSchemaComparer {
 		return (ISqlElement)element;
 	}
 
-//	private ISqlElement getOriginalSqlElement(StructureElementModification structureElementModification) {
-//		IStructureElement element = null;
-//
-//		if (structureElementModification != null) {
-//			String identifier = structureElementModification.getModificationDetail().getIdentifier();
-//
-//			element = graph1.getStructureElement(identifier);
-//		}
-//
-//		return (ISqlElement)element;
-//	}
-
 	private SchemaModification getModificationType(ISqlElement sqlElement,
 			Type modificationType) {
 		if (sqlElement instanceof SqlTableVertex) {
@@ -190,8 +177,9 @@ public class SqlSchemaComparer {
         removedForeignKeyRelations.removeAll(addedForeignKeyRelations);
         addedForeignKeyRelations.removeAll(allForeignKeyRelations);
         
-        if (comparisonResult == null)
-                comparisonResult = new SqlSchemaComparisonResult();
+        if (comparisonResult == null) {
+	        comparisonResult = new SqlSchemaComparisonResult();
+		}
         
         comparisonResult.setAddedForeignKeyRelations(addedForeignKeyRelations);
         comparisonResult.setRemovedForeignKeyRelations(removedForeignKeyRelations);
@@ -200,9 +188,11 @@ public class SqlSchemaComparer {
 	private List<IForeignKeyRelationEdge> getForeignKeyRelations(Set<DefaultEdge> edges) {
         List<IForeignKeyRelationEdge> list = new ArrayList<>();
         
-        for (DefaultEdge edge : edges)
-                if (edge instanceof IForeignKeyRelationEdge)
-                        list.add((IForeignKeyRelationEdge) edge);
+        for (DefaultEdge edge : edges) {
+            if (edge instanceof IForeignKeyRelationEdge) {
+                list.add((IForeignKeyRelationEdge) edge);
+            }
+        }
         
         return list;
 	}
