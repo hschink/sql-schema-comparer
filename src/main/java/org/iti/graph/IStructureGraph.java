@@ -40,4 +40,6 @@ public interface IStructureGraph {
 	List<IStructureElement> getStructureElements(String path);
 
 	List<IStructureElement> getStructureElements(String path, boolean directAncestorsOnly);
+
+	List<String> getPathes();
 }

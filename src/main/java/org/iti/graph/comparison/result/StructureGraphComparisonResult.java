@@ -52,10 +52,19 @@ public class StructureGraphComparisonResult {
 	}
 
 	public Map<String, IStructureModification> getNodeModifications() {
+		return getModifications(StructureElementModification.class);
+	}
+
+	public Map<String, IStructureModification> getPathModifications() {
+		return getModifications(StructurePathModification.class);
+	}
+
+	private Map<String, IStructureModification> getModifications(
+			Class<?> class1) {
 		Map<String, IStructureModification> nodeModifications = new HashMap<>();
 
 		for (Entry<String, IStructureModification> e : modifications.entrySet()) {
-			if (e.getValue() instanceof StructureElementModification) {
+			if (class1.isInstance(e.getValue())) {
 				nodeModifications.put(e.getKey(), e.getValue());
 			}
 		}

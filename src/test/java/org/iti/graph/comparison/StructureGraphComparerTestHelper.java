@@ -2,6 +2,7 @@ package org.iti.graph.comparison;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -110,22 +111,22 @@ public class StructureGraphComparerTestHelper {
 		currentGraph.addEdge(cn4, cn6, new Edge6());
 	}
 
-	static void givenExpectRemoval(StructureGraph originalGraph,
+	static void givenExpectedNodeRemovals(StructureGraph originalGraph,
 			Map<String, Type> expectedModifications) {
-		givenExpectNodeRemoved(cn3, originalGraph, expectedModifications);
-		givenExpectNodeRemoved(cn2, originalGraph, expectedModifications);
-		givenExpectNodeRemoved(cn5, originalGraph, expectedModifications);
-		givenExpectNodeRemoved(cn6, originalGraph, expectedModifications);
+		givenExpectedNodeRemovals(cn3, originalGraph, expectedModifications);
+		givenExpectedNodeRemovals(cn2, originalGraph, expectedModifications);
+		givenExpectedNodeRemovals(cn5, originalGraph, expectedModifications);
+		givenExpectedNodeRemovals(cn6, originalGraph, expectedModifications);
 	}
 
-	static void givenExpectNodeRemoved(IStructureElement element,
+	static void givenExpectedNodeRemovals(IStructureElement element,
 			StructureGraph originalGraph,
 			Map<String, Type> expectedModifications) {
 
 		expectedModifications.put(originalGraph.getIdentifier(element), Type.NodeDeleted);
 	}
 
-	static void givenExpectRemovalDetails(StructureGraph originalGraph,
+	static void givenExpectedNodeRemovalDetails(StructureGraph originalGraph,
 			Map<String, IModificationDetail> expectedModificationDetails) {
 		expectedModificationDetails.put(originalGraph.getIdentifier(cn3), null);
 		expectedModificationDetails.put(originalGraph.getIdentifier(cn2), null);
@@ -133,19 +134,45 @@ public class StructureGraphComparerTestHelper {
 		expectedModificationDetails.put(originalGraph.getIdentifier(cn6), null);
 	}
 
-	static void givenExpectAddition(DirectedGraph<IStructureElement, DefaultEdge> currentGraph,
+	static void givenExpectedPathRemovals(StructureGraph originalGraph,
+			Map<String, Type> expectedModifications) {
+		givenExpectedPathRemovals("cn1.Edge2", expectedModifications);
+		givenExpectedPathRemovals("re.Edge4", expectedModifications);
+		givenExpectedPathRemovals("cn2.Edge5", expectedModifications);
+		givenExpectedPathRemovals("cn2.Edge6", expectedModifications);
+	}
+
+	static void givenExpectedPathRemovals(String path,
+			Map<String, Type> expectedModifications) {
+
+		expectedModifications.put(path, Type.PathDeleted);
+	}
+
+	static void givenExpectedNodeAddition(DirectedGraph<IStructureElement, DefaultEdge> currentGraph,
 			Map<String, Type> expectedModifications) {
 		StructureGraph structureGraphCurrent = new StructureGraph(currentGraph);
 
-		givenExpectNodeAdded(cn7, structureGraphCurrent, expectedModifications);
-		givenExpectNodeAdded(cn8, structureGraphCurrent, expectedModifications);
+		givenExpectedNodeAddition(cn7, structureGraphCurrent, expectedModifications);
+		givenExpectedNodeAddition(cn8, structureGraphCurrent, expectedModifications);
 	}
 
-	static void givenExpectNodeAdded(IStructureElement element,
+	static void givenExpectedNodeAddition(IStructureElement element,
 			StructureGraph currentGraph,
 			Map<String, Type> expectedModifications) {
 
 		expectedModifications.put(currentGraph.getIdentifier(element), Type.NodeAdded);
+	}
+
+	static void givenExpectedPathAddition(DirectedGraph<IStructureElement, DefaultEdge> currentGraph,
+			Map<String, Type> expectedModifications) {
+		givenExpectedPathAddition("cn1.Edge7", expectedModifications);
+		givenExpectedPathAddition("re.Edge8", expectedModifications);
+	}
+
+	static void givenExpectedPathAddition(String path,
+			Map<String, Type> expectedModifications) {
+
+		expectedModifications.put(path, Type.PathAdded);
 	}
 
 	static void givenExpectAdditionDetails(DirectedGraph<IStructureElement, DefaultEdge> currentGraph,
@@ -174,10 +201,11 @@ public class StructureGraphComparerTestHelper {
 				new OriginalStructureElement("re.Edge4(cn2.Edge6(cn6))"));
 	}
 
-	static void assertNodeModificationExpectations(
+	static void assertModificationExpectations(
 			Map<String, Type> expectedModifications,
 			StructureGraphComparisonResult result) {
 		for (Entry<String, Type> expectation : expectedModifications.entrySet()) {
+			assertNotNull(result.getModifications().get(expectation.getKey()));
 			assertEquals(expectation.getKey(),
 					expectation.getValue(),
 					result.getModifications().get(expectation.getKey()).getType());

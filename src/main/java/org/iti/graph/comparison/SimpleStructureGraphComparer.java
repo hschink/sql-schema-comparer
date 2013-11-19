@@ -27,6 +27,7 @@ import java.util.List;
 import org.iti.graph.IStructureGraph;
 import org.iti.graph.comparison.result.StructureElementModification;
 import org.iti.graph.comparison.result.StructureGraphComparisonResult;
+import org.iti.graph.comparison.result.StructurePathModification;
 import org.iti.graph.comparison.result.Type;
 import org.iti.graph.nodes.IStructureElement;
 
@@ -38,10 +39,12 @@ public class SimpleStructureGraphComparer implements IStructureGraphComparer {
 		List<String> removedNodeIds = getMissingNodeIds(oldGraph, newGraph);
 		List<String> addedNodeIds = getMissingNodeIds(newGraph, oldGraph);
 		List<String> removedPathes = getMissingPathes(oldGraph, newGraph);
-		List<String> addedPathes = getMissingPathes(oldGraph, newGraph);
+		List<String> addedPathes = getMissingPathes(newGraph, oldGraph);
 
 		addNodesWithModificationToResult(oldGraph, removedNodeIds, Type.NodeDeleted, result);
 		addNodesWithModificationToResult(newGraph, addedNodeIds, Type.NodeAdded, result);
+		addPathesWithModificationToResult(oldGraph, removedPathes, Type.PathDeleted, result);
+		addPathesWithModificationToResult(newGraph, addedPathes, Type.PathAdded, result);
 
 		return result;
 	}
@@ -55,6 +58,16 @@ public class SimpleStructureGraphComparer implements IStructureGraphComparer {
 
 		return oldNodes;
 	}	
+
+	private List<String> getMissingPathes(IStructureGraph oldGraph,
+			IStructureGraph newGraph) {
+		List<String> oldPathes = new ArrayList<>(oldGraph.getPathes());
+		List<String> newPathes = new ArrayList<>(newGraph.getPathes());
+
+		oldPathes.removeAll(newPathes);
+
+		return oldPathes;
+	}
 
 	private static void addNodesWithModificationToResult(IStructureGraph graph,
 			List<String> nodeIds,
@@ -80,5 +93,17 @@ public class SimpleStructureGraphComparer implements IStructureGraphComparer {
 		}
 
 		return nodes;
+	}
+
+	private void addPathesWithModificationToResult(IStructureGraph oldGraph,
+			List<String> pathes,
+			Type type,
+			StructureGraphComparisonResult result) {
+
+		for (String path : pathes) {
+			StructurePathModification modification = new StructurePathModification(path, type);
+
+			result.addModification(path, modification);
+		}
 	}
 }

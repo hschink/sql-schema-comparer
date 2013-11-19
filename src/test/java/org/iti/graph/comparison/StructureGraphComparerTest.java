@@ -73,28 +73,28 @@ public class StructureGraphComparerTest {
 	@Test
 	public void detectsRemovedNodes() throws StructureGraphComparisonException {
 		StructureGraphComparerTestHelper.givenRemovedNodes(currentGraph);
-		StructureGraphComparerTestHelper.givenExpectRemoval(structureGraphOriginal, expectedModifications);
-		StructureGraphComparerTestHelper.givenExpectRemovalDetails(structureGraphOriginal, expectedModificationDetails);
+		StructureGraphComparerTestHelper.givenExpectedNodeRemovals(structureGraphOriginal, expectedModifications);
+		StructureGraphComparerTestHelper.givenExpectedNodeRemovalDetails(structureGraphOriginal, expectedModificationDetails);
 
 		whenComparisonResultIsCreated();
 
 		assertEquals(expectedModifications.size(), result.getNodeModifications().size());
 
-		StructureGraphComparerTestHelper.assertNodeModificationExpectations(expectedModifications, result);
+		StructureGraphComparerTestHelper.assertModificationExpectations(expectedModifications, result);
 		StructureGraphComparerTestHelper.assertNodeModificationDetailExpectations(expectedModificationDetails, result);
 	}
 
 	@Test
 	public void detectsAddedNodes() throws StructureGraphComparisonException {
 		StructureGraphComparerTestHelper.givenAddedNodes(currentGraph);
-		StructureGraphComparerTestHelper.givenExpectAddition(currentGraph, expectedModifications);
+		StructureGraphComparerTestHelper.givenExpectedNodeAddition(currentGraph, expectedModifications);
 		StructureGraphComparerTestHelper.givenExpectAdditionDetails(currentGraph, expectedModificationDetails);
 
 		whenComparisonResultIsCreated();
 
 		assertEquals(expectedModifications.size(), result.getNodeModifications().size());
 
-		StructureGraphComparerTestHelper.assertNodeModificationExpectations(expectedModifications, result);
+		StructureGraphComparerTestHelper.assertModificationExpectations(expectedModifications, result);
 		StructureGraphComparerTestHelper.assertNodeModificationDetailExpectations(expectedModificationDetails, result);
 	}
 
@@ -102,16 +102,16 @@ public class StructureGraphComparerTest {
 	public void detectsAddedAndRemovedNodes() throws StructureGraphComparisonException {
 		StructureGraphComparerTestHelper.givenRemovedNodes(currentGraph);
 		StructureGraphComparerTestHelper.givenAddedNodes(currentGraph);
-		StructureGraphComparerTestHelper.givenExpectAddition(currentGraph, expectedModifications);
-		StructureGraphComparerTestHelper.givenExpectRemoval(structureGraphOriginal, expectedModifications);
+		StructureGraphComparerTestHelper.givenExpectedNodeAddition(currentGraph, expectedModifications);
+		StructureGraphComparerTestHelper.givenExpectedNodeRemovals(structureGraphOriginal, expectedModifications);
 		StructureGraphComparerTestHelper.givenExpectAdditionDetails(currentGraph, expectedModificationDetails);
-		StructureGraphComparerTestHelper.givenExpectRemovalDetails(structureGraphOriginal, expectedModificationDetails);
+		StructureGraphComparerTestHelper.givenExpectedNodeRemovalDetails(structureGraphOriginal, expectedModificationDetails);
 
 		whenComparisonResultIsCreated();
 
 		assertEquals(expectedModifications.size(), result.getNodeModifications().size());
 
-		StructureGraphComparerTestHelper.assertNodeModificationExpectations(expectedModifications, result);
+		StructureGraphComparerTestHelper.assertModificationExpectations(expectedModifications, result);
 		StructureGraphComparerTestHelper.assertNodeModificationDetailExpectations(expectedModificationDetails, result);
 	}
 
@@ -125,7 +125,7 @@ public class StructureGraphComparerTest {
 
 		assertEquals(expectedModifications.size(), result.getNodeModifications().size());
 
-		StructureGraphComparerTestHelper.assertNodeModificationExpectations(expectedModifications, result);
+		StructureGraphComparerTestHelper.assertModificationExpectations(expectedModifications, result);
 		StructureGraphComparerTestHelper.assertNodeModificationDetailExpectations(expectedModificationDetails, result);
 	}
 
@@ -139,7 +139,7 @@ public class StructureGraphComparerTest {
 
 		assertEquals(expectedModifications.size(), result.getNodeModifications().size());
 
-		StructureGraphComparerTestHelper.assertNodeModificationExpectations(expectedModifications, result);
+		StructureGraphComparerTestHelper.assertModificationExpectations(expectedModifications, result);
 		StructureGraphComparerTestHelper.assertNodeModificationDetailExpectations(expectedModificationDetails, result);
 	}
 
@@ -156,7 +156,7 @@ public class StructureGraphComparerTest {
 
 		assertEquals(expectedModifications.size(), result.getNodeModifications().size());
 
-		StructureGraphComparerTestHelper.assertNodeModificationExpectations(expectedModifications, result);
+		StructureGraphComparerTestHelper.assertModificationExpectations(expectedModifications, result);
 	}
 	
 	@Test(expected=AmbiguousRenameException.class)
