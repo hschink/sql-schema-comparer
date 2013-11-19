@@ -19,7 +19,7 @@
  *
  */
 
-package org.iti.graph.comparison;
+package org.iti.graph.comparison.result;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,13 +45,25 @@ public class StructureGraphComparisonResult {
 		return newGraph;
 	}
 
-	private Map<String, StructureElementModification> modifications = new HashMap<>();
+	private Map<String, IStructureModification> modifications = new HashMap<>();
 
-	public Map<String, StructureElementModification> getModifications() {
+	public Map<String, IStructureModification> getModifications() {
 		return modifications;
 	}
 
-	public void addModification(String path, StructureElementModification modification) {
+	public Map<String, IStructureModification> getNodeModifications() {
+		Map<String, IStructureModification> nodeModifications = new HashMap<>();
+
+		for (Entry<String, IStructureModification> e : modifications.entrySet()) {
+			if (e.getValue() instanceof StructureElementModification) {
+				nodeModifications.put(e.getKey(), e.getValue());
+			}
+		}
+
+		return nodeModifications;
+	}
+
+	public void addModification(String path, IStructureModification modification) {
 		modifications.put(path, modification);
 	}
 
@@ -65,10 +77,10 @@ public class StructureGraphComparisonResult {
 		this.newGraph = newGraph;
 	}
 
-	public Collection<IStructureElement> getElementsByModification(StructureElementModification.Type type) {
+	public Collection<IStructureElement> getElementsByModification(Type type) {
 		List<IStructureElement> elements = new ArrayList<>();
 
-		for (Entry<String, StructureElementModification> m : modifications.entrySet()) {
+		for (Entry<String, IStructureModification> m : modifications.entrySet()) {
 			if (m.getValue().getType() == type) {
 				elements.add(getElementByPath(m.getKey()));
 			}
@@ -88,10 +100,10 @@ public class StructureGraphComparisonResult {
 	}
 
 	public Collection<IStructureElement> getElementsByIdentifier(String identifier,
-			StructureElementModification.Type type) {
+			Type type) {
 		List<IStructureElement> elements = new ArrayList<>();
 
-		for (Entry<String, StructureElementModification> m : modifications.entrySet()) {
+		for (Entry<String, IStructureModification> m : modifications.entrySet()) {
 			IStructureElement element = getElementByPath(m.getKey());
 
 			if (m.getValue().getType() == type && element.getIdentifier().equals(identifier)) {

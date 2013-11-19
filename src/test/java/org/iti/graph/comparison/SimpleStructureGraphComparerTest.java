@@ -27,7 +27,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.iti.graph.StructureGraph;
-import org.iti.graph.comparison.StructureElementModification.Type;
+import org.iti.graph.comparison.result.StructureGraphComparisonResult;
+import org.iti.graph.comparison.result.Type;
 import org.iti.graph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -68,7 +69,7 @@ public class SimpleStructureGraphComparerTest {
 
 		whenComparisonResultIsCreated();
 
-		assertEquals(expectedModifications.size(), result.getModifications().size());
+		assertEquals(expectedModifications.size(), result.getNodeModifications().size());
 
 		StructureGraphComparerTestHelper.assertNodeModificationExpectations(expectedModifications, result);
 	}
@@ -80,7 +81,7 @@ public class SimpleStructureGraphComparerTest {
 
 		whenComparisonResultIsCreated();
 
-		assertEquals(expectedModifications.size(), result.getModifications().size());
+		assertEquals(expectedModifications.size(), result.getNodeModifications().size());
 
 		StructureGraphComparerTestHelper.assertNodeModificationExpectations(expectedModifications, result);
 	}
@@ -94,7 +95,7 @@ public class SimpleStructureGraphComparerTest {
 
 		whenComparisonResultIsCreated();
 
-		assertEquals(expectedModifications.size(), result.getModifications().size());
+		assertEquals(expectedModifications.size(), result.getNodeModifications().size());
 
 		StructureGraphComparerTestHelper.assertNodeModificationExpectations(expectedModifications, result);
 	}
@@ -107,7 +108,7 @@ public class SimpleStructureGraphComparerTest {
 
 		whenComparisonResultIsCreated();
 
-		assertEquals(expectedModifications.size(), result.getModifications().size());
+		assertEquals(expectedModifications.size(), result.getNodeModifications().size());
 
 		StructureGraphComparerTestHelper.assertNodeModificationExpectations(expectedModifications, result);
 	}
@@ -120,7 +121,7 @@ public class SimpleStructureGraphComparerTest {
 
 		whenComparisonResultIsCreated();
 
-		assertEquals(expectedModifications.size(), result.getModifications().size());
+		assertEquals(expectedModifications.size(), result.getNodeModifications().size());
 
 		StructureGraphComparerTestHelper.assertNodeModificationExpectations(expectedModifications, result);
 	}

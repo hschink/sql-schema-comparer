@@ -30,11 +30,11 @@ import java.util.Set;
 
 import org.iti.graph.StructureGraph;
 import org.iti.graph.comparison.IStructureGraphComparer;
-import org.iti.graph.comparison.StructureElementModification;
-import org.iti.graph.comparison.StructureElementModification.Type;
 import org.iti.graph.comparison.StructureGraphComparer;
 import org.iti.graph.comparison.StructureGraphComparisonException;
-import org.iti.graph.comparison.StructureGraphComparisonResult;
+import org.iti.graph.comparison.result.IStructureModification;
+import org.iti.graph.comparison.result.StructureGraphComparisonResult;
+import org.iti.graph.comparison.result.Type;
 import org.iti.graph.nodes.IStructureElement;
 import org.iti.sqlSchemaComparison.edge.IForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
@@ -76,7 +76,7 @@ public class SqlSchemaComparer {
 	private void setSqlSchemaComparisonResult(
 			StructureGraphComparisonResult result) {
 		
-		for (Entry<String, StructureElementModification> entry : result.getModifications().entrySet()) {
+		for (Entry<String, IStructureModification> entry : result.getNodeModifications().entrySet()) {
 			Type type = entry.getValue().getType();
 			ISqlElement currentSqlElement = getCurrentSqlElement(entry.getKey(), type);
 
@@ -108,7 +108,7 @@ public class SqlSchemaComparer {
 	private Map<ISqlElement, SqlSchemaColumnComparisonResult> compareRenamedColumns(StructureGraphComparisonResult result) {
 		Map<ISqlElement, SqlSchemaColumnComparisonResult> columnComparisonResults = new HashMap<>();
 
-		for (Entry<String, StructureElementModification> entry : result.getModifications().entrySet()) {
+		for (Entry<String, IStructureModification> entry : result.getNodeModifications().entrySet()) {
 			ISqlElement current = (ISqlElement) graph2.getStructureElement(entry.getKey());
 
 			if (current instanceof SqlColumnVertex) {

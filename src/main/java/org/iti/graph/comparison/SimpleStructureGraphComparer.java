@@ -25,6 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.iti.graph.IStructureGraph;
+import org.iti.graph.comparison.result.StructureElementModification;
+import org.iti.graph.comparison.result.StructureGraphComparisonResult;
+import org.iti.graph.comparison.result.Type;
 import org.iti.graph.nodes.IStructureElement;
 
 public class SimpleStructureGraphComparer implements IStructureGraphComparer {
@@ -34,16 +37,11 @@ public class SimpleStructureGraphComparer implements IStructureGraphComparer {
 		StructureGraphComparisonResult result = new StructureGraphComparisonResult(oldGraph, newGraph);
 		List<String> removedNodeIds = getMissingNodeIds(oldGraph, newGraph);
 		List<String> addedNodeIds = getMissingNodeIds(newGraph, oldGraph);
+		List<String> removedPathes = getMissingPathes(oldGraph, newGraph);
+		List<String> addedPathes = getMissingPathes(oldGraph, newGraph);
 
-		addNodesWithModificationToResult(oldGraph,
-				removedNodeIds,
-				StructureElementModification.Type.NodeDeleted,
-				result);
-		addNodesWithModificationToResult(
-				newGraph,
-				addedNodeIds,
-				StructureElementModification.Type.NodeAdded,
-				result);
+		addNodesWithModificationToResult(oldGraph, removedNodeIds, Type.NodeDeleted, result);
+		addNodesWithModificationToResult(newGraph, addedNodeIds, Type.NodeAdded, result);
 
 		return result;
 	}
@@ -60,15 +58,14 @@ public class SimpleStructureGraphComparer implements IStructureGraphComparer {
 
 	private static void addNodesWithModificationToResult(IStructureGraph graph,
 			List<String> nodeIds,
-			StructureElementModification.Type type,
+			Type type,
 			StructureGraphComparisonResult result) {
 		List<IStructureElement> elements = getNodes(graph, nodeIds);
-
 
 		for (IStructureElement element : elements) {
 			String fullIdentifier = graph.getIdentifier(element);
 			String path = graph.getPath(element);
-			StructureElementModification modification =  new StructureElementModification(path, element.getIdentifier(), type);
+			StructureElementModification modification = new StructureElementModification(path, element.getIdentifier(), type);
 
 			result.addModification(fullIdentifier, modification);
 		}

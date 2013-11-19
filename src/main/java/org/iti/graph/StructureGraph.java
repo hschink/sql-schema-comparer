@@ -60,28 +60,29 @@ public class StructureGraph implements IStructureGraph {
 		while (currentElement != null) {
 			elements.addFirst(currentElement);
 
-			DefaultEdge incomingEdge = getIncomingEdge(graph.incomingEdgesOf(currentElement));
-			currentElement = getParent(incomingEdge);
+			currentElement = getParent(currentElement);
 		}
 
 		return elements;
 	}
 
-	private DefaultEdge getIncomingEdge(Set<DefaultEdge> incomingEdgesOf) {
-		if (incomingEdgesOf != null && incomingEdgesOf.size() > 0) {
-			return incomingEdgesOf.iterator().next();
+	private IStructureElement getParent(IStructureElement element) {
+		DefaultEdge incomingEdge = getIncomingEdge(graph.incomingEdgesOf(element));
+
+		if (incomingEdge != null) {
+			for (IStructureElement e : graph.vertexSet()) {
+				if (graph.outgoingEdgesOf(e).contains(incomingEdge)) {
+					return e;
+				}
+			}
 		}
 		
 		return null;
 	}
 
-	private IStructureElement getParent(DefaultEdge incomingEdge) {
-		if (incomingEdge != null) {
-			for (IStructureElement element : graph.vertexSet()) {
-				if (graph.outgoingEdgesOf(element).contains(incomingEdge)) {
-					return element;
-				}
-			}
+	private DefaultEdge getIncomingEdge(Set<DefaultEdge> incomingEdgesOf) {
+		if (incomingEdgesOf != null && incomingEdgesOf.size() > 0) {
+			return incomingEdgesOf.iterator().next();
 		}
 		
 		return null;
@@ -199,5 +200,25 @@ public class StructureGraph implements IStructureGraph {
 	@Override
 	public List<String> getIdentifiers() {
 		return new ArrayList<String>(elementsByIdentifer.keySet());
+	}
+
+	@Override
+	public List<String> getPathes() {
+		List<String> pathes = new ArrayList<>();
+
+		for (IStructureElement element : elementsByIdentifer.values()) {
+			IStructureElement parent = getParent(element);
+
+			if (parent != null) {
+				List<IStructureElement> pathElements = new ArrayList<>();
+
+				pathElements.add(parent);
+				pathElements.add(element);
+
+				pathes.add(getPathString(pathElements, false));
+			}
+		}
+
+		return pathes;
 	}
 }

@@ -7,9 +7,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.iti.graph.StructureGraph;
-import org.iti.graph.comparison.StructureElementModification.Type;
 import org.iti.graph.comparison.result.IModificationDetail;
 import org.iti.graph.comparison.result.OriginalStructureElement;
+import org.iti.graph.comparison.result.StructureGraphComparisonResult;
+import org.iti.graph.comparison.result.Type;
 import org.iti.graph.helper.Edge1;
 import org.iti.graph.helper.Edge2;
 import org.iti.graph.helper.Edge3;

@@ -29,9 +29,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.iti.graph.IStructureGraph;
-import org.iti.graph.comparison.StructureElementModification.Type;
 import org.iti.graph.comparison.result.IModificationDetail;
 import org.iti.graph.comparison.result.OriginalStructureElement;
+import org.iti.graph.comparison.result.StructureElementModification;
+import org.iti.graph.comparison.result.StructureGraphComparisonResult;
+import org.iti.graph.comparison.result.Type;
 import org.iti.graph.nodes.IStructureElement;
 
 public class StructureGraphComparer implements IStructureGraphComparer {

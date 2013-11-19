@@ -19,18 +19,23 @@
  *
  */
 
-package org.iti.graph.comparison;
+package org.iti.graph.comparison.result;
 
-import org.iti.graph.comparison.result.IModificationDetail;
+import java.util.ArrayList;
+import java.util.List;
 
-public class StructureElementModification {
-	public enum Type {
-		None,
-		NodeAdded,
-		NodeMoved,
-		NodeRenamed,
-		NodeDeleted,
-	}
+
+public class StructureElementModification implements IStructureModification {
+
+	private static final List<Type> VALID_TYPES = new ArrayList<Type>() {
+		private static final long serialVersionUID = -2162117789613361300L;
+	{
+		add(Type.None);
+		add(Type.NodeAdded);
+		add(Type.NodeDeleted);
+		add(Type.NodeMoved);
+		add(Type.NodeRenamed);
+	}};
 
 	private String path;
 
@@ -40,18 +45,21 @@ public class StructureElementModification {
 
 	private String identifier;
 
+	@Override
 	public String getIdentifier() {
 		return identifier;
 	}
 
 	private Type type;
 
+	@Override
 	public Type getType() {
 		return type;
 	}
 
 	private IModificationDetail modificationDetail;
 
+	@Override
 	public IModificationDetail getModificationDetail() {
 		return modificationDetail;
 	}
@@ -60,6 +68,10 @@ public class StructureElementModification {
 		this.path = path;
 		this.identifier = identifier;
 		this.type = type;
+
+		if (!VALID_TYPES.contains(type)) {
+			throw new IllegalArgumentException(String.format("Type %s is invalid for StructureElementModification!", type));
+		}
 	}
 
 	public StructureElementModification(String path,

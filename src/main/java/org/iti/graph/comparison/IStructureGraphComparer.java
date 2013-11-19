@@ -22,6 +22,7 @@
 package org.iti.graph.comparison;
 
 import org.iti.graph.IStructureGraph;
+import org.iti.graph.comparison.result.StructureGraphComparisonResult;
 
 public interface IStructureGraphComparer {
 
