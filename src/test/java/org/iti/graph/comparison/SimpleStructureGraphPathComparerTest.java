@@ -63,7 +63,7 @@ public class SimpleStructureGraphPathComparerTest {
 	}
 
 	@Test
-	public void detectsRemovedNodes() throws StructureGraphComparisonException {
+	public void detectsRemovedPathes() throws StructureGraphComparisonException {
 		StructureGraphComparerTestHelper.givenRemovedNodes(currentGraph);
 		StructureGraphComparerTestHelper.givenExpectedPathRemovals(structureGraphOriginal, expectedModifications);
 
@@ -75,7 +75,7 @@ public class SimpleStructureGraphPathComparerTest {
 	}
 
 	@Test
-	public void detectsAddedNodes() throws StructureGraphComparisonException {
+	public void detectsAddedPathes() throws StructureGraphComparisonException {
 		StructureGraphComparerTestHelper.givenAddedNodes(currentGraph);
 		StructureGraphComparerTestHelper.givenExpectedPathAddition(currentGraph, expectedModifications);
 
@@ -87,7 +87,7 @@ public class SimpleStructureGraphPathComparerTest {
 	}
 
 	@Test
-	public void detectsAddedAndRemovedNodes() throws StructureGraphComparisonException {
+	public void detectsAddedAndRemovedPathes() throws StructureGraphComparisonException {
 		StructureGraphComparerTestHelper.givenRemovedNodes(currentGraph);
 		StructureGraphComparerTestHelper.givenAddedNodes(currentGraph);
 		StructureGraphComparerTestHelper.givenExpectedPathRemovals(structureGraphOriginal, expectedModifications);
@@ -101,7 +101,7 @@ public class SimpleStructureGraphPathComparerTest {
 	}
 
 	@Test
-	public void detectsRenamedNodes() throws StructureGraphComparisonException {
+	public void detectsRenamedPathes() throws StructureGraphComparisonException {
 		StructureGraphComparerTestHelper.givenRenamedNode(currentGraph);
 
 		whenComparisonResultIsCreated();
@@ -110,7 +110,7 @@ public class SimpleStructureGraphPathComparerTest {
 	}
 
 	@Test
-	public void detectsMovedNodes() throws StructureGraphComparisonException {
+	public void detectsMovedPathes() throws StructureGraphComparisonException {
 		StructureGraphComparerTestHelper.givenMovedNode(currentGraph);
 		StructureGraphComparerTestHelper.givenExpectedPathRemovals("cn2.Edge6", expectedModifications);
 		StructureGraphComparerTestHelper.givenExpectedPathAddition("cn4.Edge6", expectedModifications);
