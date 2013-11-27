@@ -9,7 +9,6 @@ public enum Type {
 	NodeDeleted,
 
 	PathAdded,
-	PathMoved,
 	PathRenamed,
 	PathDeleted,
 }

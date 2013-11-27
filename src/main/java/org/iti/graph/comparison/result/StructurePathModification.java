@@ -33,7 +33,6 @@ public class StructurePathModification implements IStructureModification {
 		add(Type.None);
 		add(Type.PathAdded);
 		add(Type.PathDeleted);
-		add(Type.PathMoved);
 		add(Type.PathRenamed);
 	}};
 
