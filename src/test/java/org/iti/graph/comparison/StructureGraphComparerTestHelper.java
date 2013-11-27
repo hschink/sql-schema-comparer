@@ -183,7 +183,7 @@ public class StructureGraphComparerTestHelper {
 		expectedModificationDetails.put(structureGraphCurrent.getIdentifier(cn8), null);
 	}
 
-	static void givenExpectRename(Map<String, Type> expectedModifications) {
+	static void givenExpectedNodeRename(Map<String, Type> expectedModifications) {
 		expectedModifications.put("re.Edge1(cn1.Edge2(cn3r))", Type.NodeRenamed);
 	}
 
@@ -199,6 +199,16 @@ public class StructureGraphComparerTestHelper {
 	static IModificationDetail givenExpectMoveDetail(Map<String, IModificationDetail> expectedModificationDetails) {
 		return expectedModificationDetails.put("re.Edge1(cn1.Edge3(cn4.Edge6(cn6)))",
 				new OriginalStructureElement("re.Edge4(cn2.Edge6(cn6))"));
+	}
+
+	public static void givenExpectPathRename( Map<String, Type> expectedModifications) {
+		expectedModifications.put("cn4.Edge6", Type.PathRenamed);
+	}
+
+	public static IModificationDetail givenExpectPathRenameDetail(
+			Map<String, IModificationDetail> expectedModificationDetails) {
+		return expectedModificationDetails.put("cn4.Edge6",
+				new OriginalStructureElement("cn2.Edge6"));
 	}
 
 	static void assertModificationExpectations(

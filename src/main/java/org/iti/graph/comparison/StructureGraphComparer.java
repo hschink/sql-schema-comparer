@@ -30,9 +30,11 @@ import java.util.Map.Entry;
 
 import org.iti.graph.IStructureGraph;
 import org.iti.graph.comparison.result.IModificationDetail;
+import org.iti.graph.comparison.result.IStructureModification;
 import org.iti.graph.comparison.result.OriginalStructureElement;
 import org.iti.graph.comparison.result.StructureElementModification;
 import org.iti.graph.comparison.result.StructureGraphComparisonResult;
+import org.iti.graph.comparison.result.StructurePathModification;
 import org.iti.graph.comparison.result.Type;
 import org.iti.graph.nodes.IStructureElement;
 
@@ -68,6 +70,7 @@ public class StructureGraphComparer implements IStructureGraphComparer {
 
 		setRenamedNodes();
 		setMovedNodes();
+		setRenamedPathes();
 
 		return result;
 	}
@@ -182,6 +185,39 @@ public class StructureGraphComparer implements IStructureGraphComparer {
 				return addedElement;
 
 			default: throw new AmbiguousMoveException();
+		}
+	}
+
+	private void setRenamedPathes() {
+		for (IStructureElement element : result.getElementsByModification(Type.NodeMoved)) {
+			String newPath = getPath(element, result.getNewGraph());
+			String oldPath = getPath(getMovedElement(element), result.getOldGraph());
+
+			exchangePaths(oldPath, newPath, Type.PathRenamed);
+		}
+	}
+
+	private IStructureElement getMovedElement(IStructureElement element) {
+		String identifier = result.getNewGraph().getIdentifier(element);
+		IStructureModification modification = result.getModifications().get(identifier);
+		IModificationDetail detail = modification.getModificationDetail();
+
+		return result.getOldGraph().getStructureElement(detail.getIdentifier());
+	}
+
+	private String getPath(IStructureElement element, IStructureGraph graph) {
+		return graph.getPath(element, false);
+	}
+
+	private void exchangePaths(String removedPath, String addedPath, Type type) {
+		if (addedPath != null) {
+			IModificationDetail detail = new OriginalStructureElement(removedPath);
+			IStructureModification modification = new StructurePathModification(addedPath, type, detail);
+
+			result.removeModification(addedPath);
+			result.removeModification(removedPath);
+
+			result.addModification(addedPath, modification);
 		}
 	}
 }

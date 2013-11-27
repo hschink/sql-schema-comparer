@@ -42,7 +42,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class StructureGraphComparerTest {
+public class StructureGraphNodeComparerTest {
 
 	private static IStructureGraphComparer comparer = new StructureGraphComparer();
 
@@ -118,7 +118,7 @@ public class StructureGraphComparerTest {
 	@Test
 	public void detectsRenamedNodes() throws StructureGraphComparisonException {
 		StructureGraphComparerTestHelper.givenRenamedNode(currentGraph);
-		StructureGraphComparerTestHelper.givenExpectRename(expectedModifications);
+		StructureGraphComparerTestHelper.givenExpectedNodeRename(expectedModifications);
 		StructureGraphComparerTestHelper.givenExpectRenameDetail(expectedModificationDetails);
 
 		whenComparisonResultIsCreated();
@@ -147,7 +147,7 @@ public class StructureGraphComparerTest {
 	public void detectsRenamedMovedNodes() throws StructureGraphComparisonException {
 		StructureGraphComparerTestHelper.givenRenamedNode(currentGraph);
 		StructureGraphComparerTestHelper.givenMovedNode(currentGraph);
-		StructureGraphComparerTestHelper.givenExpectRename(expectedModifications);
+		StructureGraphComparerTestHelper.givenExpectedNodeRename(expectedModifications);
 		StructureGraphComparerTestHelper.givenExpectRenameDetail(expectedModificationDetails);
 		StructureGraphComparerTestHelper.givenExpectMove(expectedModifications);
 		StructureGraphComparerTestHelper.givenExpectMoveDetail(expectedModificationDetails);
