@@ -35,6 +35,8 @@ public interface IStructureGraph {
 
 	String getPath(IStructureElement structureElement);
 
+	String getPath(IStructureElement structureElement, boolean toRootElement);
+
 	List<String> getIdentifiers();
 
 	List<IStructureElement> getStructureElements(String path);

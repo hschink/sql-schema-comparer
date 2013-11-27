@@ -54,13 +54,20 @@ public class StructureGraph implements IStructureGraph {
 	}
 
 	private List<IStructureElement> getElementPathElements(IStructureElement element) {
+		return getElementPathElements(element, true);
+	}
+
+	private List<IStructureElement> getElementPathElements(IStructureElement element, boolean toRootElement) {
 		IStructureElement currentElement = element; 
 		LinkedList<IStructureElement> elements = new LinkedList<>();
+		int elementCount = (toRootElement) ? -1 : 2;
 
-		while (currentElement != null) {
+		while (currentElement != null && elementCount != 0) {
 			elements.addFirst(currentElement);
 
 			currentElement = getParent(currentElement);
+
+			elementCount--;
 		}
 
 		return elements;
@@ -149,6 +156,14 @@ public class StructureGraph implements IStructureGraph {
 	@Override
 	public String getPath(IStructureElement element) {
 		List<IStructureElement> pathElements = getElementPathElements(element);
+
+		return getPathString(pathElements, false);
+	}
+
+
+	@Override
+	public String getPath(IStructureElement element, boolean toRootElement) {
+		List<IStructureElement> pathElements = getElementPathElements(element, toRootElement);
 
 		return getPathString(pathElements, false);
 	}
