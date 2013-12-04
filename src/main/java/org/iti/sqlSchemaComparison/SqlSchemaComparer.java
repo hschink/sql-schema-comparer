@@ -18,7 +18,6 @@
  *
  *
  */
-
 package org.iti.sqlSchemaComparison;
 
 import java.util.ArrayList;
@@ -26,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.iti.graph.StructureGraph;
 import org.iti.graph.comparison.IStructureGraphComparer;
@@ -34,6 +32,7 @@ import org.iti.graph.comparison.StructureGraphComparer;
 import org.iti.graph.comparison.StructureGraphComparisonException;
 import org.iti.graph.comparison.result.IStructureModification;
 import org.iti.graph.comparison.result.StructureGraphComparisonResult;
+import org.iti.graph.comparison.result.StructurePathModification;
 import org.iti.graph.comparison.result.Type;
 import org.iti.graph.nodes.IStructureElement;
 import org.iti.sqlSchemaComparison.edge.IForeignKeyRelationEdge;
@@ -49,7 +48,7 @@ import org.jgrapht.graph.DefaultEdge;
 public class SqlSchemaComparer {
 
 	private static final IStructureGraphComparer comparer = new StructureGraphComparer();
-	
+
 	private StructureGraph graph1;
 	private StructureGraph graph2;
 	
@@ -70,12 +69,39 @@ public class SqlSchemaComparer {
 
 		computeColumnTypeAndConstraintChanges(result, schema1);
 
-		computeForeignKeyChanges(schema1, schema2);
+		setForeignKeyChanges(result);
+	}
+
+	private void setForeignKeyChanges(StructureGraphComparisonResult result) {
+        List<IForeignKeyRelationEdge> addedForeignKeyRelations = new ArrayList<>();
+        List<IForeignKeyRelationEdge> removedForeignKeyRelations = new ArrayList<>();
+
+		for (Entry<String, IStructureModification> entry : result.getPathModifications().entrySet()) {
+			StructurePathModification modification = (StructurePathModification)entry.getValue();
+
+			if (modification.getEdge() instanceof IForeignKeyRelationEdge) {
+				IForeignKeyRelationEdge foreignKeyEdge = (IForeignKeyRelationEdge)modification.getEdge();
+				switch (entry.getValue().getType()) {
+					case PathAdded:
+						addedForeignKeyRelations.add(foreignKeyEdge);
+						break;
+
+					case PathDeleted:
+						removedForeignKeyRelations.add(foreignKeyEdge);
+						break;
+
+					default: break;
+				}
+			}
+		}
+
+		comparisonResult.setAddedForeignKeyRelations(addedForeignKeyRelations);
+		comparisonResult.setRemovedForeignKeyRelations(removedForeignKeyRelations);
 	}
 
 	private void setSqlSchemaComparisonResult(
 			StructureGraphComparisonResult result) {
-		
+
 		for (Entry<String, IStructureModification> entry : result.getNodeModifications().entrySet()) {
 			Type type = entry.getValue().getType();
 			ISqlElement currentSqlElement = getCurrentSqlElement(entry.getKey(), type);
@@ -88,17 +114,17 @@ public class SqlSchemaComparer {
         Map<ISqlElement, SqlSchemaColumnComparisonResult> columnComparisonResults = compareUnchagedColumns(schema1);
 
         columnComparisonResults.putAll(compareRenamedColumns(result));
-        
+
         comparisonResult.setColumnComparisonResults(columnComparisonResults);
 	}
 
 	private Map<ISqlElement, SqlSchemaColumnComparisonResult> compareUnchagedColumns(DirectedGraph<IStructureElement, DefaultEdge> schema1) {
 		Map<ISqlElement, SqlSchemaColumnComparisonResult> columnComparisonResults = new HashMap<>();
-        
+
         for (ISqlElement vertex1 : SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet())) {
         	String identifier = graph1.getIdentifier(vertex1);
             ISqlElement vertex2 = (ISqlElement) graph2.getStructureElement(identifier);
-                
+
             if (vertex2 != null && !columnComparisonResults.containsKey(vertex2))
                 columnComparisonResults.put(vertex2, ColumnConstraintHelper.compare(vertex1, vertex2));
         }
@@ -117,7 +143,7 @@ public class SqlSchemaComparer {
 					case NodeRenamed:
 						String originalIdentifier = entry.getValue().getModificationDetail().getIdentifier();
 						ISqlElement original = (ISqlElement) graph1.getStructureElement(originalIdentifier);
-					
+
 			            if (original != null && !columnComparisonResults.containsKey(original))
 			                columnComparisonResults.put(current, ColumnConstraintHelper.compare(original, current));
 	
@@ -166,34 +192,5 @@ public class SqlSchemaComparer {
 				default: return SchemaModification.RENAME_COLUMN;
 			}
 		}
-	}
-
-	private void computeForeignKeyChanges(DirectedGraph<IStructureElement,DefaultEdge> schema1,
-			DirectedGraph<IStructureElement,DefaultEdge> schema2) {
-        List<IForeignKeyRelationEdge> allForeignKeyRelations = getForeignKeyRelations(schema1.edgeSet());
-        List<IForeignKeyRelationEdge> addedForeignKeyRelations = getForeignKeyRelations(schema2.edgeSet());
-        List<IForeignKeyRelationEdge> removedForeignKeyRelations = getForeignKeyRelations(schema1.edgeSet());
-        
-        removedForeignKeyRelations.removeAll(addedForeignKeyRelations);
-        addedForeignKeyRelations.removeAll(allForeignKeyRelations);
-        
-        if (comparisonResult == null) {
-	        comparisonResult = new SqlSchemaComparisonResult();
-		}
-        
-        comparisonResult.setAddedForeignKeyRelations(addedForeignKeyRelations);
-        comparisonResult.setRemovedForeignKeyRelations(removedForeignKeyRelations);
-	}
-
-	private List<IForeignKeyRelationEdge> getForeignKeyRelations(Set<DefaultEdge> edges) {
-        List<IForeignKeyRelationEdge> list = new ArrayList<>();
-        
-        for (DefaultEdge edge : edges) {
-            if (edge instanceof IForeignKeyRelationEdge) {
-                list.add((IForeignKeyRelationEdge) edge);
-            }
-        }
-        
-        return list;
 	}
 }
