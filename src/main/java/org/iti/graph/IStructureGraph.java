@@ -24,12 +24,19 @@ package org.iti.graph;
 import java.util.List;
 
 import org.iti.graph.nodes.IStructureElement;
+import org.jgrapht.graph.DefaultEdge;
 
 public interface IStructureGraph {
 
 	boolean containsElementWithPath(String path);
 
 	IStructureElement getStructureElement(String identifier);
+
+	DefaultEdge getEdge(String path);
+
+	IStructureElement getSourceElement(DefaultEdge edge);
+
+	IStructureElement getTargetElement(DefaultEdge edge);
 
 	String getIdentifier(IStructureElement structureElement);
 

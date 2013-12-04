@@ -27,7 +27,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.iti.graph.nodes.IStructureElement;
@@ -39,17 +38,38 @@ public class StructureGraph implements IStructureGraph {
 	private DirectedGraph<IStructureElement, DefaultEdge> graph;
 	
 	private Map<String, IStructureElement> elementsByIdentifer = new HashMap<>();
+	private Map<String, DefaultEdge> pathesByIdentifer = new HashMap<>();
 	
 	public StructureGraph(DirectedGraph<IStructureElement, DefaultEdge> graph) {
 		this.graph = graph;
 		
 		loadElementsByIdentifier();
+		loadEdgesByIdentifier();
 	}
 
 	private void loadElementsByIdentifier() {
 		for (IStructureElement element : graph.vertexSet()) {
 			String identifier = getIdentifier(element);
 			elementsByIdentifer.put(identifier, element);
+		}
+	}
+
+	private void loadEdgesByIdentifier() {
+		for (IStructureElement element : elementsByIdentifer.values()) {
+			List<DefaultEdge> incomingEdges = getIncomingEdges(element);
+
+			for (DefaultEdge incomingEdge : incomingEdges) {
+				for (IStructureElement relatedElement : graph.vertexSet()) {
+					if (graph.outgoingEdgesOf(relatedElement).contains(incomingEdge)) {
+						List<IStructureElement> pathElements = new ArrayList<>();
+
+						pathElements.add(relatedElement);
+						pathElements.add(element);
+
+						pathesByIdentifer.put(getPathString(pathElements, false), incomingEdge);
+					}
+				}
+			}
 		}
 	}
 
@@ -74,9 +94,11 @@ public class StructureGraph implements IStructureGraph {
 	}
 
 	private IStructureElement getParent(IStructureElement element) {
-		DefaultEdge incomingEdge = getIncomingEdge(graph.incomingEdgesOf(element));
+		List<DefaultEdge> incomingEdges = getIncomingEdges(element);
 
-		if (incomingEdge != null) {
+		if (!incomingEdges.isEmpty()) {
+			DefaultEdge incomingEdge = incomingEdges.get(0);
+
 			for (IStructureElement e : graph.vertexSet()) {
 				if (graph.outgoingEdgesOf(e).contains(incomingEdge)) {
 					return e;
@@ -87,12 +109,8 @@ public class StructureGraph implements IStructureGraph {
 		return null;
 	}
 
-	private DefaultEdge getIncomingEdge(Set<DefaultEdge> incomingEdgesOf) {
-		if (incomingEdgesOf != null && incomingEdgesOf.size() > 0) {
-			return incomingEdgesOf.iterator().next();
-		}
-		
-		return null;
+	private List<DefaultEdge> getIncomingEdges(IStructureElement element) {
+		return new ArrayList<DefaultEdge>(graph.incomingEdgesOf(element));
 	}
 
 	private String getPathString(List<IStructureElement> pathElements) {
@@ -160,6 +178,20 @@ public class StructureGraph implements IStructureGraph {
 		return getPathString(pathElements, false);
 	}
 
+	@Override
+	public DefaultEdge getEdge(String path) {
+		return pathesByIdentifer.get(path);
+	}
+
+	@Override
+	public IStructureElement getSourceElement(DefaultEdge edge) {
+		return graph.getEdgeSource(edge);
+	}
+
+	@Override
+	public IStructureElement getTargetElement(DefaultEdge edge) {
+		return graph.getEdgeTarget(edge);
+	}
 
 	@Override
 	public String getPath(IStructureElement element, boolean toRootElement) {
@@ -219,21 +251,7 @@ public class StructureGraph implements IStructureGraph {
 
 	@Override
 	public List<String> getPathes() {
-		List<String> pathes = new ArrayList<>();
-
-		for (IStructureElement element : elementsByIdentifer.values()) {
-			IStructureElement parent = getParent(element);
-
-			if (parent != null) {
-				List<IStructureElement> pathElements = new ArrayList<>();
-
-				pathElements.add(parent);
-				pathElements.add(element);
-
-				pathes.add(getPathString(pathElements, false));
-			}
-		}
-
-		return pathes;
+		return new ArrayList<String>(pathesByIdentifer.keySet());
 	}
+
 }
