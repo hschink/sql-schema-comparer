@@ -24,6 +24,9 @@ package org.iti.graph.comparison.result;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.iti.graph.nodes.IStructureElement;
+import org.jgrapht.graph.DefaultEdge;
+
 
 public class StructurePathModification implements IStructureModification {
 
@@ -43,6 +46,24 @@ public class StructurePathModification implements IStructureModification {
 		return identifier;
 	}
 
+	private DefaultEdge edge;
+
+	public DefaultEdge getEdge() {
+		return edge;
+	}
+
+	private IStructureElement sourceElement;
+
+	public IStructureElement getSourceElement() {
+		return sourceElement;
+	}
+
+	private IStructureElement targetElement;
+
+	public IStructureElement getTargetElement() {
+		return targetElement;
+	}
+
 	private Type type;
 
 	@Override
@@ -56,8 +77,15 @@ public class StructurePathModification implements IStructureModification {
 		return modificationDetail;
 	}
 
-	public StructurePathModification(String identifier, Type type) {
+	public StructurePathModification(String identifier,
+			DefaultEdge edge,
+			IStructureElement sourceElement,
+			IStructureElement targetElement,
+			Type type) {
 		this.identifier = identifier;
+		this.edge = edge;
+		this.sourceElement = sourceElement;
+		this.targetElement = targetElement;
 		this.type = type;
 
 		if (!VALID_TYPES.contains(type)) {
@@ -65,10 +93,13 @@ public class StructurePathModification implements IStructureModification {
 		}
 	}
 
-	public StructurePathModification( String identifier,
+	public StructurePathModification(String identifier,
+			DefaultEdge edge,
+			IStructureElement sourceElement,
+			IStructureElement targetElement,
 			Type type,
 			IModificationDetail modificationDetail) {
-		this(identifier, type);
+		this(identifier, edge, sourceElement, targetElement, type);
 
 		this.modificationDetail = modificationDetail;
 	}

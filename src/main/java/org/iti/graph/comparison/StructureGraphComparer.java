@@ -37,6 +37,7 @@ import org.iti.graph.comparison.result.StructureGraphComparisonResult;
 import org.iti.graph.comparison.result.StructurePathModification;
 import org.iti.graph.comparison.result.Type;
 import org.iti.graph.nodes.IStructureElement;
+import org.jgrapht.graph.DefaultEdge;
 
 public class StructureGraphComparer implements IStructureGraphComparer {
 
@@ -211,8 +212,11 @@ public class StructureGraphComparer implements IStructureGraphComparer {
 
 	private void exchangePaths(String removedPath, String addedPath, Type type) {
 		if (addedPath != null) {
+			DefaultEdge edge = newGraph.getEdge(addedPath);
+			IStructureElement source = newGraph.getSourceElement(edge);
+			IStructureElement target = newGraph.getSourceElement(edge);
 			IModificationDetail detail = new OriginalStructureElement(removedPath);
-			IStructureModification modification = new StructurePathModification(addedPath, type, detail);
+			IStructureModification modification = new StructurePathModification(addedPath, edge, source, target, type, detail);
 
 			result.removeModification(addedPath);
 			result.removeModification(removedPath);

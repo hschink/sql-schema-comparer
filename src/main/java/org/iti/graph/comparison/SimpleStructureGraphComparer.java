@@ -30,6 +30,7 @@ import org.iti.graph.comparison.result.StructureGraphComparisonResult;
 import org.iti.graph.comparison.result.StructurePathModification;
 import org.iti.graph.comparison.result.Type;
 import org.iti.graph.nodes.IStructureElement;
+import org.jgrapht.graph.DefaultEdge;
 
 public class SimpleStructureGraphComparer implements IStructureGraphComparer {
 
@@ -95,13 +96,16 @@ public class SimpleStructureGraphComparer implements IStructureGraphComparer {
 		return nodes;
 	}
 
-	private void addPathesWithModificationToResult(IStructureGraph oldGraph,
+	private void addPathesWithModificationToResult(IStructureGraph graph,
 			List<String> pathes,
 			Type type,
 			StructureGraphComparisonResult result) {
 
 		for (String path : pathes) {
-			StructurePathModification modification = new StructurePathModification(path, type);
+			DefaultEdge edge = graph.getEdge(path);
+			IStructureElement source = graph.getSourceElement(edge);
+			IStructureElement target = graph.getSourceElement(edge);
+			StructurePathModification modification = new StructurePathModification(path, edge, source, target, type);
 
 			result.addModification(path, modification);
 		}
