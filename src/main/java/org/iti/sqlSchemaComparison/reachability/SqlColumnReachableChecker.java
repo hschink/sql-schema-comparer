@@ -24,12 +24,12 @@ package org.iti.sqlSchemaComparison.reachability;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.iti.graph.nodes.IStructureElement;
 import org.iti.sqlSchemaComparison.edge.IForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.edge.ITableHasColumnEdge;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
+import org.iti.structureGraph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.AsUndirectedGraph;

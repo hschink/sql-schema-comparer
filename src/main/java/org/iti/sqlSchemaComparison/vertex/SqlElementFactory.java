@@ -27,9 +27,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.iti.graph.nodes.IStructureElement;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.PrimaryKeyColumnConstraint;
+import org.iti.structureGraph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 

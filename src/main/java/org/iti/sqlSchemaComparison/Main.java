@@ -23,11 +23,11 @@ package org.iti.sqlSchemaComparison;
 
 import java.util.List;
 
-import org.iti.graph.comparison.StructureGraphComparisonException;
-import org.iti.graph.nodes.IStructureElement;
 import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
 import org.iti.sqlSchemaComparison.frontends.SqlStatementFrontend;
 import org.iti.sqlSchemaComparison.frontends.database.SqliteSchemaFrontend;
+import org.iti.structureGraph.comparison.StructureGraphComparisonException;
+import org.iti.structureGraph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.kohsuke.args4j.Argument;

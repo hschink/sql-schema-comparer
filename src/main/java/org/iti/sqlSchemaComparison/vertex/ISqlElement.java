@@ -23,7 +23,7 @@ package org.iti.sqlSchemaComparison.vertex;
 
 import java.io.Serializable;
 
-import org.iti.graph.nodes.IStructureElement;
+import org.iti.structureGraph.nodes.IStructureElement;
 
 
 public interface ISqlElement extends IStructureElement, Serializable {

@@ -21,9 +21,9 @@
 
 package org.iti.sqlSchemaComparison.edge;
 
-import org.iti.graph.nodes.IStructureElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
+import org.iti.structureGraph.nodes.IStructureElement;
 import org.jgrapht.graph.DefaultEdge;
 
 public class TableHasColumnEdge extends DefaultEdge implements ITableHasColumnEdge {

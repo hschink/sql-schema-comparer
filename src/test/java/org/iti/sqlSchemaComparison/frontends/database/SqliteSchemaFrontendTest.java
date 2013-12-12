@@ -31,8 +31,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.iti.graph.comparison.StructureGraphComparisonException;
-import org.iti.graph.nodes.IStructureElement;
 import org.iti.sqlSchemaComparison.SchemaModification;
 import org.iti.sqlSchemaComparison.SqlSchemaColumnComparisonResult;
 import org.iti.sqlSchemaComparison.SqlSchemaComparer;
@@ -46,6 +44,8 @@ import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlElementType;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.PrimaryKeyColumnConstraint;
+import org.iti.structureGraph.comparison.StructureGraphComparisonException;
+import org.iti.structureGraph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.junit.After;

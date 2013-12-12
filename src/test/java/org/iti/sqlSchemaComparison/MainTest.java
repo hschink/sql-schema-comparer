@@ -21,9 +21,9 @@
 
 package org.iti.sqlSchemaComparison;
 
-import org.iti.graph.comparison.StructureGraphComparisonException;
 import org.iti.sqlSchemaComparison.edge.SqlStatementFrontendTest;
 import org.iti.sqlSchemaComparison.frontends.database.SqliteSchemaFrontendTest;
+import org.iti.structureGraph.comparison.StructureGraphComparisonException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

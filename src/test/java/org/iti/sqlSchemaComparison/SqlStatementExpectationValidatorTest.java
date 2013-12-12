@@ -32,13 +32,13 @@ import java.util.List;
 
 import org.gibello.zql.ZFromItem;
 import org.gibello.zql.ZSelectItem;
-import org.iti.graph.nodes.IStructureElement;
 import org.iti.sqlSchemaComparison.edge.SqlStatementFrontendTest;
 import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
 import org.iti.sqlSchemaComparison.frontends.SqlStatementFrontend;
 import org.iti.sqlSchemaComparison.frontends.database.SqliteSchemaFrontend;
 import org.iti.sqlSchemaComparison.frontends.database.SqliteSchemaFrontendTest;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
+import org.iti.structureGraph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.junit.After;

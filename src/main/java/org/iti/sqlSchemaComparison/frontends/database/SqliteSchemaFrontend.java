@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.iti.graph.nodes.IStructureElement;
 import org.iti.sqlSchemaComparison.edge.ForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.edge.TableHasColumnEdge;
 import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
@@ -47,6 +46,7 @@ import org.iti.sqlSchemaComparison.vertex.sqlColumn.DefaultColumnConstraint;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.NotNullColumnConstraint;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.PrimaryKeyColumnConstraint;
+import org.iti.structureGraph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;

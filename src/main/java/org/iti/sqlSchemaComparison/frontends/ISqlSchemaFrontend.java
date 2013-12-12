@@ -21,7 +21,7 @@
 
 package org.iti.sqlSchemaComparison.frontends;
 
-import org.iti.graph.nodes.IStructureElement;
+import org.iti.structureGraph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
