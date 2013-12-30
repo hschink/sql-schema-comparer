@@ -7,4 +7,10 @@
 
 bin
 dependencies
+build
+
+.gradle
+.classpath
+.project
 .metadata
+.settings

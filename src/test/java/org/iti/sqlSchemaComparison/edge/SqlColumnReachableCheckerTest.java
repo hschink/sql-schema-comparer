@@ -21,7 +21,8 @@
 
 package org.iti.sqlSchemaComparison.edge;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.iti.sqlSchemaComparison.reachability.ISqlElementReachabilityChecker;
 import org.iti.sqlSchemaComparison.reachability.SqlColumnReachableChecker;
@@ -29,9 +30,10 @@ import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlElementType;
-import org.jgrapht.Graph;
+import org.iti.structureGraph.nodes.IStructureElement;
+import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.SimpleGraph;
+import org.jgrapht.graph.SimpleDirectedGraph;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -42,9 +44,9 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class SqlColumnReachableCheckerTest {
 
-	private static Graph<ISqlElement, DefaultEdge> schema1 = new SimpleGraph<ISqlElement, DefaultEdge>(DefaultEdge.class);
-	private static Graph<ISqlElement, DefaultEdge> schema2 = new SimpleGraph<ISqlElement, DefaultEdge>(DefaultEdge.class);
-	private static Graph<ISqlElement, DefaultEdge> schema3 = new SimpleGraph<ISqlElement, DefaultEdge>(DefaultEdge.class);
+	private static DirectedGraph<IStructureElement, DefaultEdge> schema1 = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
+	private static DirectedGraph<IStructureElement, DefaultEdge> schema2 = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
+	private static DirectedGraph<IStructureElement, DefaultEdge> schema3 = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
 	
 	private static ISqlElement t1 = SqlElementFactory.createSqlElement(SqlElementType.Table, "t1");
 	private static ISqlElement t2 = SqlElementFactory.createSqlElement(SqlElementType.Table, "t2");
@@ -78,11 +80,11 @@ public class SqlColumnReachableCheckerTest {
 		schema3.addVertex(c5);
 		
 		schema1.addEdge(t1, c1, new TableHasColumnEdge(t1, c1));
-		schema1.addEdge(t2, c2, new TableHasColumnEdge(t1, c2));
+		schema1.addEdge(t2, c2, new TableHasColumnEdge(t2, c2));
 		
 		schema2.addEdge(t1, c3, new TableHasColumnEdge(t1, c3));
 		schema2.addEdge(t2, c1, new TableHasColumnEdge(t2, c1));
-		schema2.addEdge(t2, c2, new TableHasColumnEdge(t1, c2));
+		schema2.addEdge(t2, c2, new TableHasColumnEdge(t2, c2));
 		schema2.addEdge(c3, c2, new ForeignKeyRelationEdge(c3, t2, c2));
 		
 		schema3.addEdge(t1, c3, new TableHasColumnEdge(t1, c3));

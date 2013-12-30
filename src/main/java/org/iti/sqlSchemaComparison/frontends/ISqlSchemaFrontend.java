@@ -21,11 +21,11 @@
 
 package org.iti.sqlSchemaComparison.frontends;
 
-import org.iti.sqlSchemaComparison.vertex.ISqlElement;
-import org.jgrapht.Graph;
+import org.iti.structureGraph.nodes.IStructureElement;
+import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
 public interface ISqlSchemaFrontend {
 
-	Graph<ISqlElement, DefaultEdge> createSqlSchema();
+	DirectedGraph<IStructureElement, DefaultEdge> createSqlSchema();
 }

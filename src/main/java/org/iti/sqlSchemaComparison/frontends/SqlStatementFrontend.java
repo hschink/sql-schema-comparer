@@ -38,9 +38,10 @@ import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlElementType;
-import org.jgrapht.Graph;
+import org.iti.structureGraph.nodes.IStructureElement;
+import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.SimpleGraph;
+import org.jgrapht.graph.SimpleDirectedGraph;
 
 public class SqlStatementFrontend implements ISqlSchemaFrontend {
 
@@ -50,15 +51,15 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 		return statement;
 	}
 	
-	private Graph<ISqlElement, DefaultEdge> databaseSchema;
+	private DirectedGraph<IStructureElement, DefaultEdge> databaseSchema;
 
-	public Graph<ISqlElement, DefaultEdge> getDatabaseSchema() {
+	public DirectedGraph<IStructureElement, DefaultEdge> getDatabaseSchema() {
 		return databaseSchema;
 	}
 
 	@Override
-	public Graph<ISqlElement, DefaultEdge> createSqlSchema() {
-		Graph<ISqlElement, DefaultEdge> result = null;
+	public DirectedGraph<IStructureElement, DefaultEdge> createSqlSchema() {
+		DirectedGraph<IStructureElement, DefaultEdge> result = null;
 		ZStatement statement = parseStatement();
 		
 		if (statement != null)
@@ -81,8 +82,8 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 		return null;
 	}
 	
-	private Graph<ISqlElement, DefaultEdge> createGraph(ZStatement statement) {
-		Graph<ISqlElement, DefaultEdge> result = null;
+	private DirectedGraph<IStructureElement, DefaultEdge> createGraph(ZStatement statement) {
+		DirectedGraph<IStructureElement, DefaultEdge> result = null;
 		
 		if (statement instanceof ZQuery)
 			result = createGraphFromQuery((ZQuery)statement);
@@ -90,8 +91,8 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 		return result;
 	}
 
-	private Graph<ISqlElement, DefaultEdge> createGraphFromQuery(ZQuery query) {
-		Graph<ISqlElement, DefaultEdge> schema = new SimpleGraph<ISqlElement, DefaultEdge>(DefaultEdge.class);
+	private DirectedGraph<IStructureElement, DefaultEdge> createGraphFromQuery(ZQuery query) {
+		DirectedGraph<IStructureElement, DefaultEdge> schema = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
 
 		createTables(query, schema);
 		
@@ -101,7 +102,7 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 	}
 
 	private void createTables(ZQuery query,
-			Graph<ISqlElement, DefaultEdge> schema) {
+			DirectedGraph<IStructureElement, DefaultEdge> schema) {
 
 		for (Object item : query.getFrom()) {
 			ZFromItem fromItem = (ZFromItem) item;
@@ -110,7 +111,7 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 		}
 	}
 
-	private void createTable(Graph<ISqlElement, DefaultEdge> schema,
+	private void createTable(DirectedGraph<IStructureElement, DefaultEdge> schema,
 			ZQuery query, ZFromItem fromItem) {
 		if (databaseSchema != null) {
 			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, fromItem.getTable(), databaseSchema.vertexSet());
@@ -127,7 +128,7 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 	}
 
 	private void createTableColumns(ZQuery query,
-			Graph<ISqlElement, DefaultEdge> schema) {
+			DirectedGraph<IStructureElement, DefaultEdge> schema) {
 
 		for (Object item : query.getSelect()) {
 			ZSelectItem selectItem = (ZSelectItem) item;
@@ -232,7 +233,7 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 		return matchingTables;
 	}
 
-	public SqlStatementFrontend(String statement, Graph<ISqlElement, DefaultEdge> databaseSchema) {
+	public SqlStatementFrontend(String statement, DirectedGraph<IStructureElement, DefaultEdge> databaseSchema) {
 		if (statement == null || statement == "")
 			throw new NullPointerException("SQL statement must not be null or empty!");
 		

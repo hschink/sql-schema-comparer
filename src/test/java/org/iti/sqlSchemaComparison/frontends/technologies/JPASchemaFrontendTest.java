@@ -21,14 +21,16 @@
 
 package org.iti.sqlSchemaComparison.frontends.technologies;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.iti.sqlSchemaComparison.edge.ForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlElementType;
-import org.jgrapht.Graph;
+import org.iti.structureGraph.nodes.IStructureElement;
+import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.junit.After;
 import org.junit.Before;
@@ -48,7 +50,7 @@ public class JPASchemaFrontendTest {
 	@Test
 	public void databaseConnectionEstablishedCorrectly() {
 		ISqlSchemaFrontend frontend = new JPASchemaFrontend(JPA_FILE_PATH);
-		Graph<ISqlElement, DefaultEdge> schema = frontend.createSqlSchema();
+		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
 		
 		assertNotNull(schema);
 		ISqlElement[] tables = SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).toArray(new ISqlElement[] {});
@@ -61,7 +63,7 @@ public class JPASchemaFrontendTest {
 	@Test
 	public void directoryProcessing() {
 		ISqlSchemaFrontend frontend = new JPASchemaFrontend(JPA_FOLDER);
-		Graph<ISqlElement, DefaultEdge> schema = frontend.createSqlSchema();
+		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
 		
 		assertNotNull(schema);
 		assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
@@ -69,7 +71,7 @@ public class JPASchemaFrontendTest {
 		assertEquals(2, getForeignKeyCount(schema));
 	}
 
-	private int getForeignKeyCount(Graph<ISqlElement, DefaultEdge> schema) {
+	private int getForeignKeyCount(DirectedGraph<IStructureElement, DefaultEdge> schema) {
 		int foreignKeyEdges = 0;
 		
 		for (DefaultEdge edge : schema.edgeSet())

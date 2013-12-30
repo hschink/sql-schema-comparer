@@ -21,9 +21,9 @@
 
 package org.iti.sqlSchemaComparison.edge;
 
-import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
+import org.iti.structureGraph.nodes.IStructureElement;
 import org.jgrapht.graph.DefaultEdge;
 
 public class ForeignKeyRelationEdge extends DefaultEdge implements IForeignKeyRelationEdge {
@@ -51,7 +51,9 @@ public class ForeignKeyRelationEdge extends DefaultEdge implements IForeignKeyRe
 		return foreignKeyColumn;
 	}
 	
-	public ForeignKeyRelationEdge(ISqlElement referencingColumn, ISqlElement foreignKeyTable, ISqlElement foreignKeyColumn) {
+	public ForeignKeyRelationEdge(IStructureElement referencingColumn,
+			IStructureElement foreignKeyTable,
+			IStructureElement foreignKeyColumn) {
 		this.referencingColumn = (SqlColumnVertex) referencingColumn;
 		this.foreignKeyTable = (SqlTableVertex) foreignKeyTable;
 		this.foreignKeyColumn = (SqlColumnVertex) foreignKeyColumn;

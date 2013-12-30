@@ -51,15 +51,17 @@ import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlElementType;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.PrimaryKeyColumnConstraint;
+import org.iti.structureGraph.nodes.IStructureElement;
+import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.SimpleGraph;
+import org.jgrapht.graph.SimpleDirectedGraph;
 
 public class JPASchemaFrontend implements IJPASchemaFrontend {
 	
 	private String filePath;
 	
-	private static class JPAAnnotationVisitor extends VoidVisitorAdapter<Graph<ISqlElement, DefaultEdge>> {
+	private static class JPAAnnotationVisitor extends VoidVisitorAdapter<DirectedGraph<IStructureElement, DefaultEdge>> {
 
 		public Map<String, String> classToTable = new HashMap<>();
 		public Map<String, ClassOrInterfaceDeclaration> classDeclarations = new HashMap<>();
@@ -67,16 +69,16 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 		private final static String TRANSIENT = "Transient";
 		private final static String ID = "Id";
 		
-		private Graph<ISqlElement, DefaultEdge> schema;
+		private DirectedGraph<IStructureElement, DefaultEdge> schema;
 
 		private ISqlElement lastVisitedClass;
 		
-		public JPAAnnotationVisitor(Graph<ISqlElement, DefaultEdge> schema) {
+		public JPAAnnotationVisitor(DirectedGraph<IStructureElement, DefaultEdge> schema) {
 			this.schema = schema;
 		}
 		
 		@Override
-		public void visit(ClassOrInterfaceDeclaration n, Graph<ISqlElement, DefaultEdge> arg) {
+		public void visit(ClassOrInterfaceDeclaration n, DirectedGraph<IStructureElement, DefaultEdge> arg) {
 
 			if (n.getAnnotations() != null && isAnnotationAvailable(n.getAnnotations(), ENTITY)) {
 				processClass(n);
@@ -100,7 +102,7 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 		}
 
 		@Override
-		public void visit(MethodDeclaration n, Graph<ISqlElement, DefaultEdge> arg) {
+		public void visit(MethodDeclaration n, DirectedGraph<IStructureElement, DefaultEdge> arg) {
 
 			if (isGetter(n) && (n.getAnnotations() == null || !isAnnotationAvailable(n.getAnnotations(), TRANSIENT))) {
 				processMethod(n);
@@ -137,15 +139,15 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 		
 	}
 	
-	private static class PrimaryKeyVisitor extends VoidVisitorAdapter<Graph<ISqlElement, DefaultEdge>> {
+	private static class PrimaryKeyVisitor extends VoidVisitorAdapter<DirectedGraph<IStructureElement, DefaultEdge>> {
 
-		private Graph<ISqlElement, DefaultEdge> schema;
+		private DirectedGraph<IStructureElement, DefaultEdge> schema;
 		
 		private Map<String, String> classToTable;
 		
 		private Map<String, ClassOrInterfaceDeclaration> classDeclarations = new HashMap<>();
 		
-		public PrimaryKeyVisitor(Graph<ISqlElement, DefaultEdge> schema,
+		public PrimaryKeyVisitor(DirectedGraph<IStructureElement, DefaultEdge> schema,
 				Map<String, String> classToTable,
 				Map<String, ClassOrInterfaceDeclaration> classDeclarations) {
 			this.schema = schema;
@@ -154,7 +156,7 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 		}
 		
 		@Override
-		public void visit(ClassOrInterfaceDeclaration n, Graph<ISqlElement, DefaultEdge> arg) {
+		public void visit(ClassOrInterfaceDeclaration n, DirectedGraph<IStructureElement, DefaultEdge> arg) {
 
 			if (n.getAnnotations() != null && isAnnotationAvailable(n.getAnnotations(), ENTITY)) {
 				processClass(n);
@@ -239,13 +241,13 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 			"OneToOne"
 		};
 		
-		private Graph<ISqlElement, DefaultEdge> schema;
+		private DirectedGraph<IStructureElement, DefaultEdge> schema;
 		
 		private Map<String, String> classToTable = new HashMap<>();
 
 		private ISqlElement lastVisitedClass;
 		
-		public ForeignKeyVisitor(Graph<ISqlElement, DefaultEdge> schema, Map<String, String> classToTable) {
+		public ForeignKeyVisitor(DirectedGraph<IStructureElement, DefaultEdge> schema, Map<String, String> classToTable) {
 			this.schema = schema;
 			this.classToTable = classToTable;
 		}
@@ -356,8 +358,8 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 	}
 	
 	@Override
-	public Graph<ISqlElement, DefaultEdge> createSqlSchema() {
-		Graph<ISqlElement, DefaultEdge> schema = null;
+	public DirectedGraph<IStructureElement, DefaultEdge> createSqlSchema() {
+		DirectedGraph<IStructureElement, DefaultEdge> schema = null;
 		
 		try {
 			schema = tryCreateSqlSchema();
@@ -375,8 +377,8 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 		}
 	};
 
-	private Graph<ISqlElement, DefaultEdge> tryCreateSqlSchema() throws ParseException, IOException {
-		Graph<ISqlElement, DefaultEdge> schema = new SimpleGraph<ISqlElement, DefaultEdge>(DefaultEdge.class);
+	private DirectedGraph<IStructureElement, DefaultEdge> tryCreateSqlSchema() throws ParseException, IOException {
+		DirectedGraph<IStructureElement, DefaultEdge> schema = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
 		File file = new File(filePath);
 		List<CompilationUnit> cus = new ArrayList<>();
 		Map<String, String> classToTable = new HashMap<>();
@@ -430,7 +432,7 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 	}
 
 	private void parseJavaCompilationUnit(CompilationUnit cu, 
-			Graph<ISqlElement, DefaultEdge> schema, 
+			DirectedGraph<IStructureElement, DefaultEdge> schema, 
 			Map<String, String> classToTable, 
 			Map<String, ClassOrInterfaceDeclaration> classDeclarations) {
 		JPAAnnotationVisitor visitor = new JPAAnnotationVisitor(schema);
@@ -441,7 +443,7 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 	}
 
 	private void createForeignKeyPrimaryRelationships(CompilationUnit cu,
-			Graph<ISqlElement, DefaultEdge> schema,
+			DirectedGraph<IStructureElement, DefaultEdge> schema,
 			Map<String, String> classToTable,
 			Map<String, ClassOrInterfaceDeclaration> classDeclarations) {
 		PrimaryKeyVisitor visitor = new PrimaryKeyVisitor(schema, classToTable, classDeclarations);
@@ -449,7 +451,7 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 	}
 	
 	private void createForeignKeyRelationships(CompilationUnit cu, 
-			Graph<ISqlElement, DefaultEdge> schema, 
+			DirectedGraph<IStructureElement, DefaultEdge> schema, 
 			Map<String, String> classToTable) {
 		
 		ForeignKeyVisitor visitor = new ForeignKeyVisitor(schema, classToTable);

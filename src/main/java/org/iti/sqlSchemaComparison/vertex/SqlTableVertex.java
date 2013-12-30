@@ -69,4 +69,9 @@ public class SqlTableVertex implements ISqlElement {
 	public void setSourceElement(Object sourceElement) {
 		this.sourceElement = sourceElement;
 	}
+
+	@Override
+	public String getIdentifier() {
+		return getSqlElementId();
+	}
 }
