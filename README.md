@@ -11,8 +11,8 @@
 1. two SQL schemes with each other,
 2. a SQL statement with an SQL schema.
 
-Therfor, `sql-schema-comparer` transforms SQL statements and database definitions into a graph representation. The graph
-representation is then used for comparison.
+Therefor, `sql-schema-comparer` transforms SQL statements and database definitions into a graph representation. The 
+graph representation is then used for comparison.
 
 ## Frontends ##
 
