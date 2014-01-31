@@ -22,6 +22,7 @@
 package org.iti.sqlSchemaComparison;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +31,14 @@ import java.util.Set;
 import org.iti.sqlSchemaComparison.reachability.ISqlElementReachabilityChecker;
 import org.iti.sqlSchemaComparison.reachability.SqlColumnReachableChecker;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
+import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlElementType;
+import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
+import org.iti.structureGraph.StructureGraph;
+import org.iti.structureGraph.comparison.SimpleStructureGraphComparer;
+import org.iti.structureGraph.comparison.result.StructureGraphComparisonResult;
+import org.iti.structureGraph.comparison.result.Type;
 import org.iti.structureGraph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -45,8 +52,14 @@ public class SqlStatementExpectationValidator {
 	}
 
 	public SqlStatementExpectationValidationResult computeGraphMatching(DirectedGraph<IStructureElement, DefaultEdge> expectedSchema) {		
-		List<ISqlElement> missingTables = getMissingTables(expectedSchema);
-		List<ISqlElement> missingColumns = getMissingColumns(expectedSchema);
+		StructureGraph schemaGraph = new StructureGraph(schema);
+		StructureGraph expectedSchemaGraph = new StructureGraph(expectedSchema);
+		SimpleStructureGraphComparer simpleStructureGraphComparer = new SimpleStructureGraphComparer();
+
+        StructureGraphComparisonResult result = simpleStructureGraphComparer.compare(schemaGraph, expectedSchemaGraph);
+
+        List<ISqlElement> missingTables = getMissingElementByType(result.getElementsByModification(Type.NodeAdded), SqlTableVertex.class);
+        List<ISqlElement> missingColumns = getMissingElementByType(result.getElementsByModification(Type.NodeAdded), SqlColumnVertex.class);
 		Map<ISqlElement, List<List<ISqlElement>>> missingButReachableColumns = getReachableColumns(expectedSchema, missingColumns);
 		
 		missingColumns.removeAll(missingButReachableColumns.keySet());
@@ -54,32 +67,20 @@ public class SqlStatementExpectationValidator {
 		return new SqlStatementExpectationValidationResult(missingTables, missingColumns, missingButReachableColumns);
 	}
 
-	private List<ISqlElement> getMissingTables(DirectedGraph<IStructureElement, DefaultEdge> expectedSchema) {
-		List<ISqlElement> missingTables = new ArrayList<>();
-		
-		Set<ISqlElement> expectedTables = SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, expectedSchema.vertexSet());
-		Set<ISqlElement> currentTables = SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet());
-		
-		for (ISqlElement expectedTable : expectedTables)
-			if (!currentTables.contains(expectedTable))
-				missingTables.add(expectedTable);
-		
-		return missingTables;
+	private List<ISqlElement> getMissingElementByType(
+			Collection<IStructureElement> elements,
+			Class<?> class1) {
+		List<ISqlElement> missingElemets = new ArrayList<>();
+
+		for (IStructureElement element : elements) {
+			if (class1.isInstance(element)) {
+				missingElemets.add((ISqlElement)element);
+			}
+		}
+
+		return missingElemets;
 	}
 
-	private List<ISqlElement> getMissingColumns(DirectedGraph<IStructureElement, DefaultEdge> expectedSchema) {
-		List<ISqlElement> missingColumns = new ArrayList<>();
-		
-		Set<ISqlElement> expectedColumns = SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, expectedSchema.vertexSet());
-		Set<ISqlElement> currentColumns = SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet());
-		
-		for (ISqlElement expectedColumn : expectedColumns)
-			if (!currentColumns.contains(expectedColumn))
-				missingColumns.add(expectedColumn);
-		
-		return missingColumns;
-	}
-	
 	private Map<ISqlElement, List<List<ISqlElement>>> getReachableColumns(DirectedGraph<IStructureElement, DefaultEdge> expectedSchema,
 			List<ISqlElement> missingColumns) {
 		Map<ISqlElement, List<List<ISqlElement>>> reachableColumns = new HashMap<>();
@@ -109,5 +110,4 @@ public class SqlStatementExpectationValidator {
 		
 		return reachableColumns;
 	}
-	
 }
