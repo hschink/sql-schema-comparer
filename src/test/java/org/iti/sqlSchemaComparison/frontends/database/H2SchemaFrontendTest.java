@@ -108,6 +108,21 @@ public class H2SchemaFrontendTest {
 	}
 	
 	@Test
+	public void foreignKeysEstablishedCorrectly() {
+		ISqlSchemaFrontend frontend = new H2SchemaFrontend(DATABASE_FILE_PATH);
+		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
+		int foreignKeyEdges = 0;
+		
+		for (DefaultEdge edge : schema.edgeSet())
+			if (edge instanceof ForeignKeyRelationEdge)
+				foreignKeyEdges++;
+		
+		
+		assertEquals(7, foreignKeyEdges);
+		
+	}
+
+	@Test
 	public void tableHasColumnRelationsEstablishedCorrectly() {
 		ISqlSchemaFrontend frontend = new H2SchemaFrontend(DATABASE_FILE_PATH);
 		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
