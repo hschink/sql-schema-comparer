@@ -21,6 +21,13 @@
 
 package org.iti.sqlSchemaComparison.vertex;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.iti.structureGraph.nodes.IStructureElement;
+import org.jgrapht.DirectedGraph;
+import org.jgrapht.graph.DefaultEdge;
+
 
 public class SqlTableVertex implements ISqlElement {
 
@@ -73,5 +80,17 @@ public class SqlTableVertex implements ISqlElement {
 	@Override
 	public String getIdentifier() {
 		return getSqlElementId();
+	}
+
+	public Set<ISqlElement> getColumns(DirectedGraph<IStructureElement, DefaultEdge> schema) {
+		Set<ISqlElement> columns = SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet());
+		Set<ISqlElement> columnsOfTable = new HashSet<>();
+		
+		for (ISqlElement column : columns) {
+			if (((SqlColumnVertex)column).getTable().equals(getSqlElementId()))
+				columnsOfTable.add(column);
+		}
+		
+		return columnsOfTable;
 	}
 }
