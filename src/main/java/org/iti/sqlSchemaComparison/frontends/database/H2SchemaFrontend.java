@@ -30,10 +30,11 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.h2.jdbc.JdbcSQLException;
 import org.iti.sqlSchemaComparison.edge.ForeignKeyRelationEdge;
@@ -43,6 +44,7 @@ import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlElementType;
+import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.DefaultColumnConstraint;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.NotNullColumnConstraint;
@@ -78,7 +80,10 @@ public class H2SchemaFrontend implements ISqlSchemaFrontend {
                                                            + "WHERE CONSTRAINT_TYPE = 'PRIMARY KEY' "
                                                            + "AND TABLE_NAME = ? "
                                                            + "AND COLUMN_LIST = ?;";
-	private static final String QUERY_TABLE_SCHEMA_FOREIGN_KEYS = "PRAGMA foreign_key_list(?)";
+	private static final String QUERY_TABLE_SCHEMA_FOREIGN_KEYS = "SELECT SQL FROM INFORMATION_SCHEMA.CONSTRAINTS "
+                                                                  + "WHERE CONSTRAINT_TYPE = 'REFERENTIAL' "
+                                                                  + "AND TABLE_NAME = ? "
+                                                                  + "AND COLUMN_LIST = ?;";
 	
 	private PreparedStatement queryTables = null;
 	
@@ -111,6 +116,8 @@ public class H2SchemaFrontend implements ISqlSchemaFrontend {
 			for (String table : tables) {
 				createTableSchema(connection, schema, table);
 			}
+			
+			createForeignKeyRelation(connection, schema);
 			
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -190,22 +197,46 @@ public class H2SchemaFrontend implements ISqlSchemaFrontend {
 		return (primaryKeyCount.next()) ? primaryKeyCount.getInt(1) == 1 : false;
 	}
 
-	private enum ForeignKeySchema {
-		TABLE(3),
-		FROM(4),
-		TO(5);
+	private static final String FOREIGN_KEY_REGEX = "REFERENCES \\w+\\.(?<table>\\w+)\\((?<column>\\w+)\\)";
+	private static final Pattern FOREIGN_KEY_PATTERN = Pattern.compile(FOREIGN_KEY_REGEX);
 
-		private int value;    
+	private void createForeignKeyRelation(Connection connection, DirectedGraph<IStructureElement, DefaultEdge> schema) throws SQLException {
+		Set<ISqlElement> tables = SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet());
+		PreparedStatement stm = connection.prepareStatement(QUERY_TABLE_SCHEMA_FOREIGN_KEYS);
+		
+		for (ISqlElement table : tables) {
+			Set<ISqlElement> columns = ((SqlTableVertex) table).getColumns(schema);
 
-		private ForeignKeySchema(int value) {
-			this.value = value;
-		}
+			for (ISqlElement column : columns) {
+				stm.setString(1, table.getIdentifier());
+				stm.setString(2, column.getIdentifier());
 
-		public int getValue() {
-			return value;
+				try {
+					ResultSet tableSchema = stm.executeQuery();
+
+					if (tableSchema.next()) {
+						String sql = tableSchema.getString(1);
+						Matcher matcher = FOREIGN_KEY_PATTERN.matcher(sql);
+
+						if (matcher.find()) {
+							String foreignTable = matcher.group("table");
+							String foreignColumn = foreignTable + "." + matcher.group("column");
+							String referencingColumnName = table.getSqlElementId() + "." + column.getSqlElementId();
+
+							ISqlElement foreignKeyTable = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, foreignTable, schema.vertexSet());
+							ISqlElement foreignKeyColumn = SqlElementFactory.getMatchingSqlElement(SqlElementType.Column, foreignColumn, schema.vertexSet());
+							ISqlElement referencingColumn = SqlElementFactory.getMatchingSqlElement(SqlElementType.Column, referencingColumnName, schema.vertexSet());
+						
+							schema.addEdge(referencingColumn, foreignKeyColumn, new ForeignKeyRelationEdge(referencingColumn, foreignKeyTable, foreignKeyColumn));
+						}
+					}
+				} catch (Exception ex) {
+					
+				}
+			}
 		}
 	}
-
+	
 	public H2SchemaFrontend(String filePath) {
 		if (filePath == null || filePath == "")
 			throw new InvalidPathException("", "Path to H2 database file must not be null or empty!");
