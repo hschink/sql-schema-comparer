@@ -35,7 +35,6 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.OptionHandlerFilter;
-import org.kohsuke.args4j.spi.Messages;
 
 public class Main {
 
@@ -61,15 +60,15 @@ public class Main {
 			parser.parseArgument(args);
 			
 			if (option.statement == null && option.databases == null)
-				throw new CmdLineException(parser, Messages.ILLEGAL_LIST, "No arguments passed!");
+				throw new CmdLineException(parser, "No arguments passed!");
 			
 			if ((option.statement != null && option.statement != "")
 					&& (option.databases == null || option.databases.size() == 0))
-				throw new CmdLineException(parser, Messages.ILLEGAL_PATH, "Statement Validation: No database passed!");
+				throw new CmdLineException(parser, "Statement Validation: No database passed!");
 			
 			if ((option.statement == null || option.statement == "")
 					&& (option.databases == null || option.databases.size() <= 1))
-				throw new CmdLineException(parser, Messages.ILLEGAL_LIST, "Schema Comparison: Not enough databases passed!");
+				throw new CmdLineException(parser, "Schema Comparison: Not enough databases passed!");
 			
 		} catch (CmdLineException e) {
 			System.err.println(e.getMessage());
