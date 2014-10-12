@@ -287,21 +287,21 @@ public class H2SchemaFrontendTest {
 	}
 
 	@Test(expected=InvalidPathException.class)
-	public void throwsInvaidFilePathExceptionForEmptyString() {
+	public void throwsInvalidFilePathExceptionForEmptyString() {
 		ISqlSchemaFrontend frontend = new H2SchemaFrontend("");
 
 		frontend.createSqlSchema();
 	}
 
 	@Test(expected=InvalidPathException.class)
-	public void throwsInvaidFilePathExceptionForNull() {
+	public void throwsInvalidFilePathExceptionForNull() {
 		ISqlSchemaFrontend frontend = new H2SchemaFrontend(null);
 
 		frontend.createSqlSchema();
 	}
 
 	@Test(expected=IllegalArgumentException.class)
-	public void throwsInvaidArgumentExceptionOnInvalidFilePath() {
+	public void throwsInvalidArgumentExceptionOnInvalidFilePath() {
 		ISqlSchemaFrontend frontend = new H2SchemaFrontend("dadidadam");
 
 		frontend.createSqlSchema();

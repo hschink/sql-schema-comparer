@@ -287,21 +287,21 @@ public class SqliteSchemaFrontendTest {
 	}
 
 	@Test(expected=InvalidPathException.class)
-	public void throwsInvaidFilePathExceptionForEmptyString() {
+	public void throwsInvalidFilePathExceptionForEmptyString() {
 		ISqlSchemaFrontend frontend = new SqliteSchemaFrontend("");
 
 		frontend.createSqlSchema();
 	}
 
 	@Test(expected=InvalidPathException.class)
-	public void throwsInvaidFilePathExceptionForNull() {
+	public void throwsInvalidFilePathExceptionForNull() {
 		ISqlSchemaFrontend frontend = new SqliteSchemaFrontend(null);
 
 		frontend.createSqlSchema();
 	}
 
 	@Test(expected=IllegalArgumentException.class)
-	public void throwsInvaidArgumentExceptionOnInvalidFilePath() {
+	public void throwsInvalidArgumentExceptionOnInvalidFilePath() {
 		ISqlSchemaFrontend frontend = new SqliteSchemaFrontend("dadidadam");
 
 		frontend.createSqlSchema();
