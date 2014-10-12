@@ -124,6 +124,12 @@ public class H2SchemaFrontend implements ISqlSchemaFrontend {
 			e.printStackTrace();
 		} catch (JdbcSQLException e) {
 			throw new IllegalArgumentException(e);
+		}catch (SQLException e) {
+			if (e.getMessage().contains("invalid database address")) {
+				throw new IllegalArgumentException(e);
+			}
+
+			throw e;
 		} finally {
 			if (connection != null)
 				connection.close();
