@@ -1,0 +1,29 @@
+10-01 19:16:54 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Anzahl der Felder stimmt nicht überein
+Column count does not match; SQL statement:
+
+INSERT INTO external_staff VALUES(1,'Gerald','Gemrich',3850.0,'janitor','JanitorExpress','CompanyWay 10a') [21002-181]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:345)
+	at org.h2.message.DbException.get(DbException.java:179)
+	at org.h2.message.DbException.get(DbException.java:155)
+	at org.h2.message.DbException.get(DbException.java:144)
+	at org.h2.command.dml.Insert.prepare(Insert.java:265)
+	at org.h2.command.Parser.prepareCommand(Parser.java:247)
+	at org.h2.engine.Session.prepareLocal(Session.java:446)
+	at org.h2.engine.Session.prepareCommand(Session.java:388)
+	at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1189)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:171)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:159)
+	at org.h2.tools.RunScript.process(RunScript.java:260)
+	at org.h2.tools.RunScript.process(RunScript.java:190)
+	at org.h2.tools.RunScript.process(RunScript.java:328)
+	at org.h2.tools.RunScript.runTool(RunScript.java:141)
+	at org.h2.tools.RunScript.main(RunScript.java:68)
+10-01 19:17:29 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLException: Tabelle "DEPARTMENTS" besteht bereits
+Table "DEPARTMENTS" already exists; SQL statement:
+
+CREATE TABLE departments(
+	id INTEGER PRIMARY KEY AUTO_INCREMENT,
+	name varchar(255)
+) [42101-181]

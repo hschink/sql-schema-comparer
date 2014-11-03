@@ -137,7 +137,7 @@ public abstract class SqlElementFactory {
 	}
 
 	public static ISqlElement getPrimaryKey(ISqlElement table, DirectedGraph<IStructureElement, DefaultEdge> schema) {
-		Set<ISqlElement> columns = getColumnsOfTable(table, schema.vertexSet());
+		Set<ISqlElement> columns = ((SqlTableVertex) table).getColumns(schema);
 		
 		for (ISqlElement e : columns) {
 			if (e instanceof SqlColumnVertex)
@@ -147,18 +147,6 @@ public abstract class SqlElementFactory {
 		}
 		
 		return null;
-	}
-
-	private static Set<ISqlElement> getColumnsOfTable(ISqlElement table, Collection<IStructureElement> vertices) {
-		Set<ISqlElement> columns = SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, vertices);
-		Set<ISqlElement> columnsOfTable = new HashSet<>();
-		
-		for (ISqlElement column : columns) {
-			if (((SqlColumnVertex)column).getTable().equals(table.getSqlElementId()))
-				columnsOfTable.add(column);
-		}
-		
-		return columnsOfTable;
 	}
 
 }

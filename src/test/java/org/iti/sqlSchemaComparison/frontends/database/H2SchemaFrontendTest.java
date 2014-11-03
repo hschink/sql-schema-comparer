@@ -55,39 +55,39 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
-public class SqliteSchemaFrontendTest {
+public class H2SchemaFrontendTest {
 
-	public static final String DATABASE_FILE_PATH = "src//test//java//databases//hrm.sqlite";
+	public static final String DATABASE_FILE_PATH = ".//src//test//java//databases//hrm";
 	
-	public static final String DROPPED_COLUMN_DATABASE_FILE_PATH = "src//test//java//databases//refactored//hrm_DropColumn.sqlite";
-	public static final String DROPPED_TABLE_DATABASE_FILE_PATH = "src//test//java//databases//refactored//hrm_DropTable.sqlite";
-	public static final String MOVE_COLUMN_DATABASE_FILE_PATH = "src//test//java//databases//refactored//hrm_MoveColumn.sqlite";
-	public static final String RENAME_COLUMN_DATABASE_FILE_PATH = "src//test//java//databases//refactored//hrm_RenameColumn.sqlite";
-	public static final String RENAME_TABLE_DATABASE_FILE_PATH = "src//test//java//databases//refactored//hrm_RenameTable.sqlite";
-	public static final String REPLACE_COLUMN_DATABASE_FILE_PATH = "src//test//java//databases//refactored//hrm_ReplaceColumn.sqlite";
-	public static final String REPLACE_LOB_WITH_TABLE_DATABASE_FILE_PATH = "src//test//java//databases//refactored//hrm_ReplaceLobWithTable.sqlite";
+	public static final String DROPPED_COLUMN_DATABASE_FILE_PATH = ".//src//test//java//databases//refactored//hrm_DropColumn";
+	public static final String DROPPED_TABLE_DATABASE_FILE_PATH = ".//src//test//java//databases//refactored//hrm_DropTable";
+	public static final String MOVE_COLUMN_DATABASE_FILE_PATH = ".//src//test//java//databases//refactored//hrm_MoveColumn";
+	public static final String RENAME_COLUMN_DATABASE_FILE_PATH = ".//src//test//java//databases//refactored//hrm_RenameColumn";
+	public static final String RENAME_TABLE_DATABASE_FILE_PATH = ".//src//test//java//databases//refactored//hrm_RenameTable";
+	public static final String REPLACE_COLUMN_DATABASE_FILE_PATH = ".//src//test//java//databases//refactored//hrm_ReplaceColumn";
+	public static final String REPLACE_LOB_WITH_TABLE_DATABASE_FILE_PATH = ".//src//test//java//databases//refactored//hrm_ReplaceLobWithTable";
 	
-	private static final String DROPPED_COLUMN_NAME = "boss";
-	private static final String DROPPED_TABLE_NAME = "external_staff";
-	private static final String MOVE_COLUMN_NAME = "account";
-	private static final String RENAME_COLUMN_NAME = "phone";
-	private static final String RENAME_TABLE_NAME = "external_employees";
-	private static final String REPLACE_COLUMN_NAME = "company";
-	private static final String REPLACE_COLUMN_TYPE = "TEXT";
-	private static final String REPLACE_LOB_WITH_TABLE = "customer_address";
-	private static final String REPLACE_LOB_WITH_COLUMN = "address";
+	private static final String DROPPED_COLUMN_NAME = "BOSS";
+	private static final String DROPPED_TABLE_NAME = "EXTERNAL_STAFF";
+	private static final String MOVE_COLUMN_NAME = "ACCOUNT";
+	private static final String RENAME_COLUMN_NAME = "PHONE";
+	private static final String RENAME_TABLE_NAME = "EXTERNAL_EMPLOYEES";
+	private static final String REPLACE_COLUMN_NAME = "COMPANY";
+	private static final String REPLACE_COLUMN_TYPE = "CLOB";
+	private static final String REPLACE_LOB_WITH_TABLE = "CUSTOMER_ADDRESS";
+	private static final String REPLACE_LOB_WITH_COLUMN = "ADDRESS";
 	
 	@Before
 	public void setUp() { }
 	
 	@Test
 	public void databaseConnectionEstablishedCorrectly() {
-		ISqlSchemaFrontend frontend = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
+		ISqlSchemaFrontend frontend = new H2SchemaFrontend(DATABASE_FILE_PATH);
 		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
 		
 		assertNotNull(schema);
-		assertEquals(8, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
-		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
+		assertEquals(7, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
+		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
 		assertEquals(7, getColumnWithConstraint(SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()), PrimaryKeyColumnConstraint.class).size());
 		
 	}
@@ -109,7 +109,7 @@ public class SqliteSchemaFrontendTest {
 	
 	@Test
 	public void foreignKeysEstablishedCorrectly() {
-		ISqlSchemaFrontend frontend = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
+		ISqlSchemaFrontend frontend = new H2SchemaFrontend(DATABASE_FILE_PATH);
 		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
 		int foreignKeyEdges = 0;
 		
@@ -124,7 +124,7 @@ public class SqliteSchemaFrontendTest {
 
 	@Test
 	public void tableHasColumnRelationsEstablishedCorrectly() {
-		ISqlSchemaFrontend frontend = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
+		ISqlSchemaFrontend frontend = new H2SchemaFrontend(DATABASE_FILE_PATH);
 		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
 		int tableHasColumnEdges = 0;
 		
@@ -133,21 +133,21 @@ public class SqliteSchemaFrontendTest {
 				tableHasColumnEdges++;
 		
 		
-		assertEquals(31, tableHasColumnEdges);
+		assertEquals(29, tableHasColumnEdges);
 		
 	}
 	
 	@Test
 	public void droppedColumnDetectedCorrectly() throws StructureGraphComparisonException {
-		ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
-		ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(DROPPED_COLUMN_DATABASE_FILE_PATH);
+		ISqlSchemaFrontend frontend1 = new H2SchemaFrontend(DATABASE_FILE_PATH);
+		ISqlSchemaFrontend frontend2 = new H2SchemaFrontend(DROPPED_COLUMN_DATABASE_FILE_PATH);
 		DirectedGraph<IStructureElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
 		DirectedGraph<IStructureElement, DefaultEdge> schema2 = frontend2.createSqlSchema();
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
 		SqlSchemaComparisonResult result = comparer.comparisonResult;
 		
-		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
-		assertEquals(30, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
+		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
+		assertEquals(28, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
 		
 		ISqlElement elements = null;
 		
@@ -160,15 +160,15 @@ public class SqliteSchemaFrontendTest {
 	
 	@Test
 	public void droppedTableDetectedCorrectly() throws StructureGraphComparisonException {
-		ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
-		ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(DROPPED_TABLE_DATABASE_FILE_PATH);
+		ISqlSchemaFrontend frontend1 = new H2SchemaFrontend(DATABASE_FILE_PATH);
+		ISqlSchemaFrontend frontend2 = new H2SchemaFrontend(DROPPED_TABLE_DATABASE_FILE_PATH);
 		DirectedGraph<IStructureElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
 		DirectedGraph<IStructureElement, DefaultEdge> schema2 = frontend2.createSqlSchema();
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
 		SqlSchemaComparisonResult result = comparer.comparisonResult;
 		
-		assertEquals(8, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema1.vertexSet()).size());
-		assertEquals(7, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema2.vertexSet()).size());
+		assertEquals(7, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema1.vertexSet()).size());
+		assertEquals(6, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema2.vertexSet()).size());
 
 		for (Entry<ISqlElement, SchemaModification> entry : result.getModifications().entrySet()) {
 			if (entry.getValue() == SchemaModification.DELETE_TABLE) {
@@ -180,15 +180,15 @@ public class SqliteSchemaFrontendTest {
 	
 	@Test
 	public void moveColumnDetectedCorrectly() throws StructureGraphComparisonException {
-		ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
-		ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(MOVE_COLUMN_DATABASE_FILE_PATH);
+		ISqlSchemaFrontend frontend1 = new H2SchemaFrontend(DATABASE_FILE_PATH);
+		ISqlSchemaFrontend frontend2 = new H2SchemaFrontend(MOVE_COLUMN_DATABASE_FILE_PATH);
 		DirectedGraph<IStructureElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
 		DirectedGraph<IStructureElement, DefaultEdge> schema2 = frontend2.createSqlSchema();
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
 		SqlSchemaComparisonResult result = comparer.comparisonResult;
 		
-		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
-		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
+		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
+		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
 
 		Entry<ISqlElement, SchemaModification> entry = result.getModifications().entrySet().iterator().next();
 
@@ -198,15 +198,15 @@ public class SqliteSchemaFrontendTest {
 	
 	@Test
 	public void renameColumnDetectedCorrectly() throws StructureGraphComparisonException {
-		ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
-		ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(RENAME_COLUMN_DATABASE_FILE_PATH);
+		ISqlSchemaFrontend frontend1 = new H2SchemaFrontend(DATABASE_FILE_PATH);
+		ISqlSchemaFrontend frontend2 = new H2SchemaFrontend(RENAME_COLUMN_DATABASE_FILE_PATH);
 		DirectedGraph<IStructureElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
 		DirectedGraph<IStructureElement, DefaultEdge> schema2 = frontend2.createSqlSchema();
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
 		SqlSchemaComparisonResult result = comparer.comparisonResult;
 		
-		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
-		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
+		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
+		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
 
 		Entry<ISqlElement, SchemaModification> entry = result.getModifications().entrySet().iterator().next();
 
@@ -216,15 +216,15 @@ public class SqliteSchemaFrontendTest {
 	
 	@Test
 	public void renameTableDetectedCorrectly() throws StructureGraphComparisonException {
-		ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
-		ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(RENAME_TABLE_DATABASE_FILE_PATH);
+		ISqlSchemaFrontend frontend1 = new H2SchemaFrontend(DATABASE_FILE_PATH);
+		ISqlSchemaFrontend frontend2 = new H2SchemaFrontend(RENAME_TABLE_DATABASE_FILE_PATH);
 		DirectedGraph<IStructureElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
 		DirectedGraph<IStructureElement, DefaultEdge> schema2 = frontend2.createSqlSchema();
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
 		SqlSchemaComparisonResult result = comparer.comparisonResult;
 		
-		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
-		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
+		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
+		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
 
 		for (Entry<ISqlElement, SchemaModification> entry : result.getModifications().entrySet()) {
 			if (entry.getValue() == SchemaModification.RENAME_TABLE) {
@@ -235,8 +235,8 @@ public class SqliteSchemaFrontendTest {
 	
 	@Test
 	public void replaceColumnDetectedCorrectly() throws StructureGraphComparisonException {
-		ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
-		ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(REPLACE_COLUMN_DATABASE_FILE_PATH);
+		ISqlSchemaFrontend frontend1 = new H2SchemaFrontend(DATABASE_FILE_PATH);
+		ISqlSchemaFrontend frontend2 = new H2SchemaFrontend(REPLACE_COLUMN_DATABASE_FILE_PATH);
 		DirectedGraph<IStructureElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
 		DirectedGraph<IStructureElement, DefaultEdge> schema2 = frontend2.createSqlSchema();
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
@@ -252,8 +252,8 @@ public class SqliteSchemaFrontendTest {
 		
 		assertNotNull(column);
 
-		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
-		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
+		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
+		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
 
 		Entry<ISqlElement, SchemaModification> entry = result.getModifications().entrySet().iterator().next();
 
@@ -265,15 +265,15 @@ public class SqliteSchemaFrontendTest {
 	
 	@Test
 	public void replaceLobWithTable() throws StructureGraphComparisonException {
-		ISqlSchemaFrontend frontend1 = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
-		ISqlSchemaFrontend frontend2 = new SqliteSchemaFrontend(REPLACE_LOB_WITH_TABLE_DATABASE_FILE_PATH);
+		ISqlSchemaFrontend frontend1 = new H2SchemaFrontend(DATABASE_FILE_PATH);
+		ISqlSchemaFrontend frontend2 = new H2SchemaFrontend(REPLACE_LOB_WITH_TABLE_DATABASE_FILE_PATH);
 		DirectedGraph<IStructureElement, DefaultEdge> schema1 = frontend1.createSqlSchema();
 		DirectedGraph<IStructureElement, DefaultEdge> schema2 = frontend2.createSqlSchema();
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
 		SqlSchemaComparisonResult result = comparer.comparisonResult;
 
-		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
-		assertEquals(34, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
+		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
+		assertEquals(33, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
 
 		for (Entry<ISqlElement, SchemaModification> entry : result.getModifications().entrySet()) {
 			if (entry.getValue() == SchemaModification.CREATE_TABLE) {
@@ -288,21 +288,21 @@ public class SqliteSchemaFrontendTest {
 
 	@Test(expected=InvalidPathException.class)
 	public void throwsInvalidFilePathExceptionForEmptyString() {
-		ISqlSchemaFrontend frontend = new SqliteSchemaFrontend("");
+		ISqlSchemaFrontend frontend = new H2SchemaFrontend("");
 
 		frontend.createSqlSchema();
 	}
 
 	@Test(expected=InvalidPathException.class)
 	public void throwsInvalidFilePathExceptionForNull() {
-		ISqlSchemaFrontend frontend = new SqliteSchemaFrontend(null);
+		ISqlSchemaFrontend frontend = new H2SchemaFrontend(null);
 
 		frontend.createSqlSchema();
 	}
 
 	@Test(expected=IllegalArgumentException.class)
 	public void throwsInvalidArgumentExceptionOnInvalidFilePath() {
-		ISqlSchemaFrontend frontend = new SqliteSchemaFrontend("dadidadam");
+		ISqlSchemaFrontend frontend = new H2SchemaFrontend("dadidadam");
 
 		frontend.createSqlSchema();
 	}

@@ -18,7 +18,10 @@ graph representation is then used for comparison.
 
 `sql-schema-comparer` brings *limited* support for
 
-- SQLite (database schema and SQL statement parsing)
+- Database Schema Parsing
+ - H2 (Command-line not supported)
+ - SQLite
+- SQL Statement Parsing
 - JPA (annotations)
 
 ## Limitations ##
