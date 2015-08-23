@@ -175,15 +175,15 @@ public class H2SchemaFrontend implements ISqlSchemaFrontend {
 			ISqlElement column = new SqlColumnVertex(id, type, table.getName());
 
 			if (tableSchema.getString(ColumnSchema.NOT_NULL.getValue()).equals("YES"))
-				constraints.add(new NotNullColumnConstraint("", column));
+				constraints.add(new NotNullColumnConstraint(""));
 
 			String defaultValue = tableSchema.getString(ColumnSchema.DEFAULT_VALUE.getValue());
 
 			if (!tableSchema.wasNull())
-				constraints.add(new DefaultColumnConstraint(defaultValue, column));
+				constraints.add(new DefaultColumnConstraint(defaultValue));
 
 			if (isPrimaryKeyColumn(connection, tableName, id))
-				constraints.add(new PrimaryKeyColumnConstraint("", column));
+				constraints.add(new PrimaryKeyColumnConstraint(""));
 
 			((SqlColumnVertex) column).setConstraints(constraints);
 

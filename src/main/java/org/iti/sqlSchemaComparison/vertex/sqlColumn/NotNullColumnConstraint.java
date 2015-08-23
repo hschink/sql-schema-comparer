@@ -21,8 +21,6 @@
 
 package org.iti.sqlSchemaComparison.vertex.sqlColumn;
 
-import org.iti.sqlSchemaComparison.vertex.ISqlElement;
-
 public class NotNullColumnConstraint implements IColumnConstraint {
 
 	@Override
@@ -36,17 +34,9 @@ public class NotNullColumnConstraint implements IColumnConstraint {
 	public String getConstraintExpression() {
 		return expression;
 	}
-	
-	private ISqlElement vertex;
 
-	@Override
-	public ISqlElement getColumnVertex() {
-		return vertex;
-	}
-	
-	public NotNullColumnConstraint(String expression, ISqlElement vertex) {
+	public NotNullColumnConstraint(String expression) {
 		this.expression = expression;
-		this.vertex = vertex;
 	}
 
 	@Override

@@ -21,8 +21,6 @@
 
 package org.iti.sqlSchemaComparison.vertex.sqlColumn;
 
-import org.iti.sqlSchemaComparison.vertex.ISqlElement;
-
 public interface IColumnConstraint {
 
 	enum ConstraintType {
@@ -38,6 +36,4 @@ public interface IColumnConstraint {
 	ConstraintType getConstraintType();
 
 	String getConstraintExpression();
-	
-	ISqlElement getColumnVertex();
 }

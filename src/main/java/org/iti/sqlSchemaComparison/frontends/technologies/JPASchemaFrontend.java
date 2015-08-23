@@ -126,7 +126,7 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 			((SqlColumnVertex) column).setConstraints(constraints);
 
 			if (isAnnotationAvailable(n.getAnnotations(), ID)) {
-				PrimaryKeyColumnConstraint constraint = new PrimaryKeyColumnConstraint("", column);
+				PrimaryKeyColumnConstraint constraint = new PrimaryKeyColumnConstraint("");
 
 				constraints.add(constraint);
 			}
@@ -192,7 +192,7 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 
 				((SqlColumnVertex) column).setConstraints(constraints);
 
-				PrimaryKeyColumnConstraint constraint = new PrimaryKeyColumnConstraint("", column);
+				PrimaryKeyColumnConstraint constraint = new PrimaryKeyColumnConstraint("");
 
 				constraints.add(constraint);
 

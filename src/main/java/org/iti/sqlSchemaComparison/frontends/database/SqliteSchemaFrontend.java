@@ -155,15 +155,15 @@ public class SqliteSchemaFrontend implements ISqlSchemaFrontend {
 			ISqlElement column = new SqlColumnVertex(id, type, table.getName());
 
 			if (tableSchema.getInt(ColumnSchema.NOT_NULL.getValue()) > 0)
-				constraints.add(new NotNullColumnConstraint("", column));
+				constraints.add(new NotNullColumnConstraint(""));
 
 			String defaultValue = tableSchema.getString(ColumnSchema.DEFAULT_VALUE.getValue());
 
 			if (!tableSchema.wasNull())
-				constraints.add(new DefaultColumnConstraint(defaultValue, column));
+				constraints.add(new DefaultColumnConstraint(defaultValue));
 
 			if (tableSchema.getInt(ColumnSchema.PRIMARY_KEY.getValue()) > 0)
-				constraints.add(new PrimaryKeyColumnConstraint("", column));
+				constraints.add(new PrimaryKeyColumnConstraint(""));
 
 			((SqlColumnVertex) column).setConstraints(constraints);
 

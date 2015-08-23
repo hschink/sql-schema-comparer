@@ -85,8 +85,8 @@ public class SqlSchemaComparerTest {
 	private static ISqlElement c112 = new SqlColumnVertex("c1", "FLOAT", t1.getName());
 	private static ISqlElement c113 = new SqlColumnVertex("c1", "INTEGER", t1.getName());
 
-	private static IColumnConstraint constraint1 = new DefaultColumnConstraint("1", c111);
-	private static IColumnConstraint constraint2 = new NotNullColumnConstraint("", c112);
+	private static IColumnConstraint constraint1 = new DefaultColumnConstraint("1");
+	private static IColumnConstraint constraint2 = new NotNullColumnConstraint("");
 
 	@BeforeClass
 	public static void init() throws Exception {

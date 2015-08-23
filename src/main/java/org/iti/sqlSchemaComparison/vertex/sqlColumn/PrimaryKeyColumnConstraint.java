@@ -21,8 +21,6 @@
 
 package org.iti.sqlSchemaComparison.vertex.sqlColumn;
 
-import org.iti.sqlSchemaComparison.vertex.ISqlElement;
-
 public class PrimaryKeyColumnConstraint implements IColumnConstraint {
 
 	@Override
@@ -37,18 +35,10 @@ public class PrimaryKeyColumnConstraint implements IColumnConstraint {
 		return expression;
 	}
 
-	private ISqlElement vertex;
-	
-	@Override
-	public ISqlElement getColumnVertex() {
-		return vertex;
+	public PrimaryKeyColumnConstraint(String expression) {
+		this.expression = expression;
 	}
 
-	public PrimaryKeyColumnConstraint(String expression, ISqlElement vertex) {
-		this.expression = expression;
-		this.vertex = vertex;
-	}
-	
 	@Override
 	public String toString() {
 		return ColumnConstraintHelper.toString(this);
