@@ -102,7 +102,19 @@ public class SqlColumnVertex implements ISqlElement {
 	}
 
 	@Override
-	public String getIdentifier() {
+	public String getName() {
 		return getSqlElementId();
+	}
+
+	@Override
+	public boolean isMandatory() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isOptionalList() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

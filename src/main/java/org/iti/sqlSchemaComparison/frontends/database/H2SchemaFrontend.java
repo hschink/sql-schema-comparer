@@ -214,8 +214,8 @@ public class H2SchemaFrontend implements ISqlSchemaFrontend {
 			Set<ISqlElement> columns = ((SqlTableVertex) table).getColumns(schema);
 
 			for (ISqlElement column : columns) {
-				stm.setString(1, table.getIdentifier());
-				stm.setString(2, column.getIdentifier());
+				stm.setString(1, table.getName());
+				stm.setString(2, column.getName());
 
 				try {
 					ResultSet tableSchema = stm.executeQuery();
