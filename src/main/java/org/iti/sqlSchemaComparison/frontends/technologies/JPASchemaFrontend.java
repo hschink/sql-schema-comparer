@@ -58,45 +58,45 @@ import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
 
 public class JPASchemaFrontend implements IJPASchemaFrontend {
-	
+
 	private String filePath;
-	
+
 	private static class JPAAnnotationVisitor extends VoidVisitorAdapter<DirectedGraph<IStructureElement, DefaultEdge>> {
 
 		public Map<String, String> classToTable = new HashMap<>();
 		public Map<String, ClassOrInterfaceDeclaration> classDeclarations = new HashMap<>();
-		
+
 		private final static String TRANSIENT = "Transient";
 		private final static String ID = "Id";
-		
+
 		private DirectedGraph<IStructureElement, DefaultEdge> schema;
 
 		private ISqlElement lastVisitedClass;
-		
+
 		public JPAAnnotationVisitor(DirectedGraph<IStructureElement, DefaultEdge> schema) {
 			this.schema = schema;
 		}
-		
+
 		@Override
 		public void visit(ClassOrInterfaceDeclaration n, DirectedGraph<IStructureElement, DefaultEdge> arg) {
 
 			if (n.getAnnotations() != null && isAnnotationAvailable(n.getAnnotations(), ENTITY)) {
 				processClass(n);
 			}
-			
+
 			super.visit(n, arg);
 		}
 
 		private void processClass(ClassOrInterfaceDeclaration n) {
 			String tableName = getTableName(n);
 			ISqlElement table = SqlElementFactory.createSqlElement(SqlElementType.Table, tableName);
-			
+
 			table.setSourceElement(n);
-			
+
 			schema.addVertex(table);
-			
+
 			lastVisitedClass = table;
-			
+
 			classToTable.put(n.getName().toString(), tableName);
 			classDeclarations.put(n.getName(), n);
 		}
@@ -107,7 +107,7 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 			if (isGetter(n) && (n.getAnnotations() == null || !isAnnotationAvailable(n.getAnnotations(), TRANSIENT))) {
 				processMethod(n);
 			}
-			
+
 			super.visit(n, arg);
 		}
 
@@ -123,30 +123,30 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 			ISqlElement column = new SqlColumnVertex(id, type, lastVisitedClass.getSqlElementId());
 			
 			((SqlColumnVertex) column).setConstraints(constraints);
-			
+
 			if (isAnnotationAvailable(n.getAnnotations(), ID)) {
 				PrimaryKeyColumnConstraint constraint = new PrimaryKeyColumnConstraint("", column);
-				
+
 				constraints.add(constraint);
 			}
-			
+
 			schema.addVertex(column);
-			
+
 			column.setSourceElement(n);
-			
+
 			schema.addEdge(lastVisitedClass, column, new TableHasColumnEdge(lastVisitedClass, column));
 		}
-		
+
 	}
-	
+
 	private static class PrimaryKeyVisitor extends VoidVisitorAdapter<DirectedGraph<IStructureElement, DefaultEdge>> {
 
 		private DirectedGraph<IStructureElement, DefaultEdge> schema;
-		
+
 		private Map<String, String> classToTable;
-		
+
 		private Map<String, ClassOrInterfaceDeclaration> classDeclarations = new HashMap<>();
-		
+
 		public PrimaryKeyVisitor(DirectedGraph<IStructureElement, DefaultEdge> schema,
 				Map<String, String> classToTable,
 				Map<String, ClassOrInterfaceDeclaration> classDeclarations) {
@@ -154,23 +154,23 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 			this.classToTable = classToTable;
 			this.classDeclarations = classDeclarations;
 		}
-		
+
 		@Override
 		public void visit(ClassOrInterfaceDeclaration n, DirectedGraph<IStructureElement, DefaultEdge> arg) {
 
 			if (n.getAnnotations() != null && isAnnotationAvailable(n.getAnnotations(), ENTITY)) {
 				processClass(n);
 			}
-			
+
 			super.visit(n, arg);
 		}
 
 		private void processClass(ClassOrInterfaceDeclaration n) {
 			ISqlElement primaryKeyColumn = getPrimaryKeyOfType(n);
-			
+
 			if (primaryKeyColumn == null) {
 				primaryKeyColumn = getPrimaryKeyOfSupertypes(n.getExtends());
-				
+
 				setPrimaryKeyOfTable(n, primaryKeyColumn);
 			}
 		}
@@ -188,49 +188,49 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 				ISqlElement column = new SqlColumnVertex(id, type, table.getSqlElementId());
 				
 				column.setSourceElement(n);
-				
+
 				((SqlColumnVertex) column).setConstraints(constraints);
-				
+
 				PrimaryKeyColumnConstraint constraint = new PrimaryKeyColumnConstraint("", column);
-				
+
 				constraints.add(constraint);
-				
+
 				schema.addVertex(column);
 				schema.addEdge(table, column, new TableHasColumnEdge(table, column));
 				schema.addEdge(table, column, new ForeignKeyRelationEdge(column, foreignKeyTable, foreignKeyColumn));
-			}			
+			}
 		}
 
 		private ISqlElement getPrimaryKeyOfSupertypes(
 				List<ClassOrInterfaceType> supertypes) {
-			
+
 			ISqlElement primaryKeyColumn = null;
-			
+
 			for (ClassOrInterfaceType supertype : supertypes) {
 				ClassOrInterfaceDeclaration superclass = classDeclarations.get(supertype.getName());
-				
+
 				if (superclass != null) {
 					primaryKeyColumn = getPrimaryKeyOfType(superclass);
-				
+
 					if (primaryKeyColumn != null)
 						break;
-					
+
 					primaryKeyColumn = getPrimaryKeyOfSupertypes(superclass.getExtends());
 				}
 			}
-			
+
 			return primaryKeyColumn;
 		}
 
 		private ISqlElement getPrimaryKeyOfType(ClassOrInterfaceDeclaration type) {
 			String tableId = classToTable.get(type.getName().toString());
 			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, tableId, schema.vertexSet());
-			
+
 			return SqlElementFactory.getPrimaryKey(table, schema);
 		}
-		
+
 	}
-	
+
 	private static class ForeignKeyVisitor extends VoidVisitorAdapter<Graph<ISqlElement, DefaultEdge>> {
 
 		private final static String[] RELATIONSHIP_ANNOTATIONS = new String[]
@@ -240,31 +240,31 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 			"OneToMany",
 			"OneToOne"
 		};
-		
+
 		private DirectedGraph<IStructureElement, DefaultEdge> schema;
-		
+
 		private Map<String, String> classToTable = new HashMap<>();
 
 		private ISqlElement lastVisitedClass;
-		
+
 		public ForeignKeyVisitor(DirectedGraph<IStructureElement, DefaultEdge> schema, Map<String, String> classToTable) {
 			this.schema = schema;
 			this.classToTable = classToTable;
 		}
-		
+
 		@Override
 		public void visit(ClassOrInterfaceDeclaration n, Graph<ISqlElement, DefaultEdge> arg) {
 
 			if (n.getAnnotations() != null && isAnnotationAvailable(n.getAnnotations(), ENTITY)) {
 				processClass(n);
 			}
-			
+
 			super.visit(n, arg);
 		}
 
 		private void processClass(ClassOrInterfaceDeclaration n) {
 			String id = getTableName(n);
-			
+
 			lastVisitedClass = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, id, schema.vertexSet());
 		}
 
@@ -274,7 +274,7 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 			if (isGetter(n) && (n.getAnnotations() != null && isAnnotationAvailable(n.getAnnotations(), RELATIONSHIP_ANNOTATIONS))) {
 				processMethod(n);
 			}
-			
+
 			super.visit(n, arg);
 		}
 
@@ -288,12 +288,12 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 			ISqlElement foreignKeyTable = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, foreignTableId, schema.vertexSet());
 			ISqlElement referencingColumn = SqlElementFactory.getMatchingSqlColumns(columnId, schema.vertexSet(), true).get(0);
 			ISqlElement foreignKeyColumn = SqlElementFactory.getPrimaryKey(foreignKeyTable, schema);
-			
+
 			if (referencingColumn != null && foreignKeyColumn != null) {
 				schema.addEdge(referencingColumn, foreignKeyColumn, new ForeignKeyRelationEdge(referencingColumn, foreignKeyTable, foreignKeyColumn));
 			}
 		}
-		
+
 	}
 
 	private static boolean isAnnotationAvailable(
@@ -308,22 +308,22 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 		for (AnnotationExpr annotation : annotations)
 			if (Arrays.asList(relationshipAnnotations).contains(annotation.getName().toString()))
 				return true;
-		
+
 		return false;
-	}	
+	}
 
 	private static String getTableName(ClassOrInterfaceDeclaration n) {
 		AnnotationExpr tableAnnotation = getAnnotation(n.getAnnotations(), TABLE);
-		
+
 		if (tableAnnotation != null && tableAnnotation instanceof NormalAnnotationExpr) {
 			NormalAnnotationExpr a = (NormalAnnotationExpr)tableAnnotation;
-			
+
 			for (MemberValuePair p : a.getPairs()) {
 				if (p.getName().equals(TABLE_NAME))
 					return p.getValue().toString().replace("\"", "");
 			}
 		}
-		
+
 		return n.getName();
 	}
 
@@ -333,19 +333,19 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 
 	private static String getColumnName(MethodDeclaration n, String annotation) {
 		AnnotationExpr tableAnnotation = getAnnotation(n.getAnnotations(), annotation);
-		
+
 		if (tableAnnotation != null && tableAnnotation instanceof NormalAnnotationExpr) {
 			NormalAnnotationExpr a = (NormalAnnotationExpr)tableAnnotation;
-			
+
 			for (MemberValuePair p : a.getPairs()) {
 				if (p.getName().equals(TABLE_NAME))
 					return p.getValue().toString();
 			}
 		}
-		
+
 		return n.getName().substring(GETTER_PREFIX.length(), n.getName().length()).toLowerCase();
 	}
-	
+
 	private static AnnotationExpr getAnnotation(List<AnnotationExpr> annotations, String annotation) {
 		if (annotations != null) {
 			for (AnnotationExpr expr : annotations) {
@@ -353,14 +353,14 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 					return expr;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	@Override
 	public DirectedGraph<IStructureElement, DefaultEdge> createSqlSchema() {
 		DirectedGraph<IStructureElement, DefaultEdge> schema = null;
-		
+
 		try {
 			schema = tryCreateSqlSchema();
 		} catch (Exception ex) {
@@ -368,9 +368,9 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 		}
 		return schema;
 	}
-	
+
 	private static FilenameFilter javaFilenameFilter = new FilenameFilter() {
-		
+
 		@Override
 		public boolean accept(File arg0, String arg1) {
 			return arg1.endsWith(".java");
@@ -383,31 +383,31 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 		List<CompilationUnit> cus = new ArrayList<>();
 		Map<String, String> classToTable = new HashMap<>();
 		Map<String, ClassOrInterfaceDeclaration> classDeclarations = new HashMap<>();
-		
-		if (file.isDirectory()) {			
+
+		if (file.isDirectory()) {
 			for (String f : file.list(javaFilenameFilter)) {
 				File child = new File(file, f);
-				
+
 				CompilationUnit cu = getCompilationUnit(child.getAbsolutePath());
-				
+
 				if (cu != null)
 					cus.add(cu);
 			}
 		} else {
 			CompilationUnit cu = getCompilationUnit(filePath);
-			
+
 			if (cu != null)
 				cus.add(cu);
 		}
-		
+
 		for (CompilationUnit c : cus) {
 			parseJavaCompilationUnit(c, schema, classToTable, classDeclarations);
 		}
-		
+
 		for (CompilationUnit c : cus) {
 			createForeignKeyPrimaryRelationships(c, schema, classToTable, classDeclarations);
 		}
-		
+
 		for (CompilationUnit c : cus) {
 			createForeignKeyRelationships(c, schema, classToTable);
 		}
@@ -420,24 +420,24 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 		FileInputStream in = new FileInputStream(filePath);
 
         CompilationUnit cu;
-        
+
         try {
             // parse the file
             cu = JavaParser.parse(in);
         } finally {
             in.close();
         }
-        
+
         return cu;
 	}
 
-	private void parseJavaCompilationUnit(CompilationUnit cu, 
-			DirectedGraph<IStructureElement, DefaultEdge> schema, 
-			Map<String, String> classToTable, 
+	private void parseJavaCompilationUnit(CompilationUnit cu,
+			DirectedGraph<IStructureElement, DefaultEdge> schema,
+			Map<String, String> classToTable,
 			Map<String, ClassOrInterfaceDeclaration> classDeclarations) {
 		JPAAnnotationVisitor visitor = new JPAAnnotationVisitor(schema);
 		visitor.visit(cu, null);
-		
+
 		classToTable.putAll(visitor.classToTable);
 		classDeclarations.putAll(visitor.classDeclarations);
 	}
@@ -449,11 +449,11 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 		PrimaryKeyVisitor visitor = new PrimaryKeyVisitor(schema, classToTable, classDeclarations);
 		visitor.visit(cu, null);
 	}
-	
-	private void createForeignKeyRelationships(CompilationUnit cu, 
-			DirectedGraph<IStructureElement, DefaultEdge> schema, 
+
+	private void createForeignKeyRelationships(CompilationUnit cu,
+			DirectedGraph<IStructureElement, DefaultEdge> schema,
 			Map<String, String> classToTable) {
-		
+
 		ForeignKeyVisitor visitor = new ForeignKeyVisitor(schema, classToTable);
 		visitor.visit(cu, null);
 	}
@@ -461,8 +461,8 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 	public JPASchemaFrontend(String filePath) {
 		if (filePath == null || filePath == "")
 			throw new NullPointerException("Path to JPA file(s) must not be null or empty!");
-		
+
 		this.filePath = filePath;
 	}
-	
+
 }

@@ -53,22 +53,22 @@ public class SqlStatementFrontendTest {
 	private static final String MULTIPLE_MATCHING_COLUMNS_QUERY = "SELECT account from managers, salespersons;";
 	private static final String QUERY_WITH_TABLE_PREFIXED_COLUMNS_AND_WRONG_TABLE = "SELECT customers.firstname, department.name FROM customers, departments;";
 	private static final String QUERY_WITH_TABLE_PREFIXED_COLUMNS_AND_AMBIGUOUS_TABLES = "SELECT firstname, name FROM customers, departments;";
-	
+
 	private static DirectedGraph<IStructureElement, DefaultEdge> sqliteSchema;
-	
+
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
-	
+
 	@BeforeClass
 	public static void init() {
 		ISqlSchemaFrontend sqliteFrontend = new SqliteSchemaFrontend(SqliteSchemaFrontendTest.DATABASE_FILE_PATH);
-		
+
 		sqliteSchema = sqliteFrontend.createSqlSchema();
 	}
-	
+
 	@Before
 	public void setUp() { }
-	
+
 	@Test
 	public void singleTableQuery() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(SINGLE_TABLE_QUERY, null);
@@ -77,7 +77,7 @@ public class SqlStatementFrontendTest {
 		assertEquals(1, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
 		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
 	}
-	
+
 	@Test
 	public void joinTablQuery() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(JOIN_TABLE_QUERY, sqliteSchema);
@@ -86,7 +86,7 @@ public class SqlStatementFrontendTest {
 		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
 		assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
 	}
-	
+
 	@Test
 	public void joinTablWithAliasQuery() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(JOIN_TABLE_WITH_ALIAS_QUERY, sqliteSchema);
@@ -95,7 +95,7 @@ public class SqlStatementFrontendTest {
 		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
 		assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
 	}
-	
+
 	@Test
 	public void joinTablWithTableReferenceQuery() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(JOIN_TABLE_WITH_TABLE_REFERENCE_QUERY, sqliteSchema);
@@ -104,28 +104,28 @@ public class SqlStatementFrontendTest {
 		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
 		assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
 	}
-	
+
 	@Test(expected=IllegalArgumentException.class)
 	public void queryOnNonExistingTable() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(TABLE_DOES_NOT_EXIST_QUERY, sqliteSchema);
 
 		frontend.createSqlSchema();
 	}
-	
+
 	@Test(expected=IllegalArgumentException.class)
 	public void queryOnNonExistingColumn() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(COLUMN_DOES_NOT_EXIST_QUERY, sqliteSchema);
 
 		frontend.createSqlSchema();
 	}
-	
+
 	@Test(expected=IllegalArgumentException.class)
 	public void queryWithMultipleMatchingColumns() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(MULTIPLE_MATCHING_COLUMNS_QUERY, sqliteSchema);
 
 		frontend.createSqlSchema();
 	}
-	
+
 	@Test(expected=IllegalArgumentException.class)
 	public void queryWithTablePrefixedColumnsAndWrongTable() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_TABLE_PREFIXED_COLUMNS_AND_WRONG_TABLE, null);

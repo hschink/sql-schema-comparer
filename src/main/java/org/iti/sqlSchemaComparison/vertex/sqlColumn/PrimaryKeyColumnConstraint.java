@@ -29,7 +29,7 @@ public class PrimaryKeyColumnConstraint implements IColumnConstraint {
 	public ConstraintType getConstraintType() {
 		return ConstraintType.PRIMARY_KEY;
 	}
-	
+
 	private String expression;
 
 	@Override
@@ -58,7 +58,7 @@ public class PrimaryKeyColumnConstraint implements IColumnConstraint {
 	public boolean equals(Object o) {
 		return ColumnConstraintHelper.equals(this, o);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return ColumnConstraintHelper.hashCode(this);

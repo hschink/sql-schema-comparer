@@ -47,7 +47,7 @@ public class SqlColumnReachableCheckerTest {
 	private static DirectedGraph<IStructureElement, DefaultEdge> schema1 = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
 	private static DirectedGraph<IStructureElement, DefaultEdge> schema2 = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
 	private static DirectedGraph<IStructureElement, DefaultEdge> schema3 = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
-	
+
 	private static ISqlElement t1 = SqlElementFactory.createSqlElement(SqlElementType.Table, "t1");
 	private static ISqlElement t2 = SqlElementFactory.createSqlElement(SqlElementType.Table, "t2");
 	private static ISqlElement t3 = SqlElementFactory.createSqlElement(SqlElementType.Table, "t3");
@@ -78,15 +78,15 @@ public class SqlColumnReachableCheckerTest {
 		schema3.addVertex(c3);
 		schema3.addVertex(c4);
 		schema3.addVertex(c5);
-		
+
 		schema1.addEdge(t1, c1, new TableHasColumnEdge(t1, c1));
 		schema1.addEdge(t2, c2, new TableHasColumnEdge(t2, c2));
-		
+
 		schema2.addEdge(t1, c3, new TableHasColumnEdge(t1, c3));
 		schema2.addEdge(t2, c1, new TableHasColumnEdge(t2, c1));
 		schema2.addEdge(t2, c2, new TableHasColumnEdge(t2, c2));
 		schema2.addEdge(c3, c2, new ForeignKeyRelationEdge(c3, t2, c2));
-		
+
 		schema3.addEdge(t1, c3, new TableHasColumnEdge(t1, c3));
 		schema3.addEdge(t2, c5, new TableHasColumnEdge(t2, c5));
 		schema3.addEdge(t2, c2, new TableHasColumnEdge(t2, c2));
@@ -95,24 +95,24 @@ public class SqlColumnReachableCheckerTest {
 		schema3.addEdge(c3, c2, new ForeignKeyRelationEdge(c3, t2, c2));
 		schema3.addEdge(c5, c4, new ForeignKeyRelationEdge(c5, t3, c4));
 	}
-	
+
 	@Before
 	public void setUp() { }
-	
+
 	@Test
 	public void reachableColumnDetectedCorrectly() {
 		ISqlElementReachabilityChecker checker = new SqlColumnReachableChecker(schema1, t1, c1);
-		
+
 		assertTrue(checker.isReachable());
 		assertEquals(2, checker.getPath().size());
 		assertTrue(checker.getPath().contains(t1));
 		assertTrue(checker.getPath().contains(c1));
 	}
-	
+
 	@Test
 	public void reachableForeignColumnDetectedCorrectly() {
 		ISqlElementReachabilityChecker checker = new SqlColumnReachableChecker(schema2, t1, c1);
-		
+
 		assertTrue(checker.isReachable());
 		assertEquals(5, checker.getPath().size());
 		assertTrue(checker.getPath().contains(t1));
@@ -121,11 +121,11 @@ public class SqlColumnReachableCheckerTest {
 		assertTrue(checker.getPath().contains(t2));
 		assertTrue(checker.getPath().contains(c1));
 	}
-	
+
 	@Test
 	public void reachableForeignColumnWithOneIndirectionDetectedCorrectly() {
 		ISqlElementReachabilityChecker checker = new SqlColumnReachableChecker(schema3, t1, c1);
-		
+
 		assertTrue(checker.isReachable());
 		assertEquals(8, checker.getPath().size());
 		assertTrue(checker.getPath().contains(t1));
@@ -137,9 +137,9 @@ public class SqlColumnReachableCheckerTest {
 		assertTrue(checker.getPath().contains(t3));
 		assertTrue(checker.getPath().contains(c1));
 	}
-	
+
 	@After
 	public void tearDown() {
-		
+
 	}
 }

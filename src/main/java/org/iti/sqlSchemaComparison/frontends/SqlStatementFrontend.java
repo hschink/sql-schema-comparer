@@ -46,11 +46,11 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 public class SqlStatementFrontend implements ISqlSchemaFrontend {
 
 	private String statement;
-	
+
 	public String getStatement() {
 		return statement;
 	}
-	
+
 	private DirectedGraph<IStructureElement, DefaultEdge> databaseSchema;
 
 	public DirectedGraph<IStructureElement, DefaultEdge> getDatabaseSchema() {
@@ -61,33 +61,33 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 	public DirectedGraph<IStructureElement, DefaultEdge> createSqlSchema() {
 		DirectedGraph<IStructureElement, DefaultEdge> result = null;
 		ZStatement statement = parseStatement();
-		
+
 		if (statement != null)
-			result = createGraph(statement); 
-		
+			result = createGraph(statement);
+
 		return result;
 	}
 
-	private ZStatement parseStatement() {		
+	private ZStatement parseStatement() {
 		try {
 			InputStream is = new ByteArrayInputStream(statement.getBytes("UTF-8"));
 			ZqlParser parser = new ZqlParser(is);
-			
+
 			return parser.readStatement();
 		} catch (UnsupportedEncodingException | ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
-	
+
 	private DirectedGraph<IStructureElement, DefaultEdge> createGraph(ZStatement statement) {
 		DirectedGraph<IStructureElement, DefaultEdge> result = null;
-		
+
 		if (statement instanceof ZQuery)
 			result = createGraphFromQuery((ZQuery)statement);
-			
+
 		return result;
 	}
 
@@ -95,9 +95,9 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 		DirectedGraph<IStructureElement, DefaultEdge> schema = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
 
 		createTables(query, schema);
-		
+
 		createTableColumns(query, schema);
-		
+
 		return schema;
 	}
 
@@ -106,7 +106,7 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 
 		for (Object item : query.getFrom()) {
 			ZFromItem fromItem = (ZFromItem) item;
-			
+
 			createTable(schema, query, fromItem);
 		}
 	}
@@ -115,7 +115,7 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 			ZQuery query, ZFromItem fromItem) {
 		if (databaseSchema != null) {
 			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, fromItem.getTable(), databaseSchema.vertexSet());
-			
+
 			if (table == null)
 				throw new IllegalArgumentException(String.format("Table %s does not exist in schema!", fromItem.getTable()));
 		}
@@ -132,19 +132,19 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 
 		for (Object item : query.getSelect()) {
 			ZSelectItem selectItem = (ZSelectItem) item;
-			
+
 			ZFromItem tableItem = getColumnTable(query, selectItem);
-			
+
 			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, tableItem.getTable(), schema.vertexSet());
 			ISqlElement column = new SqlColumnVertex(selectItem.getColumn(), null, table.getSqlElementId());
 			
 			column.setSourceElement(selectItem);
-			
+
 			schema.addVertex(column);
 			schema.addEdge(table, column, new TableHasColumnEdge(table, column));
 		}
 	}
-	
+
 	private ZFromItem getColumnTable(ZQuery query, ZSelectItem selectItem) {
 		if (selectItem.getTable() != null) {
 			return getColumnTableFromQuery(query, selectItem);
@@ -153,22 +153,22 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 		} else if (query.getFrom().size() == 1) {
 			return (ZFromItem) query.getFrom().get(0);
 		}
-		
+
 		throw new IllegalArgumentException("No matching table for column " + selectItem.getColumn() + " exists!");
 	}
 
 	private ZFromItem getColumnTableFromQuery(ZQuery query, ZSelectItem selectItem) {
 		String tableName = selectItem.getTable();
-		
+
 		for (Object item : query.getFrom()) {
 			ZFromItem tableItem = (ZFromItem)item;
-			
+
 			if (tableItem.getTable().equals(tableName)
 					|| (tableItem.getAlias() != null && tableItem.getAlias().equals(tableName))) {
 				return tableItem;
 			}
 		}
-		
+
 		throw new IllegalArgumentException("Table " + selectItem.getTable()
 				   + " for column " + selectItem.getColumn()
 				   + " does not exist!");
@@ -187,13 +187,13 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 
 		return getTableFromQuery(query, (String) matchingTables.toArray()[0]);
 	}
-	
+
 	private Set<ZFromItem> getTablesFromQuery(ZQuery query) {
 		Set<ZFromItem> tables = new HashSet<>();
-		
+
 		for (Object item : query.getFrom())
 			tables.add((ZFromItem) item);
-		
+
 		return tables;
 	}
 
@@ -202,7 +202,7 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 
 		for (Object item : query.getFrom()) {
 			ZFromItem tableItem = (ZFromItem) item;
-			
+
 			if (tableItem.getTable().equals(tableName)) {
 				result = tableItem;
 				break;
@@ -218,8 +218,8 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 		for (ZFromItem tableItem : tables) {
 			String tableName = tableItem.getTable();
 			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, tableName, databaseSchema.vertexSet());
-			
-			
+
+
 			for (DefaultEdge e : databaseSchema.edgeSet()) {
 				if (e instanceof TableHasColumnEdge) {
 					TableHasColumnEdge edge = (TableHasColumnEdge) e;
@@ -229,14 +229,14 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 				}
 			}
 		}
-		
+
 		return matchingTables;
 	}
 
 	public SqlStatementFrontend(String statement, DirectedGraph<IStructureElement, DefaultEdge> databaseSchema) {
 		if (statement == null || statement == "")
 			throw new NullPointerException("SQL statement must not be null or empty!");
-		
+
 		this.statement = statement;
 		this.databaseSchema = databaseSchema;
 	}

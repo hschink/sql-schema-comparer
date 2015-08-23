@@ -46,12 +46,12 @@ import org.jgrapht.graph.DefaultEdge;
 public class SqlStatementExpectationValidator {
 
 	private DirectedGraph<IStructureElement, DefaultEdge> schema;
-	
+
 	public SqlStatementExpectationValidator(DirectedGraph<IStructureElement, DefaultEdge> schema) {
 		this.schema = schema;
 	}
 
-	public SqlStatementExpectationValidationResult computeGraphMatching(DirectedGraph<IStructureElement, DefaultEdge> expectedSchema) {		
+	public SqlStatementExpectationValidationResult computeGraphMatching(DirectedGraph<IStructureElement, DefaultEdge> expectedSchema) {
 		StructureGraph schemaGraph = new StructureGraph(schema);
 		StructureGraph expectedSchemaGraph = new StructureGraph(expectedSchema);
 		SimpleStructureGraphComparer simpleStructureGraphComparer = new SimpleStructureGraphComparer();
@@ -61,9 +61,9 @@ public class SqlStatementExpectationValidator {
         List<ISqlElement> missingTables = getMissingElementByType(result.getElementsByModification(Type.NodeAdded), SqlTableVertex.class);
         List<ISqlElement> missingColumns = getMissingElementByType(result.getElementsByModification(Type.NodeAdded), SqlColumnVertex.class);
 		Map<ISqlElement, List<List<ISqlElement>>> missingButReachableColumns = getReachableColumns(expectedSchema, missingColumns);
-		
+
 		missingColumns.removeAll(missingButReachableColumns.keySet());
-		
+
 		return new SqlStatementExpectationValidationResult(missingTables, missingColumns, missingButReachableColumns);
 	}
 
@@ -85,21 +85,21 @@ public class SqlStatementExpectationValidator {
 			List<ISqlElement> missingColumns) {
 		Map<ISqlElement, List<List<ISqlElement>>> reachableColumns = new HashMap<>();
 		Set<ISqlElement> expectedTables = SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, expectedSchema.vertexSet());
-		
+
 		for (ISqlElement column : missingColumns) {
 			List<ISqlElement> matchingColumns = SqlElementFactory.getMatchingSqlColumns(column.getSqlElementId(), schema.vertexSet(), false);
 			
 			for (ISqlElement matchingColumn : matchingColumns) {
 				for (ISqlElement table : expectedTables) {
 					ISqlElement schemaTable = SqlElementFactory.getMatchingSqlElement(table, schema.vertexSet());
-					
+
 					if (schemaTable != null) {
 						ISqlElementReachabilityChecker checker = new SqlColumnReachableChecker(schema, schemaTable, matchingColumn);
-						
+
 						if (checker.isReachable()) {
 							if (!reachableColumns.containsKey(column))
 								reachableColumns.put(column, new ArrayList<List<ISqlElement>>());
-							
+
 							reachableColumns.get(column).add(checker.getPath());
 							break;
 						}
@@ -107,7 +107,7 @@ public class SqlStatementExpectationValidator {
 				}
 			}
 		}
-		
+
 		return reachableColumns;
 	}
 }

@@ -29,7 +29,7 @@ public class NotNullColumnConstraint implements IColumnConstraint {
 	public ConstraintType getConstraintType() {
 		return ConstraintType.NOT_NULL;
 	}
-	
+
 	private String expression;
 
 	@Override
@@ -48,7 +48,7 @@ public class NotNullColumnConstraint implements IColumnConstraint {
 		this.expression = expression;
 		this.vertex = vertex;
 	}
-	
+
 	@Override
 	public String toString() {
 		return ColumnConstraintHelper.toString(this);
@@ -58,7 +58,7 @@ public class NotNullColumnConstraint implements IColumnConstraint {
 	public boolean equals(Object o) {
 		return ColumnConstraintHelper.equals(this, o);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return ColumnConstraintHelper.hashCode(this);

@@ -58,7 +58,7 @@ import org.junit.runners.JUnit4;
 public class H2SchemaFrontendTest {
 
 	public static final String DATABASE_FILE_PATH = ".//src//test//java//databases//hrm";
-	
+
 	public static final String DROPPED_COLUMN_DATABASE_FILE_PATH = ".//src//test//java//databases//refactored//hrm_DropColumn";
 	public static final String DROPPED_TABLE_DATABASE_FILE_PATH = ".//src//test//java//databases//refactored//hrm_DropTable";
 	public static final String MOVE_COLUMN_DATABASE_FILE_PATH = ".//src//test//java//databases//refactored//hrm_MoveColumn";
@@ -66,7 +66,7 @@ public class H2SchemaFrontendTest {
 	public static final String RENAME_TABLE_DATABASE_FILE_PATH = ".//src//test//java//databases//refactored//hrm_RenameTable";
 	public static final String REPLACE_COLUMN_DATABASE_FILE_PATH = ".//src//test//java//databases//refactored//hrm_ReplaceColumn";
 	public static final String REPLACE_LOB_WITH_TABLE_DATABASE_FILE_PATH = ".//src//test//java//databases//refactored//hrm_ReplaceLobWithTable";
-	
+
 	private static final String DROPPED_COLUMN_NAME = "BOSS";
 	private static final String DROPPED_TABLE_NAME = "EXTERNAL_STAFF";
 	private static final String MOVE_COLUMN_NAME = "ACCOUNT";
@@ -76,25 +76,25 @@ public class H2SchemaFrontendTest {
 	private static final String REPLACE_COLUMN_TYPE = "CLOB";
 	private static final String REPLACE_LOB_WITH_TABLE = "CUSTOMER_ADDRESS";
 	private static final String REPLACE_LOB_WITH_COLUMN = "ADDRESS";
-	
+
 	@Before
 	public void setUp() { }
-	
+
 	@Test
 	public void databaseConnectionEstablishedCorrectly() {
 		ISqlSchemaFrontend frontend = new H2SchemaFrontend(DATABASE_FILE_PATH);
 		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
-		
+
 		assertNotNull(schema);
 		assertEquals(7, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
 		assertEquals(7, getColumnWithConstraint(SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()), PrimaryKeyColumnConstraint.class).size());
-		
+
 	}
-	
+
 	private List<ISqlElement> getColumnWithConstraint(Set<ISqlElement> sqlElementsOfType, Class<?> constraintType) {
 		List<ISqlElement> columns = new ArrayList<>();
-		
+
 		for (ISqlElement e : sqlElementsOfType) {
 			for (IColumnConstraint c : ((SqlColumnVertex) e).getConstraints()) {
 				if (constraintType.isAssignableFrom(c.getClass())) {
@@ -103,23 +103,23 @@ public class H2SchemaFrontendTest {
 				}
 			}
 		}
-		
+
 		return columns;
 	}
-	
+
 	@Test
 	public void foreignKeysEstablishedCorrectly() {
 		ISqlSchemaFrontend frontend = new H2SchemaFrontend(DATABASE_FILE_PATH);
 		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
 		int foreignKeyEdges = 0;
-		
+
 		for (DefaultEdge edge : schema.edgeSet())
 			if (edge instanceof ForeignKeyRelationEdge)
 				foreignKeyEdges++;
-		
-		
+
+
 		assertEquals(7, foreignKeyEdges);
-		
+
 	}
 
 	@Test
@@ -127,16 +127,16 @@ public class H2SchemaFrontendTest {
 		ISqlSchemaFrontend frontend = new H2SchemaFrontend(DATABASE_FILE_PATH);
 		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
 		int tableHasColumnEdges = 0;
-		
+
 		for (DefaultEdge edge : schema.edgeSet())
 			if (edge instanceof TableHasColumnEdge)
 				tableHasColumnEdges++;
-		
-		
+
+
 		assertEquals(29, tableHasColumnEdges);
-		
+
 	}
-	
+
 	@Test
 	public void droppedColumnDetectedCorrectly() throws StructureGraphComparisonException {
 		ISqlSchemaFrontend frontend1 = new H2SchemaFrontend(DATABASE_FILE_PATH);
@@ -145,19 +145,19 @@ public class H2SchemaFrontendTest {
 		DirectedGraph<IStructureElement, DefaultEdge> schema2 = frontend2.createSqlSchema();
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
 		SqlSchemaComparisonResult result = comparer.comparisonResult;
-		
+
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
 		assertEquals(28, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
-		
+
 		ISqlElement elements = null;
-		
+
 		for (Entry<ISqlElement, SchemaModification> entry : result.getModifications().entrySet()) {
 			elements = entry.getKey();
 		}
 
 		assertEquals(DROPPED_COLUMN_NAME, elements.getSqlElementId());
 	}
-	
+
 	@Test
 	public void droppedTableDetectedCorrectly() throws StructureGraphComparisonException {
 		ISqlSchemaFrontend frontend1 = new H2SchemaFrontend(DATABASE_FILE_PATH);
@@ -166,7 +166,7 @@ public class H2SchemaFrontendTest {
 		DirectedGraph<IStructureElement, DefaultEdge> schema2 = frontend2.createSqlSchema();
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
 		SqlSchemaComparisonResult result = comparer.comparisonResult;
-		
+
 		assertEquals(7, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema1.vertexSet()).size());
 		assertEquals(6, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema2.vertexSet()).size());
 
@@ -177,7 +177,7 @@ public class H2SchemaFrontendTest {
 			}
 		}
 	}
-	
+
 	@Test
 	public void moveColumnDetectedCorrectly() throws StructureGraphComparisonException {
 		ISqlSchemaFrontend frontend1 = new H2SchemaFrontend(DATABASE_FILE_PATH);
@@ -186,7 +186,7 @@ public class H2SchemaFrontendTest {
 		DirectedGraph<IStructureElement, DefaultEdge> schema2 = frontend2.createSqlSchema();
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
 		SqlSchemaComparisonResult result = comparer.comparisonResult;
-		
+
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
 
@@ -195,7 +195,7 @@ public class H2SchemaFrontendTest {
 		assertEquals(SchemaModification.MOVE_COLUMN, entry.getValue());
 		assertEquals(MOVE_COLUMN_NAME, entry.getKey().getSqlElementId());
 	}
-	
+
 	@Test
 	public void renameColumnDetectedCorrectly() throws StructureGraphComparisonException {
 		ISqlSchemaFrontend frontend1 = new H2SchemaFrontend(DATABASE_FILE_PATH);
@@ -204,7 +204,7 @@ public class H2SchemaFrontendTest {
 		DirectedGraph<IStructureElement, DefaultEdge> schema2 = frontend2.createSqlSchema();
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
 		SqlSchemaComparisonResult result = comparer.comparisonResult;
-		
+
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
 
@@ -213,7 +213,7 @@ public class H2SchemaFrontendTest {
 		assertEquals(SchemaModification.RENAME_COLUMN, entry.getValue());
 		assertEquals(RENAME_COLUMN_NAME, entry.getKey().getSqlElementId());
 	}
-	
+
 	@Test
 	public void renameTableDetectedCorrectly() throws StructureGraphComparisonException {
 		ISqlSchemaFrontend frontend1 = new H2SchemaFrontend(DATABASE_FILE_PATH);
@@ -222,7 +222,7 @@ public class H2SchemaFrontendTest {
 		DirectedGraph<IStructureElement, DefaultEdge> schema2 = frontend2.createSqlSchema();
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
 		SqlSchemaComparisonResult result = comparer.comparisonResult;
-		
+
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
 
@@ -232,7 +232,7 @@ public class H2SchemaFrontendTest {
 			}
 		}
 	}
-	
+
 	@Test
 	public void replaceColumnDetectedCorrectly() throws StructureGraphComparisonException {
 		ISqlSchemaFrontend frontend1 = new H2SchemaFrontend(DATABASE_FILE_PATH);
@@ -242,14 +242,14 @@ public class H2SchemaFrontendTest {
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
 		SqlSchemaComparisonResult result = comparer.comparisonResult;
 		SqlSchemaColumnComparisonResult column = null;
-		
+
 		for (ISqlElement element : result.getColumnComparisonResults().keySet()) {
 			if (element.getSqlElementId().equals(REPLACE_COLUMN_NAME)) {
 				column = result.getColumnComparisonResults().get(element);
 				break;
 			}
 		}
-		
+
 		assertNotNull(column);
 
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
@@ -262,7 +262,7 @@ public class H2SchemaFrontendTest {
 		assertTrue(column.hasColumnTypeChanged());
 		assertEquals(REPLACE_COLUMN_TYPE, column.getCurrentColumnType());
 	}
-	
+
 	@Test
 	public void replaceLobWithTable() throws StructureGraphComparisonException {
 		ISqlSchemaFrontend frontend1 = new H2SchemaFrontend(DATABASE_FILE_PATH);

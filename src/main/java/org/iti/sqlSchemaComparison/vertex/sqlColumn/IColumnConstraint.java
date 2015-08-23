@@ -36,7 +36,7 @@ public interface IColumnConstraint {
 	}
 	
 	ConstraintType getConstraintType();
-	
+
 	String getConstraintExpression();
 	
 	ISqlElement getColumnVertex();

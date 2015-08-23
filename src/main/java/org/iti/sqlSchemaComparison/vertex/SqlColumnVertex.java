@@ -31,25 +31,25 @@ public class SqlColumnVertex implements ISqlElement {
 	private static final long serialVersionUID = 2813536717531181481L;
 
 	private Object sourceElement = null;
-	
+
 	@Override
 	public SqlElementType getSqlElementType() {
 		return SqlElementType.Column;
 	}
-	
+
 	private String id = "";
 
 	@Override
 	public String getSqlElementId() {
 		return id;
 	}
-	
+
 	private String type = "";
-	
+
 	public String getType() {
 		return type;
 	}
-	
+
 	private String table = "";
 
 	public String getTable() {
@@ -75,7 +75,7 @@ public class SqlColumnVertex implements ISqlElement {
 		this.type = type;
 		this.table = table;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "[" + getSqlElementType() + "] " + table + "." + getSqlElementId();
@@ -85,7 +85,7 @@ public class SqlColumnVertex implements ISqlElement {
 	public boolean equals(Object o) {
 		return SqlElementFactory.equals(this, o);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return SqlElementFactory.hashCode(this);

@@ -31,7 +31,7 @@ public class DefaultColumnConstraint implements IColumnConstraint {
 	}
 
 	private String expression;
-	
+
 	@Override
 	public String getConstraintExpression() {
 		return expression;
@@ -48,7 +48,7 @@ public class DefaultColumnConstraint implements IColumnConstraint {
 		this.expression = expression;
 		this.vertex = vertex;
 	}
-	
+
 	@Override
 	public String toString() {
 		return ColumnConstraintHelper.toString(this);
@@ -58,7 +58,7 @@ public class DefaultColumnConstraint implements IColumnConstraint {
 	public boolean equals(Object o) {
 		return ColumnConstraintHelper.equals(this, o);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return ColumnConstraintHelper.hashCode(this);

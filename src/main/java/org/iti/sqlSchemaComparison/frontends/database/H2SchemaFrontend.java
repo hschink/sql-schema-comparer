@@ -63,7 +63,7 @@ public class H2SchemaFrontend implements ISqlSchemaFrontend {
 		DEFAULT_VALUE(5),
 		PRIMARY_KEY(6);
 
-		private int value;    
+		private int value;
 
 		private ColumnSchema(int value) {
 			this.value = value;
@@ -73,7 +73,7 @@ public class H2SchemaFrontend implements ISqlSchemaFrontend {
 			return value;
 		}
 	}
-	
+
 	private static final String QUERY_TABLES = "SELECT table_name FROM information_schema.tables WHERE table_type='TABLE' ORDER BY table_name;";
 	private static final String QUERY_TABLE_SCHEMA = "SELECT table_name, column_name, type_name, is_nullable, column_default FROM information_schema.columns WHERE table_name = ?;";
 	private static final String QUERY_PRIMARY_KEY_COLUMN = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.CONSTRAINTS "
@@ -84,15 +84,15 @@ public class H2SchemaFrontend implements ISqlSchemaFrontend {
                                                                   + "WHERE CONSTRAINT_TYPE = 'REFERENTIAL' "
                                                                   + "AND TABLE_NAME = ? "
                                                                   + "AND COLUMN_LIST = ?;";
-	
+
 	private PreparedStatement queryTables = null;
-	
+
 	private String filePath;
-	
+
 	@Override
 	public DirectedGraph<IStructureElement, DefaultEdge> createSqlSchema() {
 		DirectedGraph<IStructureElement, DefaultEdge> schema = null;
-		
+
 		try {
 			schema = tryCreateSqlSchema();
 		} catch (IllegalArgumentException ex) {
@@ -106,19 +106,19 @@ public class H2SchemaFrontend implements ISqlSchemaFrontend {
 	private DirectedGraph<IStructureElement, DefaultEdge> tryCreateSqlSchema() throws SQLException {
 		DirectedGraph<IStructureElement, DefaultEdge> schema = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
 		Connection connection = null;
-		
+
 		try {
 			connection = getH2Connection();
 			queryTables = connection.prepareStatement(QUERY_TABLES);
-			
+
 			List<String> tables = getH2Tables();
-			
+
 			for (String table : tables) {
 				createTableSchema(connection, schema, table);
 			}
-			
+
 			createForeignKeyRelation(connection, schema);
-			
+
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -134,7 +134,7 @@ public class H2SchemaFrontend implements ISqlSchemaFrontend {
 			if (connection != null)
 				connection.close();
 		}
-		
+
 		return schema;
 	}
 
@@ -148,12 +148,12 @@ public class H2SchemaFrontend implements ISqlSchemaFrontend {
 
 	private List<String> getH2Tables() throws SQLException {
 		List<String> tables = new ArrayList<>();
-		
+
 		ResultSet result = queryTables.executeQuery();
-		
+
 		while (result.next())
 			tables.add(result.getString(1));
-		
+
 		return tables;
 	}
 
@@ -161,37 +161,37 @@ public class H2SchemaFrontend implements ISqlSchemaFrontend {
 			String tableName) throws SQLException {
 		ISqlElement table = SqlElementFactory.createSqlElement(SqlElementType.Table, tableName);
 		schema.addVertex(table);
-		
+
 		PreparedStatement stm = connection.prepareStatement(QUERY_TABLE_SCHEMA);
 
 		stm.setString(1, tableName);
-		
+
 		ResultSet tableSchema = stm.executeQuery();
-		
+
 		while (tableSchema.next()) {
 			String id = tableSchema.getString(ColumnSchema.NAME.getValue());
 			String type = tableSchema.getString(ColumnSchema.TYPE.getValue()).toUpperCase();
 			List<IColumnConstraint> constraints = new ArrayList<>();
 			ISqlElement column = new SqlColumnVertex(id, type, table.getSqlElementId());
-			
+
 			if (tableSchema.getString(ColumnSchema.NOT_NULL.getValue()).equals("YES"))
 				constraints.add(new NotNullColumnConstraint("", column));
-			
+
 			String defaultValue = tableSchema.getString(ColumnSchema.DEFAULT_VALUE.getValue());
-			
+
 			if (!tableSchema.wasNull())
 				constraints.add(new DefaultColumnConstraint(defaultValue, column));
-			
+
 			if (isPrimaryKeyColumn(connection, tableName, id))
 				constraints.add(new PrimaryKeyColumnConstraint("", column));
-			
+
 			((SqlColumnVertex) column).setConstraints(constraints);
-			
+
 			schema.addVertex(column);
 			schema.addEdge(table, column, new TableHasColumnEdge(table, column));
 		}
 	}
-	
+
 	private boolean isPrimaryKeyColumn(Connection connection, String tableName, String columnName) throws SQLException {
 		PreparedStatement stm = connection.prepareStatement(QUERY_PRIMARY_KEY_COLUMN);
 
@@ -209,7 +209,7 @@ public class H2SchemaFrontend implements ISqlSchemaFrontend {
 	private void createForeignKeyRelation(Connection connection, DirectedGraph<IStructureElement, DefaultEdge> schema) throws SQLException {
 		Set<ISqlElement> tables = SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet());
 		PreparedStatement stm = connection.prepareStatement(QUERY_TABLE_SCHEMA_FOREIGN_KEYS);
-		
+
 		for (ISqlElement table : tables) {
 			Set<ISqlElement> columns = ((SqlTableVertex) table).getColumns(schema);
 
@@ -232,21 +232,21 @@ public class H2SchemaFrontend implements ISqlSchemaFrontend {
 							ISqlElement foreignKeyTable = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, foreignTable, schema.vertexSet());
 							ISqlElement foreignKeyColumn = SqlElementFactory.getMatchingSqlElement(SqlElementType.Column, foreignColumn, schema.vertexSet());
 							ISqlElement referencingColumn = SqlElementFactory.getMatchingSqlElement(SqlElementType.Column, referencingColumnName, schema.vertexSet());
-						
+
 							schema.addEdge(referencingColumn, foreignKeyColumn, new ForeignKeyRelationEdge(referencingColumn, foreignKeyTable, foreignKeyColumn));
 						}
 					}
 				} catch (Exception ex) {
-					
+
 				}
 			}
 		}
 	}
-	
+
 	public H2SchemaFrontend(String filePath) {
 		if (filePath == null || filePath == "")
 			throw new InvalidPathException("", "Path to H2 database file must not be null or empty!");
-		
+
 		this.filePath = filePath;
 	}
 }

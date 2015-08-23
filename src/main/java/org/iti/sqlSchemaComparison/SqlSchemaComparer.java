@@ -51,13 +51,13 @@ public class SqlSchemaComparer {
 
 	private StructureGraph graph1;
 	private StructureGraph graph2;
-	
+
 	public SqlSchemaComparisonResult comparisonResult = new SqlSchemaComparisonResult();
 
 	public boolean isIsomorphic() {
 		return comparisonResult.getModifications().size() == 0;
 	}
-	
+
 	public SqlSchemaComparer(DirectedGraph<IStructureElement, DefaultEdge> schema1,
 			DirectedGraph<IStructureElement, DefaultEdge> schema2) throws StructureGraphComparisonException {
 		graph1 = new StructureGraph(schema1);
@@ -146,9 +146,9 @@ public class SqlSchemaComparer {
 
 			            if (original != null && !columnComparisonResults.containsKey(original))
 			                columnComparisonResults.put(current, ColumnConstraintHelper.compare(original, current));
-	
+
 						break;
-	
+
 					default:
 						break;
 				}

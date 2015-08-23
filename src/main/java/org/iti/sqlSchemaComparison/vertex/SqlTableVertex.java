@@ -34,12 +34,12 @@ public class SqlTableVertex implements ISqlElement {
 	private static final long serialVersionUID = 5594278073539735449L;
 
 	private Object sourceElement = null;
-	
+
 	@Override
 	public SqlElementType getSqlElementType() {
 		return SqlElementType.Table;
 	}
-	
+
 	private String id = "";
 
 	@Override
@@ -51,7 +51,7 @@ public class SqlTableVertex implements ISqlElement {
 	public SqlTableVertex(String id) {
 		this.id = id;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "[" + getSqlElementType() + "] " + getSqlElementId();
@@ -61,7 +61,7 @@ public class SqlTableVertex implements ISqlElement {
 	public boolean equals(Object o) {
 		return SqlElementFactory.equals(this, o);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return SqlElementFactory.hashCode(this);
@@ -85,12 +85,12 @@ public class SqlTableVertex implements ISqlElement {
 	public Set<ISqlElement> getColumns(DirectedGraph<IStructureElement, DefaultEdge> schema) {
 		Set<ISqlElement> columns = SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet());
 		Set<ISqlElement> columnsOfTable = new HashSet<>();
-		
+
 		for (ISqlElement column : columns) {
 			if (((SqlColumnVertex)column).getTable().equals(getSqlElementId()))
 				columnsOfTable.add(column);
 		}
-		
+
 		return columnsOfTable;
 	}
 

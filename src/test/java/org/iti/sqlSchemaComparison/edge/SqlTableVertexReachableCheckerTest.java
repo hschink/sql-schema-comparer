@@ -46,7 +46,7 @@ import org.junit.runners.JUnit4;
 public class SqlTableVertexReachableCheckerTest {
 
 	private static DirectedGraph<IStructureElement, DefaultEdge> schema1 = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
-	
+
 	private static ISqlElement t1 = SqlElementFactory.createSqlElement(SqlElementType.Table, "t1");
 	private static ISqlElement t2 = SqlElementFactory.createSqlElement(SqlElementType.Table, "t2");
 	
@@ -59,34 +59,34 @@ public class SqlTableVertexReachableCheckerTest {
 
 		schema1.addVertex(c1);
 		schema1.addVertex(c12);
-		
+
 		schema1.addEdge(t1, c1, new TableHasColumnEdge(t1, c1));
 		schema1.addEdge(t1, c12, new TableHasColumnEdge(t1, c12));
 	}
-	
+
 	@Before
 	public void setUp() { }
-	
+
 	@Test
 	public void reachableTableDetectedCorrectly() {
 		ISqlElementReachabilityChecker checker = new SqlTableVertexReachableChecker(schema1, t1);
-		
+
 		assertTrue(checker.isReachable());
 		assertEquals(1, checker.getPath().size());
 		assertTrue(checker.getPath().contains(t1));
 	}
-	
+
 	@Test
 	public void nonReachableTableDetectedCorrectly() {
 		ISqlElementReachabilityChecker checker = new SqlTableVertexReachableChecker(schema1, t2);
-		
+
 		assertFalse(checker.isReachable());
 		assertEquals(0, checker.getPath().size());
 		assertFalse(checker.getPath().contains(t2));
 	}
-	
+
 	@After
 	public void tearDown() {
-		
+
 	}
 }

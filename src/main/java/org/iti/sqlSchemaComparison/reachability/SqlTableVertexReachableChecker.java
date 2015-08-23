@@ -38,16 +38,16 @@ public class SqlTableVertexReachableChecker implements
 
 	private DirectedGraph<IStructureElement, DefaultEdge> schema;
 	private SqlTableVertex table;
-	
+
 	private boolean reachable = false;
-	
+
 	@Override
 	public boolean isReachable() {
 		return reachable;
 	}
 
 	private List<ISqlElement> path = new ArrayList<>();
-	
+
 	@Override
 	public List<ISqlElement> getPath() {
 		return path;
@@ -56,7 +56,7 @@ public class SqlTableVertexReachableChecker implements
 	public SqlTableVertexReachableChecker(DirectedGraph<IStructureElement, DefaultEdge> schema, ISqlElement table) {
 		this.schema = schema;
 		this.table = (SqlTableVertex) table;
-		
+
 		CheckReachability();
 	}
 
@@ -69,5 +69,5 @@ public class SqlTableVertexReachableChecker implements
 			path.add(table);
 		}
 	}
-	
+
 }
