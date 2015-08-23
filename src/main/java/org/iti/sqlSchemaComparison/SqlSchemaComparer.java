@@ -30,7 +30,6 @@ import org.iti.sqlSchemaComparison.edge.IForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
-import org.iti.sqlSchemaComparison.vertex.SqlElementType;
 import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.ColumnConstraintHelper;
 import org.iti.structureGraph.StructureGraph;
@@ -121,7 +120,7 @@ public class SqlSchemaComparer {
 	private Map<ISqlElement, SqlSchemaColumnComparisonResult> compareUnchagedColumns(DirectedGraph<IStructureElement, DefaultEdge> schema1) {
 		Map<ISqlElement, SqlSchemaColumnComparisonResult> columnComparisonResults = new HashMap<>();
 
-        for (ISqlElement vertex1 : SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet())) {
+        for (ISqlElement vertex1 : SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema1.vertexSet())) {
         	String identifier = graph1.getIdentifier(vertex1);
             ISqlElement vertex2 = (ISqlElement) graph2.getStructureElement(identifier);
 

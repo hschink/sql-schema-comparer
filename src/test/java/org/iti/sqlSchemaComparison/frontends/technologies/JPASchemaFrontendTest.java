@@ -27,8 +27,9 @@ import static org.junit.Assert.assertNotNull;
 import org.iti.sqlSchemaComparison.edge.ForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
+import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
-import org.iti.sqlSchemaComparison.vertex.SqlElementType;
+import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
 import org.iti.structureGraph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -53,11 +54,11 @@ public class JPASchemaFrontendTest {
 		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
 
 		assertNotNull(schema);
-		ISqlElement[] tables = SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).toArray(new ISqlElement[] {});
+		ISqlElement[] tables = SqlElementFactory.getSqlElementsOfType(SqlTableVertex.class, schema.vertexSet()).toArray(new ISqlElement[] {});
 
 		assertEquals(1, tables.length);
 		assertEquals("departments", tables[0].getName());
-		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
+		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema.vertexSet()).size());
 	}
 
 	@Test
@@ -66,8 +67,8 @@ public class JPASchemaFrontendTest {
 		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
 
 		assertNotNull(schema);
-		assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
-		assertEquals(10, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
+		assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlTableVertex.class, schema.vertexSet()).size());
+		assertEquals(10, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema.vertexSet()).size());
 		assertEquals(2, getForeignKeyCount(schema));
 	}
 

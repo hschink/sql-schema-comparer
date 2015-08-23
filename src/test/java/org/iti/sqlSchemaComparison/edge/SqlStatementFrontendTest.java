@@ -27,8 +27,9 @@ import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
 import org.iti.sqlSchemaComparison.frontends.SqlStatementFrontend;
 import org.iti.sqlSchemaComparison.frontends.database.SqliteSchemaFrontend;
 import org.iti.sqlSchemaComparison.frontends.database.SqliteSchemaFrontendTest;
+import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
-import org.iti.sqlSchemaComparison.vertex.SqlElementType;
+import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
 import org.iti.structureGraph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -73,36 +74,36 @@ public class SqlStatementFrontendTest {
 	public void singleTableQuery() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(SINGLE_TABLE_QUERY, null);
 		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
-		
-		assertEquals(1, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
-		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
+
+		assertEquals(1, SqlElementFactory.getSqlElementsOfType(SqlTableVertex.class, schema.vertexSet()).size());
+		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema.vertexSet()).size());
 	}
 
 	@Test
 	public void joinTablQuery() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(JOIN_TABLE_QUERY, sqliteSchema);
 		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
-		
-		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
-		assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
+
+		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlTableVertex.class, schema.vertexSet()).size());
+		assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema.vertexSet()).size());
 	}
 
 	@Test
 	public void joinTablWithAliasQuery() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(JOIN_TABLE_WITH_ALIAS_QUERY, sqliteSchema);
 		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
-		
-		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
-		assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
+
+		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlTableVertex.class, schema.vertexSet()).size());
+		assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema.vertexSet()).size());
 	}
 
 	@Test
 	public void joinTablWithTableReferenceQuery() {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(JOIN_TABLE_WITH_TABLE_REFERENCE_QUERY, sqliteSchema);
 		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
-		
-		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
-		assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
+
+		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlTableVertex.class, schema.vertexSet()).size());
+		assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema.vertexSet()).size());
 	}
 
 	@Test(expected=IllegalArgumentException.class)

@@ -33,7 +33,6 @@ import org.iti.sqlSchemaComparison.reachability.SqlColumnReachableChecker;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
-import org.iti.sqlSchemaComparison.vertex.SqlElementType;
 import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
 import org.iti.structureGraph.StructureGraph;
 import org.iti.structureGraph.comparison.SimpleStructureGraphComparer;
@@ -84,7 +83,7 @@ public class SqlStatementExpectationValidator {
 	private Map<ISqlElement, List<List<ISqlElement>>> getReachableColumns(DirectedGraph<IStructureElement, DefaultEdge> expectedSchema,
 			List<ISqlElement> missingColumns) {
 		Map<ISqlElement, List<List<ISqlElement>>> reachableColumns = new HashMap<>();
-		Set<ISqlElement> expectedTables = SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, expectedSchema.vertexSet());
+		Set<ISqlElement> expectedTables = SqlElementFactory.getSqlElementsOfType(SqlTableVertex.class, expectedSchema.vertexSet());
 
 		for (ISqlElement column : missingColumns) {
 			List<ISqlElement> matchingColumns = SqlElementFactory.getMatchingSqlColumns(column.getName(), schema.vertexSet(), false);

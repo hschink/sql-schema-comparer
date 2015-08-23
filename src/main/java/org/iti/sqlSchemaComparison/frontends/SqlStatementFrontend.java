@@ -38,6 +38,7 @@ import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlElementType;
+import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
 import org.iti.structureGraph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -114,7 +115,7 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 	private void createTable(DirectedGraph<IStructureElement, DefaultEdge> schema,
 			ZQuery query, ZFromItem fromItem) {
 		if (databaseSchema != null) {
-			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, fromItem.getTable(), databaseSchema.vertexSet());
+			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlTableVertex.class, fromItem.getTable(), databaseSchema.vertexSet());
 
 			if (table == null)
 				throw new IllegalArgumentException(String.format("Table %s does not exist in schema!", fromItem.getTable()));
@@ -135,7 +136,7 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 
 			ZFromItem tableItem = getColumnTable(query, selectItem);
 
-			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, tableItem.getTable(), schema.vertexSet());
+			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlTableVertex.class, tableItem.getTable(), schema.vertexSet());
 			ISqlElement column = new SqlColumnVertex(selectItem.getColumn(), null, table.getName());
 
 			column.setSourceElement(selectItem);
@@ -217,7 +218,7 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 
 		for (ZFromItem tableItem : tables) {
 			String tableName = tableItem.getTable();
-			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, tableName, databaseSchema.vertexSet());
+			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlTableVertex.class, tableName, databaseSchema.vertexSet());
 
 
 			for (DefaultEdge e : databaseSchema.edgeSet()) {

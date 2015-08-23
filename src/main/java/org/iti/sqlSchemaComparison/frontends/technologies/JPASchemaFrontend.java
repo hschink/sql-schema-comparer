@@ -49,6 +49,7 @@ import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlElementType;
+import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.PrimaryKeyColumnConstraint;
 import org.iti.structureGraph.nodes.IStructureElement;
@@ -178,9 +179,9 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 		private void setPrimaryKeyOfTable(ClassOrInterfaceDeclaration n, ISqlElement primaryKeyColumn) {
 			if (primaryKeyColumn != null && primaryKeyColumn instanceof SqlColumnVertex) {
 				String tableId = classToTable.get(n.getName().toString());
-				ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, tableId, schema.vertexSet());
+				ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlTableVertex.class, tableId, schema.vertexSet());
 				SqlColumnVertex foreignKeyColumn = (SqlColumnVertex)primaryKeyColumn;
-				ISqlElement foreignKeyTable = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, foreignKeyColumn.getTable(), schema.vertexSet());
+				ISqlElement foreignKeyTable = SqlElementFactory.getMatchingSqlElement(SqlTableVertex.class, foreignKeyColumn.getTable(), schema.vertexSet());
 				String id = foreignKeyColumn.getName();
 				String type = foreignKeyColumn.getType();
 				List<IColumnConstraint> constraints = new ArrayList<>();
@@ -224,7 +225,7 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 
 		private ISqlElement getPrimaryKeyOfType(ClassOrInterfaceDeclaration type) {
 			String tableId = classToTable.get(type.getName().toString());
-			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, tableId, schema.vertexSet());
+			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlTableVertex.class, tableId, schema.vertexSet());
 
 			return SqlElementFactory.getPrimaryKey(table, schema);
 		}
@@ -265,7 +266,7 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 		private void processClass(ClassOrInterfaceDeclaration n) {
 			String id = getTableName(n);
 
-			lastVisitedClass = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, id, schema.vertexSet());
+			lastVisitedClass = SqlElementFactory.getMatchingSqlElement(SqlTableVertex.class, id, schema.vertexSet());
 		}
 
 		@Override
@@ -285,7 +286,7 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 		private void processMethod(MethodDeclaration n) {
 			String columnId = lastVisitedClass.getName() + "." + getColumnName(n);
 			String foreignTableId = classToTable.get(n.getType().toString());
-			ISqlElement foreignKeyTable = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, foreignTableId, schema.vertexSet());
+			ISqlElement foreignKeyTable = SqlElementFactory.getMatchingSqlElement(SqlTableVertex.class, foreignTableId, schema.vertexSet());
 			ISqlElement referencingColumn = SqlElementFactory.getMatchingSqlColumns(columnId, schema.vertexSet(), true).get(0);
 			ISqlElement foreignKeyColumn = SqlElementFactory.getPrimaryKey(foreignKeyTable, schema);
 

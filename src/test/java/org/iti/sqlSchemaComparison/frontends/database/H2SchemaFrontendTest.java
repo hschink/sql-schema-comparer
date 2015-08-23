@@ -41,7 +41,7 @@ import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
-import org.iti.sqlSchemaComparison.vertex.SqlElementType;
+import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.PrimaryKeyColumnConstraint;
 import org.iti.structureGraph.comparison.StructureGraphComparisonException;
@@ -86,9 +86,9 @@ public class H2SchemaFrontendTest {
 		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
 
 		assertNotNull(schema);
-		assertEquals(7, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
-		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
-		assertEquals(7, getColumnWithConstraint(SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()), PrimaryKeyColumnConstraint.class).size());
+		assertEquals(7, SqlElementFactory.getSqlElementsOfType(SqlTableVertex.class, schema.vertexSet()).size());
+		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema.vertexSet()).size());
+		assertEquals(7, getColumnWithConstraint(SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema.vertexSet()), PrimaryKeyColumnConstraint.class).size());
 
 	}
 
@@ -146,8 +146,8 @@ public class H2SchemaFrontendTest {
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
 		SqlSchemaComparisonResult result = comparer.comparisonResult;
 
-		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
-		assertEquals(28, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
+		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema1.vertexSet()).size());
+		assertEquals(28, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema2.vertexSet()).size());
 
 		ISqlElement elements = null;
 
@@ -167,8 +167,8 @@ public class H2SchemaFrontendTest {
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
 		SqlSchemaComparisonResult result = comparer.comparisonResult;
 
-		assertEquals(7, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema1.vertexSet()).size());
-		assertEquals(6, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema2.vertexSet()).size());
+		assertEquals(7, SqlElementFactory.getSqlElementsOfType(SqlTableVertex.class, schema1.vertexSet()).size());
+		assertEquals(6, SqlElementFactory.getSqlElementsOfType(SqlTableVertex.class, schema2.vertexSet()).size());
 
 		for (Entry<ISqlElement, SchemaModification> entry : result.getModifications().entrySet()) {
 			if (entry.getValue() == SchemaModification.DELETE_TABLE) {
@@ -187,8 +187,8 @@ public class H2SchemaFrontendTest {
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
 		SqlSchemaComparisonResult result = comparer.comparisonResult;
 
-		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
-		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
+		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema1.vertexSet()).size());
+		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema2.vertexSet()).size());
 
 		Entry<ISqlElement, SchemaModification> entry = result.getModifications().entrySet().iterator().next();
 
@@ -205,8 +205,8 @@ public class H2SchemaFrontendTest {
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
 		SqlSchemaComparisonResult result = comparer.comparisonResult;
 
-		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
-		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
+		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema1.vertexSet()).size());
+		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema2.vertexSet()).size());
 
 		Entry<ISqlElement, SchemaModification> entry = result.getModifications().entrySet().iterator().next();
 
@@ -223,8 +223,8 @@ public class H2SchemaFrontendTest {
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
 		SqlSchemaComparisonResult result = comparer.comparisonResult;
 
-		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
-		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
+		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema1.vertexSet()).size());
+		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema2.vertexSet()).size());
 
 		for (Entry<ISqlElement, SchemaModification> entry : result.getModifications().entrySet()) {
 			if (entry.getValue() == SchemaModification.RENAME_TABLE) {
@@ -252,8 +252,8 @@ public class H2SchemaFrontendTest {
 
 		assertNotNull(column);
 
-		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
-		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
+		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema1.vertexSet()).size());
+		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema2.vertexSet()).size());
 
 		Entry<ISqlElement, SchemaModification> entry = result.getModifications().entrySet().iterator().next();
 
@@ -272,8 +272,8 @@ public class H2SchemaFrontendTest {
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
 		SqlSchemaComparisonResult result = comparer.comparisonResult;
 
-		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema1.vertexSet()).size());
-		assertEquals(33, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema2.vertexSet()).size());
+		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema1.vertexSet()).size());
+		assertEquals(33, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema2.vertexSet()).size());
 
 		for (Entry<ISqlElement, SchemaModification> entry : result.getModifications().entrySet()) {
 			if (entry.getValue() == SchemaModification.CREATE_TABLE) {

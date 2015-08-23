@@ -42,6 +42,7 @@ import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlElementType;
+import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.DefaultColumnConstraint;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.NotNullColumnConstraint;
@@ -188,7 +189,7 @@ public class SqliteSchemaFrontend implements ISqlSchemaFrontend {
 	}
 
 	private void createForeignKeyRelation(Connection connection, DirectedGraph<IStructureElement, DefaultEdge> schema) throws SQLException {
-		Set<ISqlElement> tables = SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet());
+		Set<ISqlElement> tables = SqlElementFactory.getSqlElementsOfType(SqlTableVertex.class, schema.vertexSet());
 		Statement stm = connection.createStatement();
 
 		for (ISqlElement table : tables) {
@@ -200,9 +201,9 @@ public class SqliteSchemaFrontend implements ISqlSchemaFrontend {
 					String foreignColumn = foreignTable + "." + tableSchema.getString(ForeignKeySchema.TO.getValue());
 					String referencingColumnName = table.getName() + "." + tableSchema.getString(ForeignKeySchema.FROM.getValue());
 
-					ISqlElement foreignKeyTable = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, foreignTable, schema.vertexSet());
-					ISqlElement foreignKeyColumn = SqlElementFactory.getMatchingSqlElement(SqlElementType.Column, foreignColumn, schema.vertexSet());
-					ISqlElement referencingColumn = SqlElementFactory.getMatchingSqlElement(SqlElementType.Column, referencingColumnName, schema.vertexSet());
+					ISqlElement foreignKeyTable = SqlElementFactory.getMatchingSqlElement(SqlTableVertex.class, foreignTable, schema.vertexSet());
+					ISqlElement foreignKeyColumn = SqlElementFactory.getMatchingSqlElement(SqlColumnVertex.class, foreignColumn, schema.vertexSet());
+					ISqlElement referencingColumn = SqlElementFactory.getMatchingSqlElement(SqlColumnVertex.class, referencingColumnName, schema.vertexSet());
 
 					schema.addEdge(referencingColumn, foreignKeyColumn, new ForeignKeyRelationEdge(referencingColumn, foreignKeyTable, foreignKeyColumn));
 				}

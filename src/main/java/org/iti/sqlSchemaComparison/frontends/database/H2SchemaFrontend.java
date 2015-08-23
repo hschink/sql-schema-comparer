@@ -207,7 +207,7 @@ public class H2SchemaFrontend implements ISqlSchemaFrontend {
 	private static final Pattern FOREIGN_KEY_PATTERN = Pattern.compile(FOREIGN_KEY_REGEX);
 
 	private void createForeignKeyRelation(Connection connection, DirectedGraph<IStructureElement, DefaultEdge> schema) throws SQLException {
-		Set<ISqlElement> tables = SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet());
+		Set<ISqlElement> tables = SqlElementFactory.getSqlElementsOfType(SqlTableVertex.class, schema.vertexSet());
 		PreparedStatement stm = connection.prepareStatement(QUERY_TABLE_SCHEMA_FOREIGN_KEYS);
 
 		for (ISqlElement table : tables) {
@@ -229,9 +229,9 @@ public class H2SchemaFrontend implements ISqlSchemaFrontend {
 							String foreignColumn = foreignTable + "." + matcher.group("column");
 							String referencingColumnName = table.getName() + "." + column.getName();
 
-							ISqlElement foreignKeyTable = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, foreignTable, schema.vertexSet());
-							ISqlElement foreignKeyColumn = SqlElementFactory.getMatchingSqlElement(SqlElementType.Column, foreignColumn, schema.vertexSet());
-							ISqlElement referencingColumn = SqlElementFactory.getMatchingSqlElement(SqlElementType.Column, referencingColumnName, schema.vertexSet());
+							ISqlElement foreignKeyTable = SqlElementFactory.getMatchingSqlElement(SqlTableVertex.class, foreignTable, schema.vertexSet());
+							ISqlElement foreignKeyColumn = SqlElementFactory.getMatchingSqlElement(SqlColumnVertex.class, foreignColumn, schema.vertexSet());
+							ISqlElement referencingColumn = SqlElementFactory.getMatchingSqlElement(SqlColumnVertex.class, referencingColumnName, schema.vertexSet());
 
 							schema.addEdge(referencingColumn, foreignKeyColumn, new ForeignKeyRelationEdge(referencingColumn, foreignKeyTable, foreignKeyColumn));
 						}

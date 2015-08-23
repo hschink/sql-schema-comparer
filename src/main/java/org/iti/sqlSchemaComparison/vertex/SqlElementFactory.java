@@ -49,7 +49,7 @@ public abstract class SqlElementFactory {
 		if (o instanceof ISqlElement) {
 			ISqlElement e = (ISqlElement)o;
 
-			return equals(t.getName(), e.getName(), t.getSqlElementType(), e.getSqlElementType());
+			return equals(t.getName(), e.getName(), t.getClass(), e.getClass());
 		}
 
 		return false;
@@ -59,28 +59,28 @@ public abstract class SqlElementFactory {
 		if (o instanceof SqlColumnVertex) {
 			SqlColumnVertex e = (SqlColumnVertex)o;
 
-			return equals(t.getName(), e.getName(), t.getSqlElementType(), e.getSqlElementType())
+			return equals(t.getName(), e.getName(), t.getClass(), e.getClass())
 					&& t.getTable().equals(e.getTable());
 		}
 
 		return false;
 	}
 
-	private static boolean equals(String id, String otherId, SqlElementType type, SqlElementType otherType) {
-		return id.equals(otherId) && type.equals(otherType);
+	private static boolean equals(String id, String otherId, Class<? extends ISqlElement> class1, Class<? extends ISqlElement> class2) {
+		return id.equals(otherId) && class1.equals(class2);
 	}
 
 	public static int hashCode(ISqlElement t) {
-		return t.getName().hashCode() + t.getSqlElementType().hashCode();
+		return t.getName().hashCode() + t.getClass().hashCode();
 	}
 
-	public static Set<ISqlElement> getSqlElementsOfType(SqlElementType type, Collection<IStructureElement> vertices) {
+	public static Set<ISqlElement> getSqlElementsOfType(Class<? extends ISqlElement> type, Collection<IStructureElement> vertices) {
 		Set<ISqlElement> verticesOfType = new HashSet<>();
 
 		for (IStructureElement element : vertices) {
 			ISqlElement t = (ISqlElement)element;
 
-			if (t.getSqlElementType() == type)
+			if (t.getClass().equals(type))
 				verticesOfType.add(t);
 		}
 
@@ -99,13 +99,13 @@ public abstract class SqlElementFactory {
 		return null;
 	}
 
-	public static ISqlElement getMatchingSqlElement(SqlElementType type, String id, Collection<IStructureElement> vertices) {
+	public static ISqlElement getMatchingSqlElement(Class<? extends ISqlElement> type, String id, Collection<IStructureElement> vertices) {
 
 		for (IStructureElement element : vertices) {
 			ISqlElement v = (ISqlElement)element;
 
-			if (v.getSqlElementType().equals(type)) {
-				if (type == SqlElementType.Column) {
+			if (v.getClass().equals(type)) {
+				if (type.equals(SqlColumnVertex.class)) {
 					String otherTable = ((SqlColumnVertex) v).getTable();
 					String otherId = otherTable + "." + v.getName();
 
@@ -122,7 +122,7 @@ public abstract class SqlElementFactory {
 	}
 
 	public static List<ISqlElement> getMatchingSqlColumns(String id, Collection<IStructureElement> vertices, boolean matchColumnTable) {
-		Set<ISqlElement> columns = SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, vertices);
+		Set<ISqlElement> columns = SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, vertices);
 		List<ISqlElement> matchingColumns = new ArrayList<>();
 
 		for (ISqlElement column : columns) {

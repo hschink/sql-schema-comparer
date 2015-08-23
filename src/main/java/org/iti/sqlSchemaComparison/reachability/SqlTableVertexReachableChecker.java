@@ -27,7 +27,6 @@ import java.util.Set;
 
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
-import org.iti.sqlSchemaComparison.vertex.SqlElementType;
 import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
 import org.iti.structureGraph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
@@ -61,8 +60,8 @@ public class SqlTableVertexReachableChecker implements
 	}
 
 	private void CheckReachability() {
-		Set<ISqlElement> tables = SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet());
-		
+		Set<ISqlElement> tables = SqlElementFactory.getSqlElementsOfType(SqlTableVertex.class, schema.vertexSet());
+
 		if (tables.contains(table))
 		{
 			reachable = true;
