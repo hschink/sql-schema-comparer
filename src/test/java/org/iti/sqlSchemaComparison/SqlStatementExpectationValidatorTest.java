@@ -26,6 +26,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -172,8 +174,8 @@ public class SqlStatementExpectationValidatorTest {
 		SqlStatementExpectationValidationResult result = validator.computeGraphMatching(expectedSchema);
 
 		for (ISqlElement element : result.getMissingColumns()) {
-			assertTrue(element.getSourceElement() != null);
-			assertTrue(element.getSourceElement() instanceof ZSelectItem);
+			assertNotNull(element.getSourceElement());
+			assertSame(element.getSourceElement().getClass(), ZSelectItem.class);
 		}
 	}
 
@@ -186,8 +188,8 @@ public class SqlStatementExpectationValidatorTest {
 		SqlStatementExpectationValidationResult result = validator.computeGraphMatching(expectedSchema);
 
 		for (ISqlElement element : result.getMissingTables()) {
-			assertTrue(element.getSourceElement() != null);
-			assertTrue(element.getSourceElement() instanceof ZFromItem);
+			assertNotNull(element.getSourceElement());
+			assertSame(element.getSourceElement().getClass(), ZFromItem.class);
 		}
 	}
 
