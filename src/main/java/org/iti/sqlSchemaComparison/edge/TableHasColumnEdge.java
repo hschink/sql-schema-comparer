@@ -51,7 +51,7 @@ public class TableHasColumnEdge extends DefaultEdge implements ITableHasColumnEd
 
 	@Override
 	public String toString() {
-		return table.getSqlElementId() + " (" + column.getSqlElementId() + ")";
+		return table.getName() + " (" + column.getName() + ")";
 	}
 
 	@Override

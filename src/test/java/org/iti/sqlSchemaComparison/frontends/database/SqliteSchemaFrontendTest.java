@@ -155,7 +155,7 @@ public class SqliteSchemaFrontendTest {
 			elements = entry.getKey();
 		}
 
-		assertEquals(DROPPED_COLUMN_NAME, elements.getSqlElementId());
+		assertEquals(DROPPED_COLUMN_NAME, elements.getName());
 	}
 
 	@Test
@@ -173,7 +173,7 @@ public class SqliteSchemaFrontendTest {
 		for (Entry<ISqlElement, SchemaModification> entry : result.getModifications().entrySet()) {
 			if (entry.getValue() == SchemaModification.DELETE_TABLE) {
 				assertEquals(SchemaModification.DELETE_TABLE, entry.getValue());
-				assertEquals(DROPPED_TABLE_NAME, entry.getKey().getSqlElementId());
+				assertEquals(DROPPED_TABLE_NAME, entry.getKey().getName());
 			}
 		}
 	}
@@ -193,7 +193,7 @@ public class SqliteSchemaFrontendTest {
 		Entry<ISqlElement, SchemaModification> entry = result.getModifications().entrySet().iterator().next();
 
 		assertEquals(SchemaModification.MOVE_COLUMN, entry.getValue());
-		assertEquals(MOVE_COLUMN_NAME, entry.getKey().getSqlElementId());
+		assertEquals(MOVE_COLUMN_NAME, entry.getKey().getName());
 	}
 
 	@Test
@@ -211,7 +211,7 @@ public class SqliteSchemaFrontendTest {
 		Entry<ISqlElement, SchemaModification> entry = result.getModifications().entrySet().iterator().next();
 
 		assertEquals(SchemaModification.RENAME_COLUMN, entry.getValue());
-		assertEquals(RENAME_COLUMN_NAME, entry.getKey().getSqlElementId());
+		assertEquals(RENAME_COLUMN_NAME, entry.getKey().getName());
 	}
 
 	@Test
@@ -228,7 +228,7 @@ public class SqliteSchemaFrontendTest {
 
 		for (Entry<ISqlElement, SchemaModification> entry : result.getModifications().entrySet()) {
 			if (entry.getValue() == SchemaModification.RENAME_TABLE) {
-				assertEquals(RENAME_TABLE_NAME, entry.getKey().getSqlElementId());
+				assertEquals(RENAME_TABLE_NAME, entry.getKey().getName());
 			}
 		}
 	}
@@ -244,7 +244,7 @@ public class SqliteSchemaFrontendTest {
 		SqlSchemaColumnComparisonResult column = null;
 
 		for (ISqlElement element : result.getColumnComparisonResults().keySet()) {
-			if (element.getSqlElementId().equals(REPLACE_COLUMN_NAME)) {
+			if (element.getName().equals(REPLACE_COLUMN_NAME)) {
 				column = result.getColumnComparisonResults().get(element);
 				break;
 			}
@@ -258,7 +258,7 @@ public class SqliteSchemaFrontendTest {
 		Entry<ISqlElement, SchemaModification> entry = result.getModifications().entrySet().iterator().next();
 
 		assertEquals(SchemaModification.RENAME_COLUMN, entry.getValue());
-		assertEquals(REPLACE_COLUMN_NAME, entry.getKey().getSqlElementId());
+		assertEquals(REPLACE_COLUMN_NAME, entry.getKey().getName());
 		assertTrue(column.hasColumnTypeChanged());
 		assertEquals(REPLACE_COLUMN_TYPE, column.getCurrentColumnType());
 	}
@@ -277,11 +277,11 @@ public class SqliteSchemaFrontendTest {
 
 		for (Entry<ISqlElement, SchemaModification> entry : result.getModifications().entrySet()) {
 			if (entry.getValue() == SchemaModification.CREATE_TABLE) {
-				assertEquals(REPLACE_LOB_WITH_TABLE, entry.getKey().getSqlElementId());
+				assertEquals(REPLACE_LOB_WITH_TABLE, entry.getKey().getName());
 			}
 
 			if (entry.getValue() == SchemaModification.DELETE_COLUMN) {
-				assertEquals(REPLACE_LOB_WITH_COLUMN, entry.getKey().getSqlElementId());
+				assertEquals(REPLACE_LOB_WITH_COLUMN, entry.getKey().getName());
 			}
 		}
 	}

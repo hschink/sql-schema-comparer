@@ -136,8 +136,8 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 			ZFromItem tableItem = getColumnTable(query, selectItem);
 
 			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, tableItem.getTable(), schema.vertexSet());
-			ISqlElement column = new SqlColumnVertex(selectItem.getColumn(), null, table.getSqlElementId());
-			
+			ISqlElement column = new SqlColumnVertex(selectItem.getColumn(), null, table.getName());
+
 			column.setSourceElement(selectItem);
 
 			schema.addVertex(column);
@@ -223,9 +223,9 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 			for (DefaultEdge e : databaseSchema.edgeSet()) {
 				if (e instanceof TableHasColumnEdge) {
 					TableHasColumnEdge edge = (TableHasColumnEdge) e;
-					
-					if (edge.getTable().equals(table) && edge.getColumn().getSqlElementId().equals(columnName))
-						matchingTables.add(table.getSqlElementId());
+
+					if (edge.getTable().equals(table) && edge.getColumn().getName().equals(columnName))
+						matchingTables.add(table.getName());
 				}
 			}
 		}

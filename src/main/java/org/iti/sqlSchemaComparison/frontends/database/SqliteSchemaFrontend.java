@@ -151,8 +151,8 @@ public class SqliteSchemaFrontend implements ISqlSchemaFrontend {
 			String id = tableSchema.getString(ColumnSchema.NAME.getValue());
 			String type = tableSchema.getString(ColumnSchema.TYPE.getValue()).toUpperCase();
 			List<IColumnConstraint> constraints = new ArrayList<>();
-			ISqlElement column = new SqlColumnVertex(id, type, table.getSqlElementId());
-			
+			ISqlElement column = new SqlColumnVertex(id, type, table.getName());
+
 			if (tableSchema.getInt(ColumnSchema.NOT_NULL.getValue()) > 0)
 				constraints.add(new NotNullColumnConstraint("", column));
 
@@ -193,13 +193,13 @@ public class SqliteSchemaFrontend implements ISqlSchemaFrontend {
 
 		for (ISqlElement table : tables) {
 			try {
-				ResultSet tableSchema = stm.executeQuery(QUERY_TABLE_SCHEMA_FOREIGN_KEYS.replaceAll("\\?", table.getSqlElementId()));
-				
+				ResultSet tableSchema = stm.executeQuery(QUERY_TABLE_SCHEMA_FOREIGN_KEYS.replaceAll("\\?", table.getName()));
+
 				while (tableSchema != null && tableSchema.next()) {
 					String foreignTable = tableSchema.getString(ForeignKeySchema.TABLE.getValue());
 					String foreignColumn = foreignTable + "." + tableSchema.getString(ForeignKeySchema.TO.getValue());
-					String referencingColumnName = table.getSqlElementId() + "." + tableSchema.getString(ForeignKeySchema.FROM.getValue());
-					
+					String referencingColumnName = table.getName() + "." + tableSchema.getString(ForeignKeySchema.FROM.getValue());
+
 					ISqlElement foreignKeyTable = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, foreignTable, schema.vertexSet());
 					ISqlElement foreignKeyColumn = SqlElementFactory.getMatchingSqlElement(SqlElementType.Column, foreignColumn, schema.vertexSet());
 					ISqlElement referencingColumn = SqlElementFactory.getMatchingSqlElement(SqlElementType.Column, referencingColumnName, schema.vertexSet());

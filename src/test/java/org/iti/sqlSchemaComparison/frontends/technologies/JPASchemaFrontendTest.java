@@ -56,7 +56,7 @@ public class JPASchemaFrontendTest {
 		ISqlElement[] tables = SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).toArray(new ISqlElement[] {});
 
 		assertEquals(1, tables.length);
-		assertEquals("departments", tables[0].getSqlElementId());
+		assertEquals("departments", tables[0].getName());
 		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
 	}
 

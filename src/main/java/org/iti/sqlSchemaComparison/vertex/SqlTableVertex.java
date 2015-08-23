@@ -42,19 +42,13 @@ public class SqlTableVertex implements ISqlElement {
 
 	private String id = "";
 
-	@Override
-	public String getSqlElementId() {
-		// TODO Auto-generated method stub
-		return id;
-	}
-
 	public SqlTableVertex(String id) {
 		this.id = id;
 	}
 
 	@Override
 	public String toString() {
-		return "[" + getSqlElementType() + "] " + getSqlElementId();
+		return "[" + getSqlElementType() + "] " + getName();
 	}
 
 	@Override
@@ -79,7 +73,7 @@ public class SqlTableVertex implements ISqlElement {
 
 	@Override
 	public String getName() {
-		return getSqlElementId();
+		return id;
 	}
 
 	public Set<ISqlElement> getColumns(DirectedGraph<IStructureElement, DefaultEdge> schema) {
@@ -87,7 +81,7 @@ public class SqlTableVertex implements ISqlElement {
 		Set<ISqlElement> columnsOfTable = new HashSet<>();
 
 		for (ISqlElement column : columns) {
-			if (((SqlColumnVertex)column).getTable().equals(getSqlElementId()))
+			if (((SqlColumnVertex)column).getTable().equals(getName()))
 				columnsOfTable.add(column);
 		}
 

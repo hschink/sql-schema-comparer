@@ -119,9 +119,9 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 			String id = getColumnName(n);
 			String type = "?";
 			List<IColumnConstraint> constraints = new ArrayList<>();
-			
-			ISqlElement column = new SqlColumnVertex(id, type, lastVisitedClass.getSqlElementId());
-			
+
+			ISqlElement column = new SqlColumnVertex(id, type, lastVisitedClass.getName());
+
 			((SqlColumnVertex) column).setConstraints(constraints);
 
 			if (isAnnotationAvailable(n.getAnnotations(), ID)) {
@@ -181,12 +181,12 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 				ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, tableId, schema.vertexSet());
 				SqlColumnVertex foreignKeyColumn = (SqlColumnVertex)primaryKeyColumn;
 				ISqlElement foreignKeyTable = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, foreignKeyColumn.getTable(), schema.vertexSet());
-				String id = foreignKeyColumn.getSqlElementId();
+				String id = foreignKeyColumn.getName();
 				String type = foreignKeyColumn.getType();
 				List<IColumnConstraint> constraints = new ArrayList<>();
-				
-				ISqlElement column = new SqlColumnVertex(id, type, table.getSqlElementId());
-				
+
+				ISqlElement column = new SqlColumnVertex(id, type, table.getName());
+
 				column.setSourceElement(n);
 
 				((SqlColumnVertex) column).setConstraints(constraints);
@@ -283,7 +283,7 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 		}
 
 		private void processMethod(MethodDeclaration n) {
-			String columnId = lastVisitedClass.getSqlElementId() + "." + getColumnName(n);
+			String columnId = lastVisitedClass.getName() + "." + getColumnName(n);
 			String foreignTableId = classToTable.get(n.getType().toString());
 			ISqlElement foreignKeyTable = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, foreignTableId, schema.vertexSet());
 			ISqlElement referencingColumn = SqlElementFactory.getMatchingSqlColumns(columnId, schema.vertexSet(), true).get(0);

@@ -48,8 +48,8 @@ public abstract class SqlElementFactory {
 	public static boolean equals(ISqlElement t, Object o) {
 		if (o instanceof ISqlElement) {
 			ISqlElement e = (ISqlElement)o;
-			
-			return equals(t.getSqlElementId(), e.getSqlElementId(), t.getSqlElementType(), e.getSqlElementType());
+
+			return equals(t.getName(), e.getName(), t.getSqlElementType(), e.getSqlElementType());
 		}
 
 		return false;
@@ -58,8 +58,8 @@ public abstract class SqlElementFactory {
 	public static boolean equals(SqlColumnVertex t, Object o) {
 		if (o instanceof SqlColumnVertex) {
 			SqlColumnVertex e = (SqlColumnVertex)o;
-			
-			return equals(t.getSqlElementId(), e.getSqlElementId(), t.getSqlElementType(), e.getSqlElementType())
+
+			return equals(t.getName(), e.getName(), t.getSqlElementType(), e.getSqlElementType())
 					&& t.getTable().equals(e.getTable());
 		}
 
@@ -71,7 +71,7 @@ public abstract class SqlElementFactory {
 	}
 
 	public static int hashCode(ISqlElement t) {
-		return t.getSqlElementId().hashCode() + t.getSqlElementType().hashCode();
+		return t.getName().hashCode() + t.getSqlElementType().hashCode();
 	}
 
 	public static Set<ISqlElement> getSqlElementsOfType(SqlElementType type, Collection<IStructureElement> vertices) {
@@ -107,13 +107,13 @@ public abstract class SqlElementFactory {
 			if (v.getSqlElementType().equals(type)) {
 				if (type == SqlElementType.Column) {
 					String otherTable = ((SqlColumnVertex) v).getTable();
-					String otherId = otherTable + "." + v.getSqlElementId();
-					
+					String otherId = otherTable + "." + v.getName();
+
 					if (otherId.equals(id))
 						return v;
 
 					continue;
-				} else if (v.getSqlElementId().equals(id))
+				} else if (v.getName().equals(id))
 					return v;
 			}
 		}
@@ -127,8 +127,8 @@ public abstract class SqlElementFactory {
 
 		for (ISqlElement column : columns) {
 			String otherTable =  (matchColumnTable) ? ((SqlColumnVertex) column).getTable() + "." : "";
-			String otherId = otherTable + column.getSqlElementId();
-			
+			String otherId = otherTable + column.getName();
+
 			if (otherId.equals(id))
 				matchingColumns.add(column);
 		}

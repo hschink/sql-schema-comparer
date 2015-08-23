@@ -61,9 +61,9 @@ public class ForeignKeyRelationEdge extends DefaultEdge implements IForeignKeyRe
 
 	@Override
 	public String toString() {
-		return referencingColumn.getSqlElementId() + " --> " 
-				+ foreignKeyTable.getSqlElementId() 
-				+ " (" + foreignKeyColumn.getSqlElementId() + ")";
+		return referencingColumn.getName() + " --> "
+				+ foreignKeyTable.getName()
+				+ " (" + foreignKeyColumn.getName() + ")";
 	}
 
 	@Override

@@ -172,7 +172,7 @@ public class H2SchemaFrontend implements ISqlSchemaFrontend {
 			String id = tableSchema.getString(ColumnSchema.NAME.getValue());
 			String type = tableSchema.getString(ColumnSchema.TYPE.getValue()).toUpperCase();
 			List<IColumnConstraint> constraints = new ArrayList<>();
-			ISqlElement column = new SqlColumnVertex(id, type, table.getSqlElementId());
+			ISqlElement column = new SqlColumnVertex(id, type, table.getName());
 
 			if (tableSchema.getString(ColumnSchema.NOT_NULL.getValue()).equals("YES"))
 				constraints.add(new NotNullColumnConstraint("", column));
@@ -227,7 +227,7 @@ public class H2SchemaFrontend implements ISqlSchemaFrontend {
 						if (matcher.find()) {
 							String foreignTable = matcher.group("table");
 							String foreignColumn = foreignTable + "." + matcher.group("column");
-							String referencingColumnName = table.getSqlElementId() + "." + column.getSqlElementId();
+							String referencingColumnName = table.getName() + "." + column.getName();
 
 							ISqlElement foreignKeyTable = SqlElementFactory.getMatchingSqlElement(SqlElementType.Table, foreignTable, schema.vertexSet());
 							ISqlElement foreignKeyColumn = SqlElementFactory.getMatchingSqlElement(SqlElementType.Column, foreignColumn, schema.vertexSet());

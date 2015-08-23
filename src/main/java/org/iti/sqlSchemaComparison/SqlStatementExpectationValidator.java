@@ -87,8 +87,8 @@ public class SqlStatementExpectationValidator {
 		Set<ISqlElement> expectedTables = SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, expectedSchema.vertexSet());
 
 		for (ISqlElement column : missingColumns) {
-			List<ISqlElement> matchingColumns = SqlElementFactory.getMatchingSqlColumns(column.getSqlElementId(), schema.vertexSet(), false);
-			
+			List<ISqlElement> matchingColumns = SqlElementFactory.getMatchingSqlColumns(column.getName(), schema.vertexSet(), false);
+
 			for (ISqlElement matchingColumn : matchingColumns) {
 				for (ISqlElement table : expectedTables) {
 					ISqlElement schemaTable = SqlElementFactory.getMatchingSqlElement(table, schema.vertexSet());

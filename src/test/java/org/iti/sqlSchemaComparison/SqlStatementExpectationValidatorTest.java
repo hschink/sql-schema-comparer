@@ -93,7 +93,7 @@ public class SqlStatementExpectationValidatorTest {
 
 		assertFalse(result.isStatementValid());
 		assertEquals(1, result.getMissingColumns().size());
-		assertEquals("fee", result.getMissingColumns().get(0).getSqlElementId());
+		assertEquals("fee", result.getMissingColumns().get(0).getName());
 	}
 
 	@Test
@@ -110,7 +110,7 @@ public class SqlStatementExpectationValidatorTest {
 		List<String> columnNames = new ArrayList<>();
 
 		for (ISqlElement element : result.getMissingColumns()) {
-			columnNames.add(element.getSqlElementId());
+			columnNames.add(element.getName());
 		}
 
 		assertThat(columnNames, hasItems("missing_1", "missing_2"));
@@ -126,7 +126,7 @@ public class SqlStatementExpectationValidatorTest {
 
 		assertFalse(result.isStatementValid());
 		assertEquals(1, result.getMissingTables().size());
-		assertEquals("missing", result.getMissingTables().get(0).getSqlElementId());
+		assertEquals("missing", result.getMissingTables().get(0).getName());
 	}
 
 	@Test
@@ -143,7 +143,7 @@ public class SqlStatementExpectationValidatorTest {
 		List<String> tableNames = new ArrayList<>();
 
 		for (ISqlElement element : result.getMissingTables()) {
-			tableNames.add(element.getSqlElementId());
+			tableNames.add(element.getName());
 		}
 
 		assertThat(tableNames, hasItems("missing_1", "missing_2"));
@@ -162,7 +162,7 @@ public class SqlStatementExpectationValidatorTest {
 		assertFalse(result.isStatementValid());
 		assertEquals(1, result.getMissingButReachableColumns().size());
 		assertEquals(2, result.getMissingButReachableColumns().get(key).size());
-		assertEquals("account", key.getSqlElementId());
+		assertEquals("account", key.getName());
 	}
 
 	@Test
@@ -203,7 +203,7 @@ public class SqlStatementExpectationValidatorTest {
 
 		assertFalse(result.isStatementValid());
 		assertEquals(1, result.getMissingButReachableColumns().size());
-		assertEquals("name", result.getMissingButReachableColumns().keySet().iterator().next().getSqlElementId());
+		assertEquals("name", result.getMissingButReachableColumns().keySet().iterator().next().getName());
 	}
 
 	@After

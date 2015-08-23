@@ -74,17 +74,17 @@ public class SqlSchemaComparerTest {
 
 	private static ISqlElement t1 = SqlElementFactory.createSqlElement(SqlElementType.Table, "t1");
 	private static ISqlElement t2 = SqlElementFactory.createSqlElement(SqlElementType.Table, "t2");
-	
-	private static ISqlElement c1 = new SqlColumnVertex("c1", "", t1.getSqlElementId());
-	private static ISqlElement c12 = new SqlColumnVertex("c12", "", t1.getSqlElementId());
-	private static ISqlElement c2 = new SqlColumnVertex("c2", "", t2.getSqlElementId());
-	private static ISqlElement c22 = new SqlColumnVertex("c22", "", t2.getSqlElementId());
-	private static ISqlElement c3 = new SqlColumnVertex("c1", "", t2.getSqlElementId());
-	
-	private static ISqlElement c111 = new SqlColumnVertex("c1", "INTEGER", t1.getSqlElementId());
-	private static ISqlElement c112 = new SqlColumnVertex("c1", "FLOAT", t1.getSqlElementId());
-	private static ISqlElement c113 = new SqlColumnVertex("c1", "INTEGER", t1.getSqlElementId());
-	
+
+	private static ISqlElement c1 = new SqlColumnVertex("c1", "", t1.getName());
+	private static ISqlElement c12 = new SqlColumnVertex("c12", "", t1.getName());
+	private static ISqlElement c2 = new SqlColumnVertex("c2", "", t2.getName());
+	private static ISqlElement c22 = new SqlColumnVertex("c22", "", t2.getName());
+	private static ISqlElement c3 = new SqlColumnVertex("c1", "", t2.getName());
+
+	private static ISqlElement c111 = new SqlColumnVertex("c1", "INTEGER", t1.getName());
+	private static ISqlElement c112 = new SqlColumnVertex("c1", "FLOAT", t1.getName());
+	private static ISqlElement c113 = new SqlColumnVertex("c1", "INTEGER", t1.getName());
+
 	private static IColumnConstraint constraint1 = new DefaultColumnConstraint("1", c111);
 	private static IColumnConstraint constraint2 = new NotNullColumnConstraint("", c112);
 
@@ -206,7 +206,7 @@ public class SqlSchemaComparerTest {
 		}
 
 		assertEquals(SchemaModification.CREATE_TABLE, entry.getValue());
-		assertEquals(t2.getSqlElementId(), entry.getKey().getSqlElementId());
+		assertEquals(t2.getName(), entry.getKey().getName());
 	}
 
 	@Test
@@ -219,7 +219,7 @@ public class SqlSchemaComparerTest {
 
 		for (Entry<ISqlElement, SchemaModification> entry : comparer1.comparisonResult.getModifications().entrySet()) {
 			if (entry.getValue() == SchemaModification.DELETE_TABLE) {
-				assertEquals(t1.getSqlElementId(), entry.getKey().getSqlElementId());
+				assertEquals(t1.getName(), entry.getKey().getName());
 				break;
 			}
 		}
@@ -241,7 +241,7 @@ public class SqlSchemaComparerTest {
 		}
 
 		assertNotNull(renameEntry);
-		assertEquals(t2.getSqlElementId(), renameEntry.getKey().getSqlElementId());
+		assertEquals(t2.getName(), renameEntry.getKey().getName());
 	}
 
 	@Test
@@ -254,7 +254,7 @@ public class SqlSchemaComparerTest {
 		Entry<ISqlElement, SchemaModification> entry = comparer1.comparisonResult.getModifications().entrySet().iterator().next();
 
 		assertEquals(SchemaModification.CREATE_COLUMN, entry.getValue());
-		assertEquals(c1.getSqlElementId(), entry.getKey().getSqlElementId());
+		assertEquals(c1.getName(), entry.getKey().getName());
 	}
 
 	@Test
@@ -267,7 +267,7 @@ public class SqlSchemaComparerTest {
 		Entry<ISqlElement, SchemaModification> entry = comparer1.comparisonResult.getModifications().entrySet().iterator().next();
 
 		assertEquals(SchemaModification.DELETE_COLUMN, entry.getValue());
-		assertEquals(c1.getSqlElementId(), entry.getKey().getSqlElementId());
+		assertEquals(c1.getName(), entry.getKey().getName());
 	}
 
 	@Test
@@ -280,7 +280,7 @@ public class SqlSchemaComparerTest {
 		Entry<ISqlElement, SchemaModification> entry = comparer1.comparisonResult.getModifications().entrySet().iterator().next();
 
 		assertEquals(SchemaModification.RENAME_COLUMN, entry.getValue());
-		assertEquals(c2.getSqlElementId(), entry.getKey().getSqlElementId());
+		assertEquals(c2.getName(), entry.getKey().getName());
 	}
 
 	@Test
@@ -293,7 +293,7 @@ public class SqlSchemaComparerTest {
 		Entry<ISqlElement, SchemaModification> entry = comparer1.comparisonResult.getModifications().entrySet().iterator().next();
 
 		assertEquals(SchemaModification.MOVE_COLUMN, entry.getValue());
-		assertEquals(c1.getSqlElementId(), entry.getKey().getSqlElementId());
+		assertEquals(c1.getName(), entry.getKey().getName());
 	}
 
 	@Test

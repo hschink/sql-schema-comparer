@@ -49,10 +49,10 @@ public class SqlTableVertexReachableCheckerTest {
 
 	private static ISqlElement t1 = SqlElementFactory.createSqlElement(SqlElementType.Table, "t1");
 	private static ISqlElement t2 = SqlElementFactory.createSqlElement(SqlElementType.Table, "t2");
-	
-	private static ISqlElement c1 = new SqlColumnVertex("c1", "", t1.getSqlElementId());
-	private static ISqlElement c12 = new SqlColumnVertex("c12", "", t2.getSqlElementId());
-	
+
+	private static ISqlElement c1 = new SqlColumnVertex("c1", "", t1.getName());
+	private static ISqlElement c12 = new SqlColumnVertex("c12", "", t2.getName());
+
 	@BeforeClass
 	public static void init() throws Exception {
 		schema1.addVertex(t1);

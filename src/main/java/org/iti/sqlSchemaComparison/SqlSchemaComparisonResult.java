@@ -111,8 +111,8 @@ public class SqlSchemaComparisonResult implements Serializable {
 				default:
 					break;
 			}
-			
-			result += String.format("\n%s | %s", entry.getValue().toString(), entry.getKey().getSqlElementId());
+
+			result += String.format("\n%s | %s", entry.getValue().toString(), entry.getKey().getName());
 		}
 
 		result += toResultString("COLUMN COMPARISON RESULTS", columnComparisonResults);

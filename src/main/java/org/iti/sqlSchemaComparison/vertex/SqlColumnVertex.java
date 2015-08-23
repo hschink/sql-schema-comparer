@@ -39,11 +39,6 @@ public class SqlColumnVertex implements ISqlElement {
 
 	private String id = "";
 
-	@Override
-	public String getSqlElementId() {
-		return id;
-	}
-
 	private String type = "";
 
 	public String getType() {
@@ -78,7 +73,7 @@ public class SqlColumnVertex implements ISqlElement {
 
 	@Override
 	public String toString() {
-		return "[" + getSqlElementType() + "] " + table + "." + getSqlElementId();
+		return "[" + getSqlElementType() + "] " + table + "." + getName();
 	}
 
 	@Override
@@ -103,7 +98,7 @@ public class SqlColumnVertex implements ISqlElement {
 
 	@Override
 	public String getName() {
-		return getSqlElementId();
+		return id;
 	}
 
 	@Override
