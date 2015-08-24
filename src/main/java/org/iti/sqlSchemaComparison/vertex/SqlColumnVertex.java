@@ -32,7 +32,7 @@ public class SqlColumnVertex implements ISqlElement {
 
 	private Object sourceElement = null;
 
-	private String id = "";
+	private String columnName = "";
 
 	private String type = "";
 
@@ -56,12 +56,8 @@ public class SqlColumnVertex implements ISqlElement {
 		return constraints;
 	}
 
-	public void setConstraints(List<IColumnConstraint> constraints) {
-		this.constraints = constraints;
-	}
-
 	public SqlColumnVertex(String id, String type, String table) {
-		this.id = id;
+		this.columnName = id;
 		this.type = type;
 		this.table = table;
 	}
@@ -93,7 +89,7 @@ public class SqlColumnVertex implements ISqlElement {
 
 	@Override
 	public String getName() {
-		return id;
+		return columnName;
 	}
 
 	@Override
