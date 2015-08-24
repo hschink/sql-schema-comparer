@@ -35,7 +35,9 @@ import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
 import org.iti.structureGraph.StructureGraph;
-import org.iti.structureGraph.comparison.SimpleStructureGraphComparer;
+import org.iti.structureGraph.comparison.IStructureGraphComparer;
+import org.iti.structureGraph.comparison.StatementStructureGraphComparer;
+import org.iti.structureGraph.comparison.StructureGraphComparisonException;
 import org.iti.structureGraph.comparison.result.StructureGraphComparisonResult;
 import org.iti.structureGraph.comparison.result.Type;
 import org.iti.structureGraph.nodes.IStructureElement;
@@ -53,12 +55,18 @@ public class SqlStatementExpectationValidator {
 	public SqlStatementExpectationValidationResult computeGraphMatching(DirectedGraph<IStructureElement, DefaultEdge> expectedSchema) {
 		StructureGraph schemaGraph = new StructureGraph(schema);
 		StructureGraph expectedSchemaGraph = new StructureGraph(expectedSchema);
-		SimpleStructureGraphComparer simpleStructureGraphComparer = new SimpleStructureGraphComparer();
+		IStructureGraphComparer comparer = new StatementStructureGraphComparer();
 
-        StructureGraphComparisonResult result = simpleStructureGraphComparer.compare(schemaGraph, expectedSchemaGraph);
+        StructureGraphComparisonResult result = null;
+		try {
+			result = comparer.compare(expectedSchemaGraph, schemaGraph);
+		} catch (StructureGraphComparisonException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-        List<ISqlElement> missingTables = getMissingElementByType(result.getElementsByModification(Type.NodeAdded), SqlTableVertex.class);
-        List<ISqlElement> missingColumns = getMissingElementByType(result.getElementsByModification(Type.NodeAdded), SqlColumnVertex.class);
+        List<ISqlElement> missingTables = getMissingElementByType(result.getElementsByModification(Type.NodeDeleted), SqlTableVertex.class);
+        List<ISqlElement> missingColumns = getMissingElementByType(result.getElementsByModification(Type.NodeDeleted), SqlColumnVertex.class);
 		Map<ISqlElement, List<List<ISqlElement>>> missingButReachableColumns = getReachableColumns(expectedSchema, missingColumns);
 
 		missingColumns.removeAll(missingButReachableColumns.keySet());
