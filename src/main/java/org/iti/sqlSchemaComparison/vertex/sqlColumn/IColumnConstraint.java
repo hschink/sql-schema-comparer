@@ -32,7 +32,7 @@ public interface IColumnConstraint {
 		COLLATE,
 		FOREIGN_KEY
 	}
-	
+
 	ConstraintType getConstraintType();
 
 	String getConstraintExpression();
