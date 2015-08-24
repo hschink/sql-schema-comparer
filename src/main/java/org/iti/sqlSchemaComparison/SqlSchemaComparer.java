@@ -177,18 +177,33 @@ public class SqlSchemaComparer {
 			Type modificationType) {
 		if (sqlElement instanceof SqlTableVertex) {
 			switch (modificationType) {
-				case NodeAdded: return SchemaModification.CREATE_TABLE;
-				case NodeDeleted: return SchemaModification.DELETE_TABLE;
+			case NodeAdded:
+				return SchemaModification.CREATE_TABLE;
+			case NodeDeleted:
+				return SchemaModification.DELETE_TABLE;
 
-				default: return SchemaModification.RENAME_TABLE;
+			default:
+				return SchemaModification.RENAME_TABLE;
+			}
+		} else if (sqlElement instanceof SqlColumnVertex) {
+			switch (modificationType) {
+			case NodeAdded:
+				return SchemaModification.CREATE_COLUMN;
+			case NodeDeleted:
+				return SchemaModification.DELETE_COLUMN;
+			case NodeMoved:
+				return SchemaModification.MOVE_COLUMN;
+
+			default:
+				return SchemaModification.RENAME_COLUMN;
 			}
 		} else {
 			switch (modificationType) {
-				case NodeAdded: return SchemaModification.CREATE_COLUMN;
-				case NodeDeleted: return SchemaModification.DELETE_COLUMN;
-				case NodeMoved: return SchemaModification.MOVE_COLUMN;
+			case NodeAdded:
+				return SchemaModification.CREATE_CONSTRAINT;
 
-				default: return SchemaModification.RENAME_COLUMN;
+			default:
+				return SchemaModification.DELETE_CONSTRAINT;
 			}
 		}
 	}
