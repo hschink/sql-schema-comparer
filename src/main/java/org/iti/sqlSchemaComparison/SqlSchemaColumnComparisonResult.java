@@ -24,7 +24,7 @@ package org.iti.sqlSchemaComparison;
 public class SqlSchemaColumnComparisonResult {
 
 	private String oldColumnType;
-	
+
 	public String getOldColumnType() {
 		return oldColumnType;
 	}
@@ -34,7 +34,7 @@ public class SqlSchemaColumnComparisonResult {
 	public String getCurrentColumnType() {
 		return currentColumnType;
 	}
-	
+
 	public boolean hasColumnTypeChanged() {
 		return !oldColumnType.equals(currentColumnType);
 	}
@@ -45,11 +45,11 @@ public class SqlSchemaColumnComparisonResult {
 		this.oldColumnType = oldColumnType;
 		this.currentColumnType = currentColumnType;
 	}
-	
+
 	@Override
 	public String toString() {
 		String result = "";
-		
+
 		if (hasColumnTypeChanged())
 			result += String.format("Type: %s -> %s\n", oldColumnType, currentColumnType);
 

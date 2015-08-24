@@ -38,16 +38,16 @@ public class ColumnConstraintHelper {
 	public static String toString(IColumnConstraint columnConstraint) {
 		return String.format("[%s] %s", columnConstraint.getConstraintType(), columnConstraint.getConstraintExpression());
 	}
-	
+
 	public static boolean equals(IColumnConstraint columnConstraint, Object o) {
 
 		if (o instanceof IColumnConstraint) {
 			IColumnConstraint constraint = (IColumnConstraint) o;
-			
+
 			return columnConstraint.getConstraintType() == constraint.getConstraintType()
 					&& columnConstraint.getConstraintExpression().equals(constraint.getConstraintExpression());
 		}
-		
+
 		return false;
 	}
 
