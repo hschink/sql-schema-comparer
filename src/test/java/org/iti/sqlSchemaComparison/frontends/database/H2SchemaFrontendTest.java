@@ -26,10 +26,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.file.InvalidPathException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.iti.sqlSchemaComparison.SchemaModification;
 import org.iti.sqlSchemaComparison.SqlSchemaColumnComparisonResult;
@@ -43,7 +40,6 @@ import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
-import org.iti.sqlSchemaComparison.vertex.sqlColumn.PrimaryKeyColumnConstraint;
 import org.iti.structureGraph.comparison.StructureGraphComparisonException;
 import org.iti.structureGraph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
@@ -88,23 +84,8 @@ public class H2SchemaFrontendTest {
 		assertNotNull(schema);
 		assertEquals(7, SqlElementFactory.getSqlElementsOfType(SqlTableVertex.class, schema.vertexSet()).size());
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema.vertexSet()).size());
-		assertEquals(7, getColumnWithConstraint(SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema.vertexSet()), PrimaryKeyColumnConstraint.class).size());
+		assertEquals(7, DatabaseFrontendTestHelper.getColumnWithConstraint(schema, IColumnConstraint.ConstraintType.PRIMARY_KEY).size());
 
-	}
-
-	private List<ISqlElement> getColumnWithConstraint(Set<ISqlElement> sqlElementsOfType, Class<?> constraintType) {
-		List<ISqlElement> columns = new ArrayList<>();
-
-		for (ISqlElement e : sqlElementsOfType) {
-			for (IColumnConstraint c : ((SqlColumnVertex) e).getConstraints()) {
-				if (constraintType.isAssignableFrom(c.getClass())) {
-					columns.add(e);
-					break;
-				}
-			}
-		}
-
-		return columns;
 	}
 
 	@Test
