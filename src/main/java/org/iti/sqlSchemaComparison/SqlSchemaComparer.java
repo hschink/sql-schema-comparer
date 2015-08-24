@@ -21,17 +21,16 @@
 package org.iti.sqlSchemaComparison;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.iti.sqlSchemaComparison.edge.IForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
-import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
-import org.iti.sqlSchemaComparison.vertex.sqlColumn.ColumnConstraintHelper;
+import org.iti.sqlSchemaComparison.vertex.sqlColumn.ColumnConstraintVertex;
+import org.iti.sqlSchemaComparison.vertex.sqlColumn.ColumnTypeVertex;
+import org.iti.structureGraph.IStructureGraph;
 import org.iti.structureGraph.StructureGraph;
 import org.iti.structureGraph.comparison.IStructureGraphComparer;
 import org.iti.structureGraph.comparison.StructureGraphComparer;
@@ -66,7 +65,7 @@ public class SqlSchemaComparer {
 
 		setSqlSchemaComparisonResult(result);
 
-		computeColumnTypeAndConstraintChanges(result, schema1);
+		checkTypeOfRenamedColumns(result);
 
 		setForeignKeyChanges(result);
 	}
@@ -109,52 +108,64 @@ public class SqlSchemaComparer {
 		}
 	}
 
-	private void computeColumnTypeAndConstraintChanges(StructureGraphComparisonResult result, DirectedGraph<IStructureElement, DefaultEdge> schema1) {
-        Map<ISqlElement, SqlSchemaColumnComparisonResult> columnComparisonResults = compareUnchagedColumns(schema1);
-
-        columnComparisonResults.putAll(compareRenamedColumns(result));
-
-        comparisonResult.setColumnComparisonResults(columnComparisonResults);
-	}
-
-	private Map<ISqlElement, SqlSchemaColumnComparisonResult> compareUnchagedColumns(DirectedGraph<IStructureElement, DefaultEdge> schema1) {
-		Map<ISqlElement, SqlSchemaColumnComparisonResult> columnComparisonResults = new HashMap<>();
-
-        for (ISqlElement vertex1 : SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema1.vertexSet())) {
-        	String identifier = graph1.getIdentifier(vertex1);
-            ISqlElement vertex2 = (ISqlElement) graph2.getStructureElement(identifier);
-
-            if (vertex2 != null && !columnComparisonResults.containsKey(vertex2))
-                columnComparisonResults.put(vertex2, ColumnConstraintHelper.compare(vertex1, vertex2));
-        }
-		return columnComparisonResults;
-	}
-
-	private Map<ISqlElement, SqlSchemaColumnComparisonResult> compareRenamedColumns(StructureGraphComparisonResult result) {
-		Map<ISqlElement, SqlSchemaColumnComparisonResult> columnComparisonResults = new HashMap<>();
-
+	private void checkTypeOfRenamedColumns(StructureGraphComparisonResult result) {
 		for (Entry<String, IStructureModification> entry : result.getNodeModifications().entrySet()) {
 			ISqlElement current = (ISqlElement) graph2.getStructureElement(entry.getKey());
 
 			if (current instanceof SqlColumnVertex) {
 				switch (entry.getValue().getType()) {
-					case NodeMoved:
-					case NodeRenamed:
-						String originalIdentifier = entry.getValue().getModificationDetail().getIdentifier();
-						ISqlElement original = (ISqlElement) graph1.getStructureElement(originalIdentifier);
+				case NodeMoved:
+				case NodeRenamed:
+					String originalIdentifier = entry.getValue().getModificationDetail().getIdentifier();
+					ISqlElement original = (ISqlElement) graph1.getStructureElement(originalIdentifier);
 
-			            if (original != null && !columnComparisonResults.containsKey(original))
-			                columnComparisonResults.put(current, ColumnConstraintHelper.compare(original, current));
+					if (original != null) {
+						ISqlElement currentColumnType = getColumnType(graph2, current);
+						ISqlElement originalColumnType = getColumnType(graph1, original);
 
-						break;
+						if (currentColumnType != null && originalColumnType != null) {
+							SchemaModification currentModification = getModification(currentColumnType);
+							SchemaModification originalModification = getModification(originalColumnType);
 
-					default:
-						break;
+							if (currentModification.equals(SchemaModification.CREATE_COLUMN_TYPE)
+									&& originalModification.equals(SchemaModification.DELETE_COLUMN_TYPE)) {
+
+								comparisonResult.removeModification(currentColumnType);
+								comparisonResult.removeModification(originalColumnType);
+								comparisonResult.addModification(currentColumnType, SchemaModification.CHANGE_COLUMN_TYPE);
+							}
+						}
+					}
+
+					break;
+
+				default:
+					break;
 				}
 			}
 		}
+	}
 
-		return columnComparisonResults;
+	private ISqlElement getColumnType(IStructureGraph graph, ISqlElement column) {
+		List<IStructureElement> children = graph.getStructureElements(graph.getPath(column), false);
+
+		for (IStructureElement child : children) {
+			if (child instanceof ColumnTypeVertex && child.getName().contains(column.getName())) {
+				return (ISqlElement) child;
+			}
+		}
+
+		return null;
+	}
+
+	private SchemaModification getModification(ISqlElement element) {
+		for (Entry<ISqlElement, SchemaModification> entry : comparisonResult.getModifications().entrySet()) {
+			if (entry.getKey().equals(element)) {
+				return entry.getValue();
+			}
+		}
+
+		return null;
 	}
 
 	private ISqlElement getCurrentSqlElement(String identifier, Type type) {
@@ -197,13 +208,23 @@ public class SqlSchemaComparer {
 			default:
 				return SchemaModification.RENAME_COLUMN;
 			}
-		} else {
+		} else if (sqlElement instanceof ColumnConstraintVertex) {
 			switch (modificationType) {
 			case NodeAdded:
 				return SchemaModification.CREATE_CONSTRAINT;
 
 			default:
 				return SchemaModification.DELETE_CONSTRAINT;
+			}
+		} else {
+			switch (modificationType) {
+			case NodeAdded:
+				return SchemaModification.CREATE_COLUMN_TYPE;
+			case NodeDeleted:
+				return SchemaModification.DELETE_COLUMN_TYPE;
+
+			default:
+				return SchemaModification.CHANGE_COLUMN_TYPE;
 			}
 		}
 	}

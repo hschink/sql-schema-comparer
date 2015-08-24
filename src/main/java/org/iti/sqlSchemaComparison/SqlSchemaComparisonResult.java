@@ -45,6 +45,10 @@ public class SqlSchemaComparisonResult implements Serializable {
 		modifications.put(modifiedElement, schemaModification);
 	}
 
+	public void removeModification(ISqlElement modifiedElement) {
+		modifications.remove(modifiedElement);
+	}
+
 	private Map<ISqlElement, SqlSchemaColumnComparisonResult> columnComparisonResults = new HashMap<>();
 
 	public Map<ISqlElement, SqlSchemaColumnComparisonResult> getColumnComparisonResults() {
