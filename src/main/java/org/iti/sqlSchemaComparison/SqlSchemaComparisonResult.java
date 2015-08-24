@@ -49,17 +49,6 @@ public class SqlSchemaComparisonResult implements Serializable {
 		modifications.remove(modifiedElement);
 	}
 
-	private Map<ISqlElement, SqlSchemaColumnComparisonResult> columnComparisonResults = new HashMap<>();
-
-	public Map<ISqlElement, SqlSchemaColumnComparisonResult> getColumnComparisonResults() {
-		return columnComparisonResults;
-	}
-
-	public void setColumnComparisonResults(
-			Map<ISqlElement, SqlSchemaColumnComparisonResult> columnComparisonResults) {
-		this.columnComparisonResults = columnComparisonResults;
-	}
-
 	private List<IForeignKeyRelationEdge> addedForeignKeyRelations = new ArrayList<>();
 
 	public List<IForeignKeyRelationEdge> getAddedForeignKeyRelations() {
@@ -119,7 +108,6 @@ public class SqlSchemaComparisonResult implements Serializable {
 			result += String.format("\n%s | %s", entry.getValue().toString(), entry.getKey().getName());
 		}
 
-		result += toResultString("COLUMN COMPARISON RESULTS", columnComparisonResults);
 		result += toResultString("CREATED FOREIGN REFERENCES", addedForeignKeyRelations);
 		result += toResultString("REMOVED FOREIGN REFERENCES", removedForeignKeyRelations);
 
@@ -127,29 +115,6 @@ public class SqlSchemaComparisonResult implements Serializable {
 			output += "Schemas are isomorphic!";
 		else
 			output += result;
-
-		return output;
-	}
-
-	private String toResultString(String title, Map<ISqlElement, SqlSchemaColumnComparisonResult> elements) {
-		String output = "";
-		String result = "";
-
-		if (!elements.isEmpty()) {
-			for (ISqlElement r : elements.keySet()) {
-				String columnComparisonResult = elements.get(r).toString();
-
-				if (columnComparisonResult.length() != 0)
-					result += String.format("--- %s ---\n%s", r.toString(), columnComparisonResult);
-			}
-		}
-
-		if (result.length() > 0) {
-			output += "\n-----------------------------\n";
-			output += "| " + title + " |\n";
-			output += "-----------------------------\n";
-			output += result;
-		}
 
 		return output;
 	}
