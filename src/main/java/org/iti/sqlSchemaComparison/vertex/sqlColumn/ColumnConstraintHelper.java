@@ -21,11 +21,7 @@
 
 package org.iti.sqlSchemaComparison.vertex.sqlColumn;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.iti.sqlSchemaComparison.SqlSchemaColumnComparisonResult;
-import org.iti.sqlSchemaComparison.SqlSchemaColumnComparisonResult.ColumnConstraintComparisonResult;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 
@@ -34,29 +30,11 @@ public class ColumnConstraintHelper {
 	public static SqlSchemaColumnComparisonResult compare(ISqlElement columnElement1, ISqlElement columnElement2) {
 		SqlColumnVertex column1 = (SqlColumnVertex) columnElement1;
 		SqlColumnVertex column2 = (SqlColumnVertex) columnElement2;
-		SqlSchemaColumnComparisonResult.ColumnConstraintComparisonResult constraintComparisonResult
-			= compare(column1.getConstraints(), column2.getConstraints());
-		
+
 		return new SqlSchemaColumnComparisonResult(column1.getType(),
-				column2.getType(),
-				constraintComparisonResult);
+				column2.getType());
 	}
-	
-	private static SqlSchemaColumnComparisonResult.ColumnConstraintComparisonResult compare(List<IColumnConstraint> constraints1, List<IColumnConstraint> constraints2) {
-		List<IColumnConstraint> addedConstraints = new ArrayList<>();
-		List<IColumnConstraint> removedConstraints = new ArrayList<>();
-		
-		for (IColumnConstraint constraint : constraints1)
-			if (!constraints2.contains(constraint))
-				removedConstraints.add(constraint);
-		
-		for (IColumnConstraint constraint : constraints2)
-			if (!constraints1.contains(constraint))
-				addedConstraints.add(constraint);
-		
-		return new ColumnConstraintComparisonResult(addedConstraints, removedConstraints);
-	}
-	
+
 	public static String toString(IColumnConstraint columnConstraint) {
 		return String.format("[%s] %s", columnConstraint.getConstraintType(), columnConstraint.getConstraintExpression());
 	}

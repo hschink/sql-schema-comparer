@@ -293,13 +293,9 @@ public class SqlSchemaComparerTest {
 	@Test
 	public void unchangedColumnAttributesDetectedCorrectly() throws StructureGraphComparisonException {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema11, schema11);
-		SqlSchemaColumnComparisonResult.ColumnConstraintComparisonResult cccr = comparer1.comparisonResult.getColumnComparisonResults().get(c111).getConstraintComparisonResult();
 
 		assertNotNull(comparer1.comparisonResult);
 		assertEquals(1, comparer1.comparisonResult.getColumnComparisonResults().size());
-		assertFalse(comparer1.comparisonResult.getColumnComparisonResults().get(c111).hasColumnTypeChanged());
-		assertEquals(0, cccr.getAddedConstraints().size());
-		assertEquals(0, cccr.getRemovedConstraints().size());
 	}
 
 	@Test
