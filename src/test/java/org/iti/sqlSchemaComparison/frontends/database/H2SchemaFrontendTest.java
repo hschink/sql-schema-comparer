@@ -23,16 +23,14 @@ package org.iti.sqlSchemaComparison.frontends.database;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.nio.file.InvalidPathException;
 import java.util.Map.Entry;
 
-import org.iti.sqlSchemaComparison.TestHelper;
 import org.iti.sqlSchemaComparison.SchemaModification;
-import org.iti.sqlSchemaComparison.SqlSchemaColumnComparisonResult;
 import org.iti.sqlSchemaComparison.SqlSchemaComparer;
 import org.iti.sqlSchemaComparison.SqlSchemaComparisonResult;
+import org.iti.sqlSchemaComparison.TestHelper;
 import org.iti.sqlSchemaComparison.edge.ForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.edge.TableHasColumnEdge;
 import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
@@ -40,6 +38,7 @@ import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
+import org.iti.sqlSchemaComparison.vertex.sqlColumn.ColumnTypeVertex;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
 import org.iti.structureGraph.comparison.StructureGraphComparisonException;
 import org.iti.structureGraph.nodes.IStructureElement;
@@ -222,26 +221,17 @@ public class H2SchemaFrontendTest {
 		DirectedGraph<IStructureElement, DefaultEdge> schema2 = frontend2.createSqlSchema();
 		SqlSchemaComparer comparer = new SqlSchemaComparer(schema1, schema2);
 		SqlSchemaComparisonResult result = comparer.comparisonResult;
-		SqlSchemaColumnComparisonResult column = null;
-
-		for (ISqlElement element : result.getColumnComparisonResults().keySet()) {
-			if (element.getName().equals(REPLACE_COLUMN_NAME)) {
-				column = result.getColumnComparisonResults().get(element);
-				break;
-			}
-		}
-
-		assertNotNull(column);
-		assertTrue(column.hasColumnTypeChanged());
 
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema1.vertexSet()).size());
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema2.vertexSet()).size());
 
-		Entry<ISqlElement, SchemaModification> entry = TestHelper.getModificationOfType(result, SchemaModification.RENAME_COLUMN);
+		Entry<ISqlElement, SchemaModification> renameColumnEntry = TestHelper.getModificationOfType(result, SchemaModification.RENAME_COLUMN);
+		Entry<ISqlElement, SchemaModification> replaceColumnTypeEntry = TestHelper.getModificationOfType(result, SchemaModification.CHANGE_COLUMN_TYPE);
 
-		assertNotNull(entry);
-		assertEquals(REPLACE_COLUMN_NAME, entry.getKey().getName());
-		assertEquals(REPLACE_COLUMN_TYPE, column.getCurrentColumnType());
+		assertNotNull(renameColumnEntry);
+		assertEquals(REPLACE_COLUMN_NAME, renameColumnEntry.getKey().getName());
+		assertNotNull(replaceColumnTypeEntry);
+		assertEquals(REPLACE_COLUMN_TYPE, ((ColumnTypeVertex) replaceColumnTypeEntry.getKey()).getColumnType());
 	}
 
 	@Test

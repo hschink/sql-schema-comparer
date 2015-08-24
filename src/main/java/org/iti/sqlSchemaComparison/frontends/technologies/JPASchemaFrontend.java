@@ -119,8 +119,7 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 
 		private void processMethod(MethodDeclaration n) {
 			String columnName = getColumnName(n);
-			String type = "?";
-			ISqlElement column = new SqlColumnVertex(columnName, type, lastVisitedClass.getName());
+			ISqlElement column = new SqlColumnVertex(columnName, lastVisitedClass.getName());
 
 			schema.addVertex(column);
 			schema.addEdge(lastVisitedClass, column, new TableHasColumnEdge(lastVisitedClass, column));
@@ -180,8 +179,7 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 				SqlColumnVertex foreignKeyColumn = (SqlColumnVertex)primaryKeyColumn;
 				ISqlElement foreignKeyTable = SqlElementFactory.getMatchingSqlElement(SqlTableVertex.class, foreignKeyColumn.getTable(), schema.vertexSet());
 				String columnName = foreignKeyColumn.getName();
-				String type = foreignKeyColumn.getType();
-				ISqlElement column = new SqlColumnVertex(columnName, type, table.getName());
+				ISqlElement column = new SqlColumnVertex(columnName, table.getName());
 
 				schema.addVertex(column);
 				schema.addEdge(table, column, new TableHasColumnEdge(table, column));

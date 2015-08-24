@@ -19,25 +19,12 @@
  *
  */
 
-package org.iti.sqlSchemaComparison;
+package org.iti.sqlSchemaComparison.edge;
 
-public enum SchemaModification {
-	NO_MODIFICATION,
+import org.jgrapht.graph.DefaultEdge;
 
-	CREATE_TABLE,
-	DELETE_TABLE,
-	RENAME_TABLE,
-	DELETE_AFTER_RENAME_TABLE,
+public class ColumnHasType extends DefaultEdge implements IColumnHasConstraint {
 
-	CREATE_COLUMN,
-	DELETE_COLUMN,
-	RENAME_COLUMN,
-	MOVE_COLUMN,
+	private static final long serialVersionUID = -4239274173188383592L;
 
-	CREATE_CONSTRAINT,
-	DELETE_CONSTRAINT,
-
-	CREATE_COLUMN_TYPE,
-	DELETE_COLUMN_TYPE,
-	CHANGE_COLUMN_TYPE
 }

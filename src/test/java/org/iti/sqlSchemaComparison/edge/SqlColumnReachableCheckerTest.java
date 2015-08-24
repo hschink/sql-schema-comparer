@@ -52,11 +52,11 @@ public class SqlColumnReachableCheckerTest {
 	private static ISqlElement t2 = SqlElementFactory.createSqlElement(SqlElementType.Table, "t2");
 	private static ISqlElement t3 = SqlElementFactory.createSqlElement(SqlElementType.Table, "t3");
 
-	private static ISqlElement c1 = new SqlColumnVertex("c1", "", t1.getName());
-	private static ISqlElement c2 = new SqlColumnVertex("c2", "", t1.getName());
-	private static ISqlElement c3 = new SqlColumnVertex("c121", "", t1.getName());
-	private static ISqlElement c4 = new SqlColumnVertex("c3", "", t1.getName());
-	private static ISqlElement c5 = new SqlColumnVertex("c231", "", t1.getName());
+	private static ISqlElement c1 = new SqlColumnVertex("c1", t1.getName());
+	private static ISqlElement c2 = new SqlColumnVertex("c2", t1.getName());
+	private static ISqlElement c3 = new SqlColumnVertex("c121", t1.getName());
+	private static ISqlElement c4 = new SqlColumnVertex("c3", t1.getName());
+	private static ISqlElement c5 = new SqlColumnVertex("c231", t1.getName());
 
 	@BeforeClass
 	public static void init() throws Exception {

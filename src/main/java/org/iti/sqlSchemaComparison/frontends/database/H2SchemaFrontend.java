@@ -175,8 +175,7 @@ public class H2SchemaFrontend implements ISqlSchemaFrontend {
 	private void createColumn(Connection connection, DirectedGraph<IStructureElement, DefaultEdge> schema,
 			String tableName, ISqlElement table, ResultSet tableSchema) throws SQLException {
 		String id = tableSchema.getString(ColumnSchema.NAME.getValue());
-		String type = tableSchema.getString(ColumnSchema.TYPE.getValue()).toUpperCase();
-		ISqlElement column = new SqlColumnVertex(id, type, table.getName());
+		ISqlElement column = new SqlColumnVertex(id, table.getName());
 
 		schema.addVertex(column);
 		schema.addEdge(table, column, new TableHasColumnEdge(table, column));

@@ -137,7 +137,7 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 			ZFromItem tableItem = getColumnTable(query, selectItem);
 
 			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlTableVertex.class, tableItem.getTable(), schema.vertexSet());
-			ISqlElement column = new SqlColumnVertex(selectItem.getColumn(), null, table.getName());
+			ISqlElement column = new SqlColumnVertex(selectItem.getColumn(), table.getName());
 
 			column.setSourceElement(selectItem);
 

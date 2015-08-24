@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.iti.sqlSchemaComparison.SchemaModification;
-import org.iti.sqlSchemaComparison.SqlSchemaComparisonResult;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;

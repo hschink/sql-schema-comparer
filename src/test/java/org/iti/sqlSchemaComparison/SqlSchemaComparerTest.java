@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import org.iti.sqlSchemaComparison.edge.ColumnHasConstraint;
+import org.iti.sqlSchemaComparison.edge.ColumnHasType;
 import org.iti.sqlSchemaComparison.edge.ForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.edge.TableHasColumnEdge;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
@@ -38,6 +39,7 @@ import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlElementType;
 import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.ColumnConstraintVertex;
+import org.iti.sqlSchemaComparison.vertex.sqlColumn.ColumnTypeVertex;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint.ConstraintType;
 import org.iti.structureGraph.comparison.StructureGraphComparisonException;
 import org.iti.structureGraph.nodes.IStructureElement;
@@ -73,19 +75,23 @@ public class SqlSchemaComparerTest {
 	private static ISqlElement t1 = SqlElementFactory.createSqlElement(SqlElementType.Table, "t1");
 	private static ISqlElement t2 = SqlElementFactory.createSqlElement(SqlElementType.Table, "t2");
 
-	private static ISqlElement c1 = new SqlColumnVertex("c1", "", t1.getName());
-	private static ISqlElement c12 = new SqlColumnVertex("c12", "", t1.getName());
-	private static ISqlElement c2 = new SqlColumnVertex("c2", "", t2.getName());
-	private static ISqlElement c22 = new SqlColumnVertex("c22", "", t2.getName());
-	private static ISqlElement c3 = new SqlColumnVertex("c1", "", t2.getName());
+	private static ISqlElement c1 = new SqlColumnVertex("c1", t1.getName());
+	private static ISqlElement c12 = new SqlColumnVertex("c12", t1.getName());
+	private static ISqlElement c2 = new SqlColumnVertex("c2", t2.getName());
+	private static ISqlElement c22 = new SqlColumnVertex("c22", t2.getName());
+	private static ISqlElement c3 = new SqlColumnVertex("c1", t2.getName());
 
-	private static ISqlElement c111 = new SqlColumnVertex("c1", "INTEGER", t1.getName());
-	private static ISqlElement c112 = new SqlColumnVertex("c1", "FLOAT", t1.getName());
-	private static ISqlElement c113 = new SqlColumnVertex("c1", "INTEGER", t1.getName());
+	private static ISqlElement c111 = new SqlColumnVertex("c1", t1.getName());
+	private static ISqlElement c112 = new SqlColumnVertex("c1", t1.getName());
+	private static ISqlElement c113 = new SqlColumnVertex("c1", t1.getName());
 
 	private static ISqlElement cc1111 = new ColumnConstraintVertex("c1", ConstraintType.DEFAULT, "1");
 	private static ISqlElement cc1121 = new ColumnConstraintVertex("c1", ConstraintType.DEFAULT, "1");
 	private static ISqlElement cc1122 = new ColumnConstraintVertex("c1", ConstraintType.NOT_NULL);
+
+	private static ISqlElement ct111 = new ColumnTypeVertex("c1", "INTEGER");
+	private static ISqlElement ct112 = new ColumnTypeVertex("c1", "FLOAT");
+	private static ISqlElement ct113 = new ColumnTypeVertex("c1", "INTEGER");
 
 	@BeforeClass
 	public static void init() throws Exception {
@@ -124,10 +130,13 @@ public class SqlSchemaComparerTest {
 		schema9.addVertex(c1);
 		schema11.addVertex(c111);
 		schema11.addVertex(cc1111);
+		schema11.addVertex(ct111);
 		schema12.addVertex(c112);
+		schema12.addVertex(ct112);
 		schema12.addVertex(cc1121);
 		schema12.addVertex(cc1122);
 		schema13.addVertex(c113);
+		schema13.addVertex(ct113);
 		schema31.addVertex(c1);
 		schema31.addVertex(c12);
 		schema31.addVertex(c2);
@@ -156,13 +165,16 @@ public class SqlSchemaComparerTest {
 		schema9.addEdge(t2, c1, new TableHasColumnEdge(t2, c1));
 
 		schema11.addEdge(t1, c111, new TableHasColumnEdge(t1, c111));
+		schema11.addEdge(c111, ct111, new ColumnHasType());
 		schema11.addEdge(c111, cc1111, new ColumnHasConstraint());
 
 		schema12.addEdge(t1, c112, new TableHasColumnEdge(t1, c112));
+		schema12.addEdge(c112, ct112, new ColumnHasType());
 		schema12.addEdge(c112, cc1121, new ColumnHasConstraint());
 		schema12.addEdge(c112, cc1122, new ColumnHasConstraint());
 
 		schema13.addEdge(t1, c113, new TableHasColumnEdge(t1, c113));
+		schema13.addEdge(c113, ct113, new ColumnHasType());
 
 		schema31.addEdge(t1, c1, new TableHasColumnEdge(t1, c1));
 		schema31.addEdge(t1, c12, new TableHasColumnEdge(t1, c12));
@@ -295,14 +307,17 @@ public class SqlSchemaComparerTest {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema11, schema11);
 
 		assertNotNull(comparer1.comparisonResult);
-		assertEquals(1, comparer1.comparisonResult.getColumnComparisonResults().size());
+		assertEquals(0, comparer1.comparisonResult.getModifications().size());
 	}
 
 	@Test
 	public void changedColumnTypeDetectedCorrectly() throws StructureGraphComparisonException {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema11, schema12);
 
-		assertTrue(comparer1.comparisonResult.getColumnComparisonResults().get(c112).hasColumnTypeChanged());
+        Entry<ISqlElement, SchemaModification> entry = TestHelper.getModificationOfType(comparer1.comparisonResult, SchemaModification.CHANGE_COLUMN_TYPE);
+
+        assertNotNull(entry);
+        assertTrue(ct112.getName().contains("FLOAT"));
 	}
 
 	@Test

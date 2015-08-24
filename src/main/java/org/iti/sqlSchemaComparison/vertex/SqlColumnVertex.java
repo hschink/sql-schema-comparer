@@ -56,9 +56,8 @@ public class SqlColumnVertex implements ISqlElement {
 		return constraints;
 	}
 
-	public SqlColumnVertex(String id, String type, String table) {
+	public SqlColumnVertex(String id, String table) {
 		this.columnName = id;
-		this.type = type;
 		this.table = table;
 	}
 
