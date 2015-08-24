@@ -1,4 +1,4 @@
-package org.iti.sqlSchemaComparison.frontends.database;
+package org.iti.sqlSchemaComparison;
 
 import static org.junit.Assert.assertTrue;
 
@@ -17,7 +17,7 @@ import org.iti.structureGraph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
-class DatabaseFrontendTestHelper {
+public class TestHelper {
 
 	public static List<IStructureElement> getColumnWithConstraint(DirectedGraph<IStructureElement,DefaultEdge> schema, ConstraintType constraintType) {
 		List<IStructureElement> columns = new ArrayList<>();

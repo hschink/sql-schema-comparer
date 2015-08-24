@@ -28,6 +28,7 @@ import static org.junit.Assert.assertTrue;
 import java.nio.file.InvalidPathException;
 import java.util.Map.Entry;
 
+import org.iti.sqlSchemaComparison.TestHelper;
 import org.iti.sqlSchemaComparison.SchemaModification;
 import org.iti.sqlSchemaComparison.SqlSchemaColumnComparisonResult;
 import org.iti.sqlSchemaComparison.SqlSchemaComparer;
@@ -84,7 +85,7 @@ public class H2SchemaFrontendTest {
 		assertNotNull(schema);
 		assertEquals(7, SqlElementFactory.getSqlElementsOfType(SqlTableVertex.class, schema.vertexSet()).size());
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema.vertexSet()).size());
-		assertEquals(7, DatabaseFrontendTestHelper.getColumnWithConstraint(schema, IColumnConstraint.ConstraintType.PRIMARY_KEY).size());
+		assertEquals(7, TestHelper.getColumnWithConstraint(schema, IColumnConstraint.ConstraintType.PRIMARY_KEY).size());
 
 	}
 
@@ -130,7 +131,7 @@ public class H2SchemaFrontendTest {
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema1.vertexSet()).size());
 		assertEquals(28, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema2.vertexSet()).size());
 
-		Entry<ISqlElement, SchemaModification> entry = DatabaseFrontendTestHelper.getModificationOfType(result, SchemaModification.DELETE_COLUMN);
+		Entry<ISqlElement, SchemaModification> entry = TestHelper.getModificationOfType(result, SchemaModification.DELETE_COLUMN);
 
 		assertNotNull(entry);
 		assertEquals(DROPPED_COLUMN_NAME, entry.getKey().getName());
@@ -168,7 +169,7 @@ public class H2SchemaFrontendTest {
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema1.vertexSet()).size());
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema2.vertexSet()).size());
 
-		Entry<ISqlElement, SchemaModification> entry = DatabaseFrontendTestHelper.getModificationOfType(result, SchemaModification.MOVE_COLUMN);
+		Entry<ISqlElement, SchemaModification> entry = TestHelper.getModificationOfType(result, SchemaModification.MOVE_COLUMN);
 
 		assertNotNull(entry);
 		assertEquals(SchemaModification.MOVE_COLUMN, entry.getValue());
@@ -187,7 +188,7 @@ public class H2SchemaFrontendTest {
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema1.vertexSet()).size());
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema2.vertexSet()).size());
 
-		Entry<ISqlElement, SchemaModification> entry = DatabaseFrontendTestHelper.getModificationOfType(result, SchemaModification.RENAME_COLUMN);
+		Entry<ISqlElement, SchemaModification> entry = TestHelper.getModificationOfType(result, SchemaModification.RENAME_COLUMN);
 
 		assertNotNull(entry);
 		assertEquals(SchemaModification.RENAME_COLUMN, entry.getValue());
@@ -236,7 +237,7 @@ public class H2SchemaFrontendTest {
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema1.vertexSet()).size());
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema2.vertexSet()).size());
 
-		Entry<ISqlElement, SchemaModification> entry = DatabaseFrontendTestHelper.getModificationOfType(result, SchemaModification.RENAME_COLUMN);
+		Entry<ISqlElement, SchemaModification> entry = TestHelper.getModificationOfType(result, SchemaModification.RENAME_COLUMN);
 
 		assertNotNull(entry);
 		assertEquals(REPLACE_COLUMN_NAME, entry.getKey().getName());
