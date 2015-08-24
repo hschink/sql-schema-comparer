@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.iti.sqlSchemaComparison.edge.ColumnHasConstraint;
+import org.iti.sqlSchemaComparison.edge.ColumnHasType;
 import org.iti.sqlSchemaComparison.edge.ForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.edge.TableHasColumnEdge;
 import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
@@ -45,6 +46,7 @@ import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlElementType;
 import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.ColumnConstraintVertex;
+import org.iti.sqlSchemaComparison.vertex.sqlColumn.ColumnTypeVertex;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint.ConstraintType;
 import org.iti.structureGraph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
@@ -160,7 +162,17 @@ public class SqliteSchemaFrontend implements ISqlSchemaFrontend {
 		schema.addVertex(column);
 		schema.addEdge(table, column, new TableHasColumnEdge(table, column));
 
+		createColumnType(schema, tableSchema, id, column);
 		createColumnConstraints(schema, tableSchema, id, column);
+	}
+
+	private void createColumnType(DirectedGraph<IStructureElement, DefaultEdge> schema, ResultSet tableSchema,
+			String id, ISqlElement column) throws SQLException {
+		String type = tableSchema.getString(ColumnSchema.TYPE.getValue()).toUpperCase();
+		ISqlElement columnType = new ColumnTypeVertex(id, type);
+
+		schema.addVertex(columnType);
+		schema.addEdge(column, columnType, new ColumnHasType());
 	}
 
 	private void createColumnConstraints(DirectedGraph<IStructureElement, DefaultEdge> schema, ResultSet tableSchema,
