@@ -21,7 +21,9 @@
 
 package org.iti.sqlSchemaComparison.vertex.sqlColumn;
 
-public interface IColumnConstraint {
+import org.iti.sqlSchemaComparison.vertex.ISqlElement;
+
+public interface IColumnConstraint extends ISqlElement {
 
 	enum ConstraintType {
 		PRIMARY_KEY,

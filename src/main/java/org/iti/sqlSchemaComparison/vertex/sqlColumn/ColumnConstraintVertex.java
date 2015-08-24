@@ -1,8 +1,6 @@
 package org.iti.sqlSchemaComparison.vertex.sqlColumn;
 
-import org.iti.sqlSchemaComparison.vertex.ISqlElement;
-
-public class ColumnConstraintVertex implements IColumnConstraint, ISqlElement {
+public class ColumnConstraintVertex implements IColumnConstraint {
 
 	private static final long serialVersionUID = -7800801666223788199L;
 
