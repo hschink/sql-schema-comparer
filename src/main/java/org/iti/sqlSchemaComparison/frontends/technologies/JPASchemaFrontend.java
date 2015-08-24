@@ -43,6 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.iti.sqlSchemaComparison.edge.ColumnHasConstraint;
 import org.iti.sqlSchemaComparison.edge.ForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.edge.TableHasColumnEdge;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
@@ -50,8 +51,8 @@ import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlElementType;
 import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
-import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
-import org.iti.sqlSchemaComparison.vertex.sqlColumn.PrimaryKeyColumnConstraint;
+import org.iti.sqlSchemaComparison.vertex.sqlColumn.ColumnConstraintVertex;
+import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint.ConstraintType;
 import org.iti.structureGraph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graph;
@@ -117,25 +118,21 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 		}
 
 		private void processMethod(MethodDeclaration n) {
-			String id = getColumnName(n);
+			String columnName = getColumnName(n);
 			String type = "?";
-			List<IColumnConstraint> constraints = new ArrayList<>();
-
-			ISqlElement column = new SqlColumnVertex(id, type, lastVisitedClass.getName());
-
-			((SqlColumnVertex) column).setConstraints(constraints);
-
-			if (isAnnotationAvailable(n.getAnnotations(), ID)) {
-				PrimaryKeyColumnConstraint constraint = new PrimaryKeyColumnConstraint("");
-
-				constraints.add(constraint);
-			}
+			ISqlElement column = new SqlColumnVertex(columnName, type, lastVisitedClass.getName());
 
 			schema.addVertex(column);
+			schema.addEdge(lastVisitedClass, column, new TableHasColumnEdge(lastVisitedClass, column));
 
 			column.setSourceElement(n);
 
-			schema.addEdge(lastVisitedClass, column, new TableHasColumnEdge(lastVisitedClass, column));
+			if (isAnnotationAvailable(n.getAnnotations(), ID)) {
+				ISqlElement columnConstraint = new ColumnConstraintVertex(columnName, ConstraintType.PRIMARY_KEY);
+
+				schema.addVertex(columnConstraint);
+				schema.addEdge(column, columnConstraint, new ColumnHasConstraint());
+			}
 		}
 
 	}
@@ -182,23 +179,20 @@ public class JPASchemaFrontend implements IJPASchemaFrontend {
 				ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlTableVertex.class, tableId, schema.vertexSet());
 				SqlColumnVertex foreignKeyColumn = (SqlColumnVertex)primaryKeyColumn;
 				ISqlElement foreignKeyTable = SqlElementFactory.getMatchingSqlElement(SqlTableVertex.class, foreignKeyColumn.getTable(), schema.vertexSet());
-				String id = foreignKeyColumn.getName();
+				String columnName = foreignKeyColumn.getName();
 				String type = foreignKeyColumn.getType();
-				List<IColumnConstraint> constraints = new ArrayList<>();
-
-				ISqlElement column = new SqlColumnVertex(id, type, table.getName());
-
-				column.setSourceElement(n);
-
-				((SqlColumnVertex) column).setConstraints(constraints);
-
-				PrimaryKeyColumnConstraint constraint = new PrimaryKeyColumnConstraint("");
-
-				constraints.add(constraint);
+				ISqlElement column = new SqlColumnVertex(columnName, type, table.getName());
 
 				schema.addVertex(column);
 				schema.addEdge(table, column, new TableHasColumnEdge(table, column));
 				schema.addEdge(table, column, new ForeignKeyRelationEdge(column, foreignKeyTable, foreignKeyColumn));
+
+				column.setSourceElement(n);
+
+				ISqlElement columnConstraint = new ColumnConstraintVertex(columnName, ConstraintType.PRIMARY_KEY);
+
+				schema.addVertex(columnConstraint);
+				schema.addEdge(column, columnConstraint, new ColumnHasConstraint());
 			}
 		}
 

@@ -27,8 +27,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.iti.sqlSchemaComparison.edge.IColumnHasConstraint;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
-import org.iti.sqlSchemaComparison.vertex.sqlColumn.PrimaryKeyColumnConstraint;
+import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint.ConstraintType;
 import org.iti.structureGraph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -141,12 +142,25 @@ public abstract class SqlElementFactory {
 
 		for (ISqlElement e : columns) {
 			if (e instanceof SqlColumnVertex)
-				for (IColumnConstraint c : ((SqlColumnVertex) e).getConstraints())
-					if (PrimaryKeyColumnConstraint.class.isAssignableFrom(c.getClass()))
+				for (IColumnConstraint c : getColumnConstraints(e, schema))
+					if (c.getConstraintType().equals(ConstraintType.PRIMARY_KEY))
 						return e;
 		}
 
 		return null;
+	}
+
+	private static List<IColumnConstraint> getColumnConstraints(ISqlElement column, DirectedGraph<IStructureElement, DefaultEdge> schema) {
+		List<IColumnConstraint> columnConstraints = new ArrayList<>();
+		Set<DefaultEdge> outgoingEdges = schema.outgoingEdgesOf(column);
+
+		for (DefaultEdge outgoingEdge : outgoingEdges) {
+			if (outgoingEdge instanceof IColumnHasConstraint) {
+				columnConstraints.add((IColumnConstraint) schema.getEdgeTarget(outgoingEdge));
+			}
+		}
+
+		return columnConstraints;
 	}
 
 }
