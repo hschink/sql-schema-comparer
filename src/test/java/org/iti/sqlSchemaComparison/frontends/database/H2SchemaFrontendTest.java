@@ -149,13 +149,10 @@ public class H2SchemaFrontendTest {
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema1.vertexSet()).size());
 		assertEquals(28, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema2.vertexSet()).size());
 
-		ISqlElement elements = null;
+		Entry<ISqlElement, SchemaModification> entry = DatabaseFrontendTestHelper.getModificationOfType(result, SchemaModification.DELETE_COLUMN);
 
-		for (Entry<ISqlElement, SchemaModification> entry : result.getModifications().entrySet()) {
-			elements = entry.getKey();
-		}
-
-		assertEquals(DROPPED_COLUMN_NAME, elements.getName());
+		assertNotNull(entry);
+		assertEquals(DROPPED_COLUMN_NAME, entry.getKey().getName());
 	}
 
 	@Test
@@ -190,8 +187,9 @@ public class H2SchemaFrontendTest {
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema1.vertexSet()).size());
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema2.vertexSet()).size());
 
-		Entry<ISqlElement, SchemaModification> entry = result.getModifications().entrySet().iterator().next();
+		Entry<ISqlElement, SchemaModification> entry = DatabaseFrontendTestHelper.getModificationOfType(result, SchemaModification.MOVE_COLUMN);
 
+		assertNotNull(entry);
 		assertEquals(SchemaModification.MOVE_COLUMN, entry.getValue());
 		assertEquals(MOVE_COLUMN_NAME, entry.getKey().getName());
 	}
@@ -208,8 +206,9 @@ public class H2SchemaFrontendTest {
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema1.vertexSet()).size());
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema2.vertexSet()).size());
 
-		Entry<ISqlElement, SchemaModification> entry = result.getModifications().entrySet().iterator().next();
+		Entry<ISqlElement, SchemaModification> entry = DatabaseFrontendTestHelper.getModificationOfType(result, SchemaModification.RENAME_COLUMN);
 
+		assertNotNull(entry);
 		assertEquals(SchemaModification.RENAME_COLUMN, entry.getValue());
 		assertEquals(RENAME_COLUMN_NAME, entry.getKey().getName());
 	}
@@ -251,15 +250,15 @@ public class H2SchemaFrontendTest {
 		}
 
 		assertNotNull(column);
+		assertTrue(column.hasColumnTypeChanged());
 
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema1.vertexSet()).size());
 		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema2.vertexSet()).size());
 
-		Entry<ISqlElement, SchemaModification> entry = result.getModifications().entrySet().iterator().next();
+		Entry<ISqlElement, SchemaModification> entry = DatabaseFrontendTestHelper.getModificationOfType(result, SchemaModification.RENAME_COLUMN);
 
-		assertEquals(SchemaModification.RENAME_COLUMN, entry.getValue());
+		assertNotNull(entry);
 		assertEquals(REPLACE_COLUMN_NAME, entry.getKey().getName());
-		assertTrue(column.hasColumnTypeChanged());
 		assertEquals(REPLACE_COLUMN_TYPE, column.getCurrentColumnType());
 	}
 

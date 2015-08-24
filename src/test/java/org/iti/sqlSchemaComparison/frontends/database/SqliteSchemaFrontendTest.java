@@ -190,8 +190,9 @@ public class SqliteSchemaFrontendTest {
 		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema1.vertexSet()).size());
 		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema2.vertexSet()).size());
 
-		Entry<ISqlElement, SchemaModification> entry = result.getModifications().entrySet().iterator().next();
+		Entry<ISqlElement, SchemaModification> entry = DatabaseFrontendTestHelper.getModificationOfType(result, SchemaModification.MOVE_COLUMN);
 
+		assertNotNull(entry);
 		assertEquals(SchemaModification.MOVE_COLUMN, entry.getValue());
 		assertEquals(MOVE_COLUMN_NAME, entry.getKey().getName());
 	}
@@ -208,8 +209,9 @@ public class SqliteSchemaFrontendTest {
 		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema1.vertexSet()).size());
 		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema2.vertexSet()).size());
 
-		Entry<ISqlElement, SchemaModification> entry = result.getModifications().entrySet().iterator().next();
+		Entry<ISqlElement, SchemaModification> entry = DatabaseFrontendTestHelper.getModificationOfType(result, SchemaModification.RENAME_COLUMN);
 
+		assertNotNull(entry);
 		assertEquals(SchemaModification.RENAME_COLUMN, entry.getValue());
 		assertEquals(RENAME_COLUMN_NAME, entry.getKey().getName());
 	}
