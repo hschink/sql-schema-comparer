@@ -26,11 +26,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map.Entry;
 
+import org.iti.sqlSchemaComparison.edge.ColumnHasConstraint;
 import org.iti.sqlSchemaComparison.edge.ForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.edge.TableHasColumnEdge;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
@@ -38,9 +37,8 @@ import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlElementType;
 import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
-import org.iti.sqlSchemaComparison.vertex.sqlColumn.DefaultColumnConstraint;
-import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
-import org.iti.sqlSchemaComparison.vertex.sqlColumn.NotNullColumnConstraint;
+import org.iti.sqlSchemaComparison.vertex.sqlColumn.ColumnConstraintVertex;
+import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint.ConstraintType;
 import org.iti.structureGraph.comparison.StructureGraphComparisonException;
 import org.iti.structureGraph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
@@ -85,8 +83,9 @@ public class SqlSchemaComparerTest {
 	private static ISqlElement c112 = new SqlColumnVertex("c1", "FLOAT", t1.getName());
 	private static ISqlElement c113 = new SqlColumnVertex("c1", "INTEGER", t1.getName());
 
-	private static IColumnConstraint constraint1 = new DefaultColumnConstraint("1");
-	private static IColumnConstraint constraint2 = new NotNullColumnConstraint("");
+	private static ISqlElement cc1111 = new ColumnConstraintVertex("c1", ConstraintType.DEFAULT, "1");
+	private static ISqlElement cc1121 = new ColumnConstraintVertex("c1", ConstraintType.DEFAULT, "1");
+	private static ISqlElement cc1122 = new ColumnConstraintVertex("c1", ConstraintType.NOT_NULL);
 
 	@BeforeClass
 	public static void init() throws Exception {
@@ -124,7 +123,10 @@ public class SqlSchemaComparerTest {
 		schema6.addVertex(c2);
 		schema9.addVertex(c1);
 		schema11.addVertex(c111);
+		schema11.addVertex(cc1111);
 		schema12.addVertex(c112);
+		schema12.addVertex(cc1121);
+		schema12.addVertex(cc1122);
 		schema13.addVertex(c113);
 		schema31.addVertex(c1);
 		schema31.addVertex(c12);
@@ -154,21 +156,13 @@ public class SqlSchemaComparerTest {
 		schema9.addEdge(t2, c1, new TableHasColumnEdge(t2, c1));
 
 		schema11.addEdge(t1, c111, new TableHasColumnEdge(t1, c111));
+		schema11.addEdge(c111, cc1111, new ColumnHasConstraint());
 
 		schema12.addEdge(t1, c112, new TableHasColumnEdge(t1, c112));
+		schema12.addEdge(c112, cc1121, new ColumnHasConstraint());
+		schema12.addEdge(c112, cc1122, new ColumnHasConstraint());
 
 		schema13.addEdge(t1, c113, new TableHasColumnEdge(t1, c113));
-
-		List<IColumnConstraint> constraints11 = new ArrayList<IColumnConstraint>();
-		List<IColumnConstraint> constraints12 = new ArrayList<IColumnConstraint>();
-
-		constraints11.add(constraint1);
-
-		constraints12.add(constraint1);
-		constraints12.add(constraint2);
-
-		((SqlColumnVertex) c111).setConstraints(constraints11);
-		((SqlColumnVertex) c112).setConstraints(constraints12);
 
 		schema31.addEdge(t1, c1, new TableHasColumnEdge(t1, c1));
 		schema31.addEdge(t1, c12, new TableHasColumnEdge(t1, c12));
@@ -318,17 +312,21 @@ public class SqlSchemaComparerTest {
 	@Test
 	public void addedColumnConstraintDetectedCorrectly() throws StructureGraphComparisonException {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema11, schema12);
-		SqlSchemaColumnComparisonResult.ColumnConstraintComparisonResult cccr = comparer1.comparisonResult.getColumnComparisonResults().get(c112).getConstraintComparisonResult();
 
-		assertTrue(cccr.getAddedConstraints().contains(constraint2));
+        Entry<ISqlElement, SchemaModification> entry = TestHelper.getModificationOfType(comparer1.comparisonResult, SchemaModification.CREATE_CONSTRAINT);
+
+        assertNotNull(entry);
+        assertEquals(cc1122.getName(), entry.getKey().getName());
 	}
 
 	@Test
 	public void removedColumnConstraintDetectedCorrectly() throws StructureGraphComparisonException {
 		SqlSchemaComparer comparer1 = new SqlSchemaComparer(schema11, schema13);
-		SqlSchemaColumnComparisonResult.ColumnConstraintComparisonResult cccr = comparer1.comparisonResult.getColumnComparisonResults().get(c113).getConstraintComparisonResult();
 
-		assertTrue(cccr.getRemovedConstraints().contains(constraint1));
+        Entry<ISqlElement, SchemaModification> entry = TestHelper.getModificationOfType(comparer1.comparisonResult, SchemaModification.DELETE_CONSTRAINT);
+
+        assertNotNull(entry);
+        assertEquals(cc1111.getName(), entry.getKey().getName());
 	}
 
 	@Test
