@@ -37,6 +37,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.h2.jdbc.JdbcSQLException;
+import org.iti.sqlSchemaComparison.edge.ColumnHasConstraint;
 import org.iti.sqlSchemaComparison.edge.ForeignKeyRelationEdge;
 import org.iti.sqlSchemaComparison.edge.TableHasColumnEdge;
 import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
@@ -45,10 +46,8 @@ import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlElementType;
 import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
-import org.iti.sqlSchemaComparison.vertex.sqlColumn.DefaultColumnConstraint;
-import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
-import org.iti.sqlSchemaComparison.vertex.sqlColumn.NotNullColumnConstraint;
-import org.iti.sqlSchemaComparison.vertex.sqlColumn.PrimaryKeyColumnConstraint;
+import org.iti.sqlSchemaComparison.vertex.sqlColumn.ColumnConstraintVertex;
+import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint.ConstraintType;
 import org.iti.structureGraph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -169,27 +168,40 @@ public class H2SchemaFrontend implements ISqlSchemaFrontend {
 		ResultSet tableSchema = stm.executeQuery();
 
 		while (tableSchema.next()) {
-			String id = tableSchema.getString(ColumnSchema.NAME.getValue());
-			String type = tableSchema.getString(ColumnSchema.TYPE.getValue()).toUpperCase();
-			List<IColumnConstraint> constraints = new ArrayList<>();
-			ISqlElement column = new SqlColumnVertex(id, type, table.getName());
-
-			if (tableSchema.getString(ColumnSchema.NOT_NULL.getValue()).equals("YES"))
-				constraints.add(new NotNullColumnConstraint(""));
-
-			String defaultValue = tableSchema.getString(ColumnSchema.DEFAULT_VALUE.getValue());
-
-			if (!tableSchema.wasNull())
-				constraints.add(new DefaultColumnConstraint(defaultValue));
-
-			if (isPrimaryKeyColumn(connection, tableName, id))
-				constraints.add(new PrimaryKeyColumnConstraint(""));
-
-			((SqlColumnVertex) column).setConstraints(constraints);
-
-			schema.addVertex(column);
-			schema.addEdge(table, column, new TableHasColumnEdge(table, column));
+			createColumn(connection, schema, tableName, table, tableSchema);
 		}
+	}
+
+	private void createColumn(Connection connection, DirectedGraph<IStructureElement, DefaultEdge> schema,
+			String tableName, ISqlElement table, ResultSet tableSchema) throws SQLException {
+		String id = tableSchema.getString(ColumnSchema.NAME.getValue());
+		String type = tableSchema.getString(ColumnSchema.TYPE.getValue()).toUpperCase();
+		ISqlElement column = new SqlColumnVertex(id, type, table.getName());
+
+		schema.addVertex(column);
+		schema.addEdge(table, column, new TableHasColumnEdge(table, column));
+
+		createColumnConstraints(connection, schema, tableName, tableSchema, id, column);
+	}
+
+	private void createColumnConstraints(Connection connection, DirectedGraph<IStructureElement, DefaultEdge> schema,
+			String tableName, ResultSet tableSchema, String columnName, ISqlElement column) throws SQLException {
+		if (tableSchema.getString(ColumnSchema.NOT_NULL.getValue()).equals("YES"))
+			addColumnConstraint(new ColumnConstraintVertex(columnName, ConstraintType.NOT_NULL), schema, column);
+
+		String defaultValue = tableSchema.getString(ColumnSchema.DEFAULT_VALUE.getValue());
+
+		if (!tableSchema.wasNull())
+			addColumnConstraint(new ColumnConstraintVertex(columnName, ConstraintType.DEFAULT, defaultValue), schema, column);
+
+		if (isPrimaryKeyColumn(connection, tableName, columnName))
+			addColumnConstraint(new ColumnConstraintVertex(columnName, ConstraintType.PRIMARY_KEY), schema, column);
+	}
+
+	private void addColumnConstraint(ColumnConstraintVertex columnConstraint,
+			DirectedGraph<IStructureElement, DefaultEdge> schema, ISqlElement column) {
+		schema.addVertex(columnConstraint);
+		schema.addEdge(column, columnConstraint, new ColumnHasConstraint());
 	}
 
 	private boolean isPrimaryKeyColumn(Connection connection, String tableName, String columnName) throws SQLException {
