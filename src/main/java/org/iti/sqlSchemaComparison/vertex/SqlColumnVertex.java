@@ -36,6 +36,8 @@ public class SqlColumnVertex implements ISqlElement {
 
 	private String type = "";
 
+	private boolean mandatory = false;
+
 	public String getType() {
 		return type;
 	}
@@ -93,8 +95,11 @@ public class SqlColumnVertex implements ISqlElement {
 
 	@Override
 	public boolean isMandatory() {
-		// TODO Auto-generated method stub
-		return false;
+		return mandatory;
+	}
+
+	public void setMandatory(boolean mandatory) {
+		this.mandatory = mandatory;
 	}
 
 	@Override

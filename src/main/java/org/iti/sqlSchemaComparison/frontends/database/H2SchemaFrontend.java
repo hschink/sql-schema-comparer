@@ -177,7 +177,7 @@ public class H2SchemaFrontend implements ISqlSchemaFrontend {
 	private void createColumn(Connection connection, DirectedGraph<IStructureElement, DefaultEdge> schema,
 			String tableName, ISqlElement table, ResultSet tableSchema) throws SQLException {
 		String id = tableSchema.getString(ColumnSchema.NAME.getValue());
-		ISqlElement column = new SqlColumnVertex(id, table.getName());
+		SqlColumnVertex column = new SqlColumnVertex(id, table.getName());
 
 		schema.addVertex(column);
 		schema.addEdge(table, column, new TableHasColumnEdge(table, column));
@@ -196,9 +196,11 @@ public class H2SchemaFrontend implements ISqlSchemaFrontend {
 	}
 
 	private void createColumnConstraints(Connection connection, DirectedGraph<IStructureElement, DefaultEdge> schema,
-			String tableName, ResultSet tableSchema, String columnName, ISqlElement column) throws SQLException {
-		if (tableSchema.getString(ColumnSchema.NOT_NULL.getValue()).equals("YES"))
+			String tableName, ResultSet tableSchema, String columnName, SqlColumnVertex column) throws SQLException {
+		if (tableSchema.getString(ColumnSchema.NOT_NULL.getValue()).equals("NO")) {
 			addColumnConstraint(new ColumnConstraintVertex(columnName, ConstraintType.NOT_NULL), schema, column);
+			column.setMandatory(true);
+		}
 
 		String defaultValue = tableSchema.getString(ColumnSchema.DEFAULT_VALUE.getValue());
 

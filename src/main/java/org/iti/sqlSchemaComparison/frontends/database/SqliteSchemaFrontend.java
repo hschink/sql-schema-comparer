@@ -157,7 +157,7 @@ public class SqliteSchemaFrontend implements ISqlSchemaFrontend {
 	private void createColumn(DirectedGraph<IStructureElement, DefaultEdge> schema, ISqlElement table,
 			ResultSet tableSchema) throws SQLException {
 		String id = tableSchema.getString(ColumnSchema.NAME.getValue());
-		ISqlElement column = new SqlColumnVertex(id, table.getName());
+		SqlColumnVertex column = new SqlColumnVertex(id, table.getName());
 
 		schema.addVertex(column);
 		schema.addEdge(table, column, new TableHasColumnEdge(table, column));
@@ -176,9 +176,11 @@ public class SqliteSchemaFrontend implements ISqlSchemaFrontend {
 	}
 
 	private void createColumnConstraints(DirectedGraph<IStructureElement, DefaultEdge> schema, ResultSet tableSchema,
-			String columnName, ISqlElement column) throws SQLException {
-		if (tableSchema.getInt(ColumnSchema.NOT_NULL.getValue()) > 0)
+			String columnName, SqlColumnVertex column) throws SQLException {
+		if (tableSchema.getInt(ColumnSchema.NOT_NULL.getValue()) > 0) {
 			addColumnConstraint(new ColumnConstraintVertex(columnName, ConstraintType.NOT_NULL), schema, column);
+			column.setMandatory(true);
+		}
 
 		String defaultValue = tableSchema.getString(ColumnSchema.DEFAULT_VALUE.getValue());
 
