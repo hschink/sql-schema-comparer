@@ -25,7 +25,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.nio.file.InvalidPathException;
+import java.util.ArrayList;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.iti.sqlSchemaComparison.SchemaModification;
 import org.iti.sqlSchemaComparison.SqlSchemaComparer;
@@ -38,8 +40,10 @@ import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
+import org.iti.sqlSchemaComparison.vertex.sqlColumn.ColumnConstraintVertex;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.ColumnTypeVertex;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
+import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint.ConstraintType;
 import org.iti.structureGraph.comparison.StructureGraphComparisonException;
 import org.iti.structureGraph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
@@ -80,12 +84,40 @@ public class H2SchemaFrontendTest {
 	public void databaseConnectionEstablishedCorrectly() {
 		ISqlSchemaFrontend frontend = new H2SchemaFrontend(DATABASE_FILE_PATH);
 		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
+		Set<ISqlElement> tables = SqlElementFactory.getSqlElementsOfType(SqlTableVertex.class, schema.vertexSet());
+		Set<ISqlElement> columns = SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema.vertexSet());
+		ArrayList<ISqlElement> mandatoryColumns = new ArrayList<>();
+		int tableCount = tables.size();
+		int columnCount = columns.size();
+
+		for (ISqlElement column : columns) {
+			if (column.isMandatory() && !isPrimaryKey(schema, column)) {
+				mandatoryColumns.add(column);
+			}
+		}
 
 		assertNotNull(schema);
-		assertEquals(7, SqlElementFactory.getSqlElementsOfType(SqlTableVertex.class, schema.vertexSet()).size());
-		assertEquals(29, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema.vertexSet()).size());
+		assertEquals(7, tableCount);
+		assertEquals(29, columnCount);
 		assertEquals(7, TestHelper.getColumnWithConstraint(schema, IColumnConstraint.ConstraintType.PRIMARY_KEY).size());
+		assertEquals(1, mandatoryColumns.size());
+		assertEquals("[Column] DEPARTMENTS.NAME", mandatoryColumns.get(0).toString());
 
+	}
+
+	private boolean isPrimaryKey(DirectedGraph<IStructureElement, DefaultEdge> schema, ISqlElement column) {
+		Set<DefaultEdge> outgoingEdges = schema.outgoingEdgesOf(column);
+
+		for (DefaultEdge outgoingEdge : outgoingEdges) {
+			IStructureElement element = schema.getEdgeTarget(outgoingEdge);
+
+			if (element instanceof ColumnConstraintVertex
+					&& ((ColumnConstraintVertex) element).getConstraintType().equals(ConstraintType.PRIMARY_KEY)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	@Test

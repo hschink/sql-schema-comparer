@@ -25,7 +25,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.nio.file.InvalidPathException;
+import java.util.ArrayList;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.iti.sqlSchemaComparison.SchemaModification;
 import org.iti.sqlSchemaComparison.SqlSchemaComparer;
@@ -80,11 +82,24 @@ public class SqliteSchemaFrontendTest {
 	public void databaseConnectionEstablishedCorrectly() {
 		ISqlSchemaFrontend frontend = new SqliteSchemaFrontend(DATABASE_FILE_PATH);
 		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
+		Set<ISqlElement> tables = SqlElementFactory.getSqlElementsOfType(SqlTableVertex.class, schema.vertexSet());
+		Set<ISqlElement> columns = SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema.vertexSet());
+		ArrayList<ISqlElement> mandatoryColumns = new ArrayList<>();
+		int tableCount = tables.size();
+		int columnCount = columns.size();
+
+		for (ISqlElement column : columns) {
+			if (column.isMandatory()) {
+				mandatoryColumns.add(column);
+			}
+		}
 
 		assertNotNull(schema);
-		assertEquals(8, SqlElementFactory.getSqlElementsOfType(SqlTableVertex.class, schema.vertexSet()).size());
-		assertEquals(31, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema.vertexSet()).size());
+		assertEquals(8, tableCount);
+		assertEquals(31, columnCount);
 		assertEquals(7, TestHelper.getColumnWithConstraint(schema, IColumnConstraint.ConstraintType.PRIMARY_KEY).size());
+		assertEquals(1, mandatoryColumns.size());
+		assertEquals("[Column] departments.name", mandatoryColumns.get(0).toString());
 
 	}
 
