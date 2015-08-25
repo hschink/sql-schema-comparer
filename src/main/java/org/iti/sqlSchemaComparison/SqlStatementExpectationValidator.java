@@ -65,8 +65,8 @@ public class SqlStatementExpectationValidator {
 			e.printStackTrace();
 		}
 
-        List<ISqlElement> missingTables = getMissingElementByType(result.getElementsByModification(Type.NodeDeleted), SqlTableVertex.class);
-        List<ISqlElement> missingColumns = getMissingElementByType(result.getElementsByModification(Type.NodeDeleted), SqlColumnVertex.class);
+        List<ISqlElement> missingTables = getMissingElementsByType(result.getElementsByModification(Type.NodeDeleted), SqlTableVertex.class);
+        List<ISqlElement> missingColumns = getMissingElementsByType(result.getElementsByModification(Type.NodeDeleted), SqlColumnVertex.class);
 		Map<ISqlElement, List<List<ISqlElement>>> missingButReachableColumns = getReachableColumns(expectedSchema, missingColumns);
 
 		missingColumns.removeAll(missingButReachableColumns.keySet());
@@ -74,7 +74,7 @@ public class SqlStatementExpectationValidator {
 		return new SqlStatementExpectationValidationResult(missingTables, missingColumns, missingButReachableColumns);
 	}
 
-	private List<ISqlElement> getMissingElementByType(
+	private List<ISqlElement> getMissingElementsByType(
 			Collection<IStructureElement> elements,
 			Class<?> class1) {
 		List<ISqlElement> missingElemets = new ArrayList<>();
