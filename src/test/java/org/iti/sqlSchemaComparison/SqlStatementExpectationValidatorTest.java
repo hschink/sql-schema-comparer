@@ -59,6 +59,7 @@ public class SqlStatementExpectationValidatorTest {
 	public static final String QUERY_WITH_TWO_MISSING_TABLES = "SELECT missing_1.firstname, missing_2.surname FROM missing_1, missing_2;";
 	public static final String QUERY_WITH_FOREIGN_TABLE_REFERENCE = "SELECT firstname, surname, account FROM customers;";
 	public static final String QUERY_WITH_TABLE_PREFIXED_COLUMNS_AND_MISSING_COLUMN = "SELECT customers.firstname, customers.name FROM customers, departments;";
+	public static final String QUERY_WITH_MISSING_NOTNULL_COLUMN = "SELECT id FROM departments;";
 
 	private static DirectedGraph<IStructureElement, DefaultEdge> sqliteSchema;
 
@@ -204,6 +205,17 @@ public class SqlStatementExpectationValidatorTest {
 		assertFalse(result.isStatementValid());
 		assertEquals(1, result.getMissingButReachableColumns().size());
 		assertEquals("name", result.getMissingButReachableColumns().keySet().iterator().next().getName());
+	}
+
+	@Test
+	public void queryWithMissingNotNullColumn() {
+		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_MISSING_NOTNULL_COLUMN, null);
+		DirectedGraph<IStructureElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
+		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
+
+		SqlStatementExpectationValidationResult result = validator.computeGraphMatching(expectedSchema);
+
+		assertTrue(result.isStatementValid());
 	}
 
 	@After
