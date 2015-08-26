@@ -36,7 +36,6 @@ import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
 import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
 import org.iti.structureGraph.StructureGraph;
-import org.iti.structureGraph.comparison.IStructureGraphComparer;
 import org.iti.structureGraph.comparison.StatementStructureGraphComparer;
 import org.iti.structureGraph.comparison.StructureGraphComparisonException;
 import org.iti.structureGraph.comparison.result.StructureGraphComparisonResult;
@@ -61,11 +60,11 @@ public class SqlStatementExpectationValidator {
 			DirectedGraph<IStructureElement, DefaultEdge> statement, QueryType queryType) {
 		StructureGraph schemaGraph = new StructureGraph(schema);
 		StructureGraph expectedSchemaGraph = new StructureGraph(statement);
-		IStructureGraphComparer comparer = new StatementStructureGraphComparer();
+		StatementStructureGraphComparer comparer = new StatementStructureGraphComparer();
 
         StructureGraphComparisonResult result = null;
 		try {
-			result = comparer.compare(expectedSchemaGraph, schemaGraph);
+			result = comparer.compare(expectedSchemaGraph, schemaGraph, queryType.equals(QueryType.DQL));
 		} catch (StructureGraphComparisonException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -71,7 +71,11 @@ public class SqlStatementFrontend implements ISqlQueryFrontend {
 
 	@Override
 	public QueryType getQueryType() {
-		return null;
+		if (statement instanceof ZQuery) {
+			return QueryType.DQL;
+		} else {
+			return QueryType.DML;
+		}
 	}
 
 	private DirectedGraph<IStructureElement, DefaultEdge> createGraph(ZStatement statement) {
