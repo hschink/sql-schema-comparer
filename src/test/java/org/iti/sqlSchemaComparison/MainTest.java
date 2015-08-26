@@ -21,6 +21,9 @@
 
 package org.iti.sqlSchemaComparison;
 
+import java.io.UnsupportedEncodingException;
+
+import org.gibello.zql.ParseException;
 import org.iti.sqlSchemaComparison.edge.SqlStatementFrontendTest;
 import org.iti.sqlSchemaComparison.frontends.database.SqliteSchemaFrontendTest;
 import org.iti.structureGraph.comparison.StructureGraphComparisonException;
@@ -37,8 +40,8 @@ public class MainTest {
 	public void setUp() { }
 
 	@Test
-	public void databaseSchemaComparison() throws StructureGraphComparisonException {
-		String[] args = new String[] { 
+	public void databaseSchemaComparison() throws StructureGraphComparisonException, UnsupportedEncodingException, ParseException {
+		String[] args = new String[] {
 			SqliteSchemaFrontendTest.DATABASE_FILE_PATH,
 			SqliteSchemaFrontendTest.DATABASE_FILE_PATH,
 			SqliteSchemaFrontendTest.DROPPED_COLUMN_DATABASE_FILE_PATH,
@@ -60,7 +63,7 @@ public class MainTest {
 	}
 
 	@Test
-	public void statementValidation() throws StructureGraphComparisonException {
+	public void statementValidation() throws StructureGraphComparisonException, UnsupportedEncodingException, ParseException {
 		String[] args = new String[] {
 			"-statement",
 			SqlStatementFrontendTest.SINGLE_TABLE_QUERY,
@@ -71,7 +74,7 @@ public class MainTest {
 	}
 
 	@Test
-	public void statementValidationMissingColumn() throws StructureGraphComparisonException {
+	public void statementValidationMissingColumn() throws StructureGraphComparisonException, UnsupportedEncodingException, ParseException {
 		String[] args = new String[] {
 			"-statement",
 			SqlStatementExpectationValidatorTest.QUERY_WITH_MISSING_COLUMN,
@@ -82,7 +85,7 @@ public class MainTest {
 	}
 
 	@Test
-	public void statementValidationMissingButReachableColumn() throws StructureGraphComparisonException {
+	public void statementValidationMissingButReachableColumn() throws StructureGraphComparisonException, UnsupportedEncodingException, ParseException {
 		String[] args = new String[] {
 			"-statement",
 			SqlStatementExpectationValidatorTest.QUERY_WITH_FOREIGN_TABLE_REFERENCE,

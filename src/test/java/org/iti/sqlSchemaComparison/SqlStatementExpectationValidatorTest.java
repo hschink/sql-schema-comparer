@@ -29,9 +29,11 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.gibello.zql.ParseException;
 import org.gibello.zql.ZFromItem;
 import org.gibello.zql.ZSelectItem;
 import org.iti.sqlSchemaComparison.edge.SqlStatementFrontendTest;
@@ -74,7 +76,7 @@ public class SqlStatementExpectationValidatorTest {
 	public void setUp() { }
 
 	@Test
-	public void singleTableQueryIsValid() {
+	public void singleTableQueryIsValid() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(SqlStatementFrontendTest.SINGLE_TABLE_QUERY, null);
 		DirectedGraph<IStructureElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
@@ -85,7 +87,7 @@ public class SqlStatementExpectationValidatorTest {
 	}
 
 	@Test
-	public void queryWithMissingColumn() {
+	public void queryWithMissingColumn() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_MISSING_COLUMN, null);
 		DirectedGraph<IStructureElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
@@ -98,7 +100,7 @@ public class SqlStatementExpectationValidatorTest {
 	}
 
 	@Test
-	public void queryWithTwoMissingColumns() {
+	public void queryWithTwoMissingColumns() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_TWO_MISSING_COLUMNS, null);
 		DirectedGraph<IStructureElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
@@ -118,7 +120,7 @@ public class SqlStatementExpectationValidatorTest {
 	}
 
 	@Test
-	public void queryWithMissingTable() {
+	public void queryWithMissingTable() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_MISSING_TABLE, null);
 		DirectedGraph<IStructureElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
@@ -131,7 +133,7 @@ public class SqlStatementExpectationValidatorTest {
 	}
 
 	@Test
-	public void queryWithTwoMissingTables() {
+	public void queryWithTwoMissingTables() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_TWO_MISSING_TABLES, null);
 		DirectedGraph<IStructureElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
@@ -151,7 +153,7 @@ public class SqlStatementExpectationValidatorTest {
 	}
 
 	@Test
-	public void queryWithForeignTableReference() {
+	public void queryWithForeignTableReference() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_FOREIGN_TABLE_REFERENCE, null);
 		DirectedGraph<IStructureElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
@@ -167,7 +169,7 @@ public class SqlStatementExpectationValidatorTest {
 	}
 
 	@Test
-	public void sourceElementIsNotEmptyForMissingColumn() {
+	public void sourceElementIsNotEmptyForMissingColumn() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_MISSING_COLUMN, null);
 		DirectedGraph<IStructureElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
@@ -181,7 +183,7 @@ public class SqlStatementExpectationValidatorTest {
 	}
 
 	@Test
-	public void sourceElementIsNotEmptyForMissingTable() {
+	public void sourceElementIsNotEmptyForMissingTable() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_MISSING_TABLE, null);
 		DirectedGraph<IStructureElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
@@ -195,7 +197,7 @@ public class SqlStatementExpectationValidatorTest {
 	}
 
 	@Test
-	public void queryWithTablePrefixedColumnsAndMissingColumn() {
+	public void queryWithTablePrefixedColumnsAndMissingColumn() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_TABLE_PREFIXED_COLUMNS_AND_MISSING_COLUMN, null);
 		DirectedGraph<IStructureElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
@@ -208,7 +210,7 @@ public class SqlStatementExpectationValidatorTest {
 	}
 
 	@Test
-	public void queryWithMissingNotNullColumn() {
+	public void queryWithMissingNotNullColumn() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_MISSING_NOTNULL_COLUMN, null);
 		DirectedGraph<IStructureElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);

@@ -46,11 +46,13 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 
 public class SqlStatementFrontend implements ISqlSchemaFrontend {
 
-	private String statement;
+	private String statementString;
 
-	public String getStatement() {
-		return statement;
+	public String getStatementString() {
+		return statementString;
 	}
+
+	private ZStatement statement;
 
 	private DirectedGraph<IStructureElement, DefaultEdge> databaseSchema;
 
@@ -61,26 +63,10 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 	@Override
 	public DirectedGraph<IStructureElement, DefaultEdge> createSqlSchema() {
 		DirectedGraph<IStructureElement, DefaultEdge> result = null;
-		ZStatement statement = parseStatement();
 
-		if (statement != null)
-			result = createGraph(statement);
+		result = createGraph(statement);
 
 		return result;
-	}
-
-	private ZStatement parseStatement() {
-		try {
-			InputStream is = new ByteArrayInputStream(statement.getBytes("UTF-8"));
-			ZqlParser parser = new ZqlParser(is);
-
-			return parser.readStatement();
-		} catch (UnsupportedEncodingException | ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return null;
 	}
 
 	private DirectedGraph<IStructureElement, DefaultEdge> createGraph(ZStatement statement) {
@@ -234,12 +220,20 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 		return matchingTables;
 	}
 
-	public SqlStatementFrontend(String statement, DirectedGraph<IStructureElement, DefaultEdge> databaseSchema) {
+	public SqlStatementFrontend(String statement, DirectedGraph<IStructureElement, DefaultEdge> databaseSchema)
+			throws ParseException, UnsupportedEncodingException {
 		if (statement == null || statement == "")
 			throw new NullPointerException("SQL statement must not be null or empty!");
 
-		this.statement = statement;
+		this.statementString = statement;
 		this.databaseSchema = databaseSchema;
+		this.statement = parseStatement();
 	}
 
+	private ZStatement parseStatement() throws ParseException, UnsupportedEncodingException {
+		InputStream is = new ByteArrayInputStream(statementString.getBytes("UTF-8"));
+		ZqlParser parser = new ZqlParser(is);
+
+		return parser.readStatement();
+	}
 }

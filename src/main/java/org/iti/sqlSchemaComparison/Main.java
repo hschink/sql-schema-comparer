@@ -21,8 +21,10 @@
 
 package org.iti.sqlSchemaComparison;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import org.gibello.zql.ParseException;
 import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
 import org.iti.sqlSchemaComparison.frontends.SqlStatementFrontend;
 import org.iti.sqlSchemaComparison.frontends.database.SqliteSchemaFrontend;
@@ -51,8 +53,9 @@ public class Main {
 			  multiValued=true)
 		private List<String> databases;
 	}
-	
-	public static void main(String[] args) throws StructureGraphComparisonException {
+
+	public static void main(String[] args)
+			throws StructureGraphComparisonException, UnsupportedEncodingException, ParseException {
 		CommandLineOption option = new CommandLineOption();
 		CmdLineParser parser = new CmdLineParser(option);
 
@@ -89,7 +92,7 @@ public class Main {
 	}
 
 	private static void compareDatabaseStatement(String statement,
-			List<String> databases) {
+			List<String> databases) throws UnsupportedEncodingException, ParseException {
 		DirectedGraph<IStructureElement, DefaultEdge> baseSchema = getBaseSchema(databases);
 		ISqlSchemaFrontend statementFrontend = new SqlStatementFrontend(statement, baseSchema);
 		DirectedGraph<IStructureElement, DefaultEdge> statementSchema = statementFrontend.createSqlSchema();
