@@ -35,7 +35,7 @@ public class MainTest {
 
 	@Before
 	public void setUp() { }
-	
+
 	@Test
 	public void databaseSchemaComparison() throws StructureGraphComparisonException {
 		String[] args = new String[] { 
@@ -55,10 +55,10 @@ public class MainTest {
 			SqliteSchemaFrontendTest.DATABASE_FILE_PATH,
 			SqliteSchemaFrontendTest.REPLACE_LOB_WITH_TABLE_DATABASE_FILE_PATH
 		};
-		
+
 		Main.main(args);
 	}
-	
+
 	@Test
 	public void statementValidation() throws StructureGraphComparisonException {
 		String[] args = new String[] {
@@ -66,10 +66,10 @@ public class MainTest {
 			SqlStatementFrontendTest.SINGLE_TABLE_QUERY,
 			SqliteSchemaFrontendTest.DATABASE_FILE_PATH
 		};
-		
+
 		Main.main(args);
 	}
-	
+
 	@Test
 	public void statementValidationMissingColumn() throws StructureGraphComparisonException {
 		String[] args = new String[] {
@@ -77,10 +77,10 @@ public class MainTest {
 			SqlStatementExpectationValidatorTest.QUERY_WITH_MISSING_COLUMN,
 			SqliteSchemaFrontendTest.DATABASE_FILE_PATH
 		};
-		
+
 		Main.main(args);
 	}
-	
+
 	@Test
 	public void statementValidationMissingButReachableColumn() throws StructureGraphComparisonException {
 		String[] args = new String[] {
@@ -88,10 +88,10 @@ public class MainTest {
 			SqlStatementExpectationValidatorTest.QUERY_WITH_FOREIGN_TABLE_REFERENCE,
 			SqliteSchemaFrontendTest.DATABASE_FILE_PATH
 		};
-		
+
 		Main.main(args);
 	}
-	
+
 	@After
 	public void tearDown() { }
 }
