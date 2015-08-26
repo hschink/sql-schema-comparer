@@ -73,13 +73,14 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 		DirectedGraph<IStructureElement, DefaultEdge> result = null;
 
 		if (statement instanceof ZQuery)
-			result = createGraphFromQuery((ZQuery)statement);
+			result = createGraphFromQuery((ZQuery) statement);
 
 		return result;
 	}
 
 	private DirectedGraph<IStructureElement, DefaultEdge> createGraphFromQuery(ZQuery query) {
-		DirectedGraph<IStructureElement, DefaultEdge> schema = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(DefaultEdge.class);
+		DirectedGraph<IStructureElement, DefaultEdge> schema = new SimpleDirectedGraph<IStructureElement, DefaultEdge>(
+				DefaultEdge.class);
 
 		createTables(query, schema);
 
@@ -88,8 +89,7 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 		return schema;
 	}
 
-	private void createTables(ZQuery query,
-			DirectedGraph<IStructureElement, DefaultEdge> schema) {
+	private void createTables(ZQuery query, DirectedGraph<IStructureElement, DefaultEdge> schema) {
 
 		for (Object item : query.getFrom()) {
 			ZFromItem fromItem = (ZFromItem) item;
@@ -98,13 +98,14 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 		}
 	}
 
-	private void createTable(DirectedGraph<IStructureElement, DefaultEdge> schema,
-			ZQuery query, ZFromItem fromItem) {
+	private void createTable(DirectedGraph<IStructureElement, DefaultEdge> schema, ZQuery query, ZFromItem fromItem) {
 		if (databaseSchema != null) {
-			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlTableVertex.class, fromItem.getTable(), databaseSchema.vertexSet());
+			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlTableVertex.class, fromItem.getTable(),
+					databaseSchema.vertexSet());
 
 			if (table == null)
-				throw new IllegalArgumentException(String.format("Table %s does not exist in schema!", fromItem.getTable()));
+				throw new IllegalArgumentException(
+						String.format("Table %s does not exist in schema!", fromItem.getTable()));
 		}
 
 		ISqlElement table = SqlElementFactory.createSqlElement(SqlElementType.Table, fromItem.getTable());
@@ -114,15 +115,15 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 		schema.addVertex(table);
 	}
 
-	private void createTableColumns(ZQuery query,
-			DirectedGraph<IStructureElement, DefaultEdge> schema) {
+	private void createTableColumns(ZQuery query, DirectedGraph<IStructureElement, DefaultEdge> schema) {
 
 		for (Object item : query.getSelect()) {
 			ZSelectItem selectItem = (ZSelectItem) item;
 
 			ZFromItem tableItem = getColumnTable(query, selectItem);
 
-			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlTableVertex.class, tableItem.getTable(), schema.vertexSet());
+			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlTableVertex.class, tableItem.getTable(),
+					schema.vertexSet());
 			ISqlElement column = new SqlColumnVertex(selectItem.getColumn(), table.getName());
 
 			column.setSourceElement(selectItem);
@@ -148,7 +149,7 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 		String tableName = selectItem.getTable();
 
 		for (Object item : query.getFrom()) {
-			ZFromItem tableItem = (ZFromItem)item;
+			ZFromItem tableItem = (ZFromItem) item;
 
 			if (tableItem.getTable().equals(tableName)
 					|| (tableItem.getAlias() != null && tableItem.getAlias().equals(tableName))) {
@@ -156,13 +157,11 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 			}
 		}
 
-		throw new IllegalArgumentException("Table " + selectItem.getTable()
-				   + " for column " + selectItem.getColumn()
-				   + " does not exist!");
+		throw new IllegalArgumentException(
+				"Table " + selectItem.getTable() + " for column " + selectItem.getColumn() + " does not exist!");
 	}
 
-	private ZFromItem getColumnTableFromDatabaseSchema(ZQuery query,
-			ZSelectItem selectItem) {
+	private ZFromItem getColumnTableFromDatabaseSchema(ZQuery query, ZSelectItem selectItem) {
 		Set<ZFromItem> tables = getTablesFromQuery(query);
 		Set<String> matchingTables = getTablesContainingColumn(tables, selectItem.getColumn());
 
@@ -204,8 +203,8 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 
 		for (ZFromItem tableItem : tables) {
 			String tableName = tableItem.getTable();
-			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlTableVertex.class, tableName, databaseSchema.vertexSet());
-
+			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlTableVertex.class, tableName,
+					databaseSchema.vertexSet());
 
 			for (DefaultEdge e : databaseSchema.edgeSet()) {
 				if (e instanceof TableHasColumnEdge) {

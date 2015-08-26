@@ -52,9 +52,9 @@ public class SqlStatementExpectationValidator {
 		this.schema = schema;
 	}
 
-	public SqlStatementExpectationValidationResult computeGraphMatching(DirectedGraph<IStructureElement, DefaultEdge> expectedSchema) {
+	public SqlStatementExpectationValidationResult computeGraphMatching(DirectedGraph<IStructureElement, DefaultEdge> statement) {
 		StructureGraph schemaGraph = new StructureGraph(schema);
-		StructureGraph expectedSchemaGraph = new StructureGraph(expectedSchema);
+		StructureGraph expectedSchemaGraph = new StructureGraph(statement);
 		IStructureGraphComparer comparer = new StatementStructureGraphComparer();
 
         StructureGraphComparisonResult result = null;
@@ -67,7 +67,9 @@ public class SqlStatementExpectationValidator {
 
         List<ISqlElement> missingTables = getMissingElementsByType(result.getElementsByModification(Type.NodeDeleted), SqlTableVertex.class);
         List<ISqlElement> missingColumns = getMissingElementsByType(result.getElementsByModification(Type.NodeDeleted), SqlColumnVertex.class);
-		Map<ISqlElement, List<List<ISqlElement>>> missingButReachableColumns = getReachableColumns(expectedSchema, missingColumns);
+		Map<ISqlElement, List<List<ISqlElement>>> missingButReachableColumns = getReachableColumns(statement, missingColumns);
+
+		missingColumns.addAll(getMissingElementsByType(result.getElementsByModification(Type.NodeAdded), SqlColumnVertex.class));
 
 		missingColumns.removeAll(missingButReachableColumns.keySet());
 
