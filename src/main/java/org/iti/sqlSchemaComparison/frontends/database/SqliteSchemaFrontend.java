@@ -184,8 +184,10 @@ public class SqliteSchemaFrontend implements ISqlSchemaFrontend {
 
 		String defaultValue = tableSchema.getString(ColumnSchema.DEFAULT_VALUE.getValue());
 
-		if (!tableSchema.wasNull())
+		if (!tableSchema.wasNull()) {
 			addColumnConstraint(new ColumnConstraintVertex(columnName, ConstraintType.DEFAULT, defaultValue), schema, column);
+			column.setMandatory(false);
+		}
 
 		if (tableSchema.getInt(ColumnSchema.PRIMARY_KEY.getValue()) > 0)
 			addColumnConstraint(new ColumnConstraintVertex(columnName, ConstraintType.PRIMARY_KEY), schema, column);
