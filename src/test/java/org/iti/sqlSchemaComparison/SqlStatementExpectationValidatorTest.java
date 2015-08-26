@@ -37,6 +37,7 @@ import org.gibello.zql.ParseException;
 import org.gibello.zql.ZFromItem;
 import org.gibello.zql.ZSelectItem;
 import org.iti.sqlSchemaComparison.edge.SqlStatementFrontendTest;
+import org.iti.sqlSchemaComparison.frontends.ISqlQueryFrontend;
 import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
 import org.iti.sqlSchemaComparison.frontends.SqlStatementFrontend;
 import org.iti.sqlSchemaComparison.frontends.database.SqliteSchemaFrontend;
@@ -211,11 +212,11 @@ public class SqlStatementExpectationValidatorTest {
 
 	@Test
 	public void queryWithMissingNotNullColumn() throws UnsupportedEncodingException, ParseException {
-		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_MISSING_NOTNULL_COLUMN, null);
+		ISqlQueryFrontend frontend = new SqlStatementFrontend(QUERY_WITH_MISSING_NOTNULL_COLUMN, null);
 		DirectedGraph<IStructureElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
 
-		SqlStatementExpectationValidationResult result = validator.computeGraphMatching(expectedSchema);
+		SqlStatementExpectationValidationResult result = validator.computeGraphMatching(expectedSchema, frontend.getQueryType());
 
 		assertTrue(result.isStatementValid());
 	}

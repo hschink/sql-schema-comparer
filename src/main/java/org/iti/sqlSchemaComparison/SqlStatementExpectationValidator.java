@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.iti.sqlSchemaComparison.frontends.ISqlQueryFrontend.QueryType;
 import org.iti.sqlSchemaComparison.reachability.ISqlElementReachabilityChecker;
 import org.iti.sqlSchemaComparison.reachability.SqlColumnReachableChecker;
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
@@ -53,6 +54,11 @@ public class SqlStatementExpectationValidator {
 	}
 
 	public SqlStatementExpectationValidationResult computeGraphMatching(DirectedGraph<IStructureElement, DefaultEdge> statement) {
+		return computeGraphMatching(statement, QueryType.DML);
+	}
+
+	public SqlStatementExpectationValidationResult computeGraphMatching(
+			DirectedGraph<IStructureElement, DefaultEdge> statement, QueryType queryType) {
 		StructureGraph schemaGraph = new StructureGraph(schema);
 		StructureGraph expectedSchemaGraph = new StructureGraph(statement);
 		IStructureGraphComparer comparer = new StatementStructureGraphComparer();

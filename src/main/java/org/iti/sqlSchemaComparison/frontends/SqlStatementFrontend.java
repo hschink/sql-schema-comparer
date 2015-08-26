@@ -44,7 +44,7 @@ import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleDirectedGraph;
 
-public class SqlStatementFrontend implements ISqlSchemaFrontend {
+public class SqlStatementFrontend implements ISqlQueryFrontend {
 
 	private String statementString;
 
@@ -67,6 +67,11 @@ public class SqlStatementFrontend implements ISqlSchemaFrontend {
 		result = createGraph(statement);
 
 		return result;
+	}
+
+	@Override
+	public QueryType getQueryType() {
+		return null;
 	}
 
 	private DirectedGraph<IStructureElement, DefaultEdge> createGraph(ZStatement statement) {
