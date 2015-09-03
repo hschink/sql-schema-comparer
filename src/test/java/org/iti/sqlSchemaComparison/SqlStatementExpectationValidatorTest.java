@@ -26,13 +26,18 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.gibello.zql.ParseException;
 import org.gibello.zql.ZFromItem;
 import org.gibello.zql.ZSelectItem;
 import org.iti.sqlSchemaComparison.edge.SqlStatementFrontendTest;
+import org.iti.sqlSchemaComparison.frontends.ISqlQueryFrontend;
 import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
 import org.iti.sqlSchemaComparison.frontends.SqlStatementFrontend;
 import org.iti.sqlSchemaComparison.frontends.database.SqliteSchemaFrontend;
@@ -57,142 +62,143 @@ public class SqlStatementExpectationValidatorTest {
 	public static final String QUERY_WITH_TWO_MISSING_TABLES = "SELECT missing_1.firstname, missing_2.surname FROM missing_1, missing_2;";
 	public static final String QUERY_WITH_FOREIGN_TABLE_REFERENCE = "SELECT firstname, surname, account FROM customers;";
 	public static final String QUERY_WITH_TABLE_PREFIXED_COLUMNS_AND_MISSING_COLUMN = "SELECT customers.firstname, customers.name FROM customers, departments;";
-	
+	public static final String QUERY_WITH_MISSING_NOTNULL_COLUMN = "SELECT id FROM departments;";
+
 	private static DirectedGraph<IStructureElement, DefaultEdge> sqliteSchema;
-	
+
 	@BeforeClass
 	public static void init() {
 		ISqlSchemaFrontend sqliteFrontend = new SqliteSchemaFrontend(SqliteSchemaFrontendTest.DATABASE_FILE_PATH);
-		
+
 		sqliteSchema = sqliteFrontend.createSqlSchema();
 	}
-	
+
 	@Before
 	public void setUp() { }
-	
+
 	@Test
-	public void singleTableQueryIsValid() {
+	public void singleTableQueryIsValid() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(SqlStatementFrontendTest.SINGLE_TABLE_QUERY, null);
 		DirectedGraph<IStructureElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
-		
+
 		SqlStatementExpectationValidationResult result = validator.computeGraphMatching(expectedSchema);
-		
-		assertTrue(result.isStatementValid());		
+
+		assertTrue(result.isStatementValid());
 	}
-	
+
 	@Test
-	public void queryWithMissingColumn() {
+	public void queryWithMissingColumn() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_MISSING_COLUMN, null);
 		DirectedGraph<IStructureElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
-		
+
 		SqlStatementExpectationValidationResult result = validator.computeGraphMatching(expectedSchema);
-		
-		assertFalse(result.isStatementValid());	
+
+		assertFalse(result.isStatementValid());
 		assertEquals(1, result.getMissingColumns().size());
-		assertEquals("fee", result.getMissingColumns().get(0).getSqlElementId());
+		assertEquals("fee", result.getMissingColumns().get(0).getName());
 	}
-	
+
 	@Test
-	public void queryWithTwoMissingColumns() {
+	public void queryWithTwoMissingColumns() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_TWO_MISSING_COLUMNS, null);
 		DirectedGraph<IStructureElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
-		
+
 		SqlStatementExpectationValidationResult result = validator.computeGraphMatching(expectedSchema);
-		
-		assertFalse(result.isStatementValid());	
+
+		assertFalse(result.isStatementValid());
 		assertEquals(2, result.getMissingColumns().size());
-		
+
 		List<String> columnNames = new ArrayList<>();
-		
+
 		for (ISqlElement element : result.getMissingColumns()) {
-			columnNames.add(element.getSqlElementId());
+			columnNames.add(element.getName());
 		}
 
 		assertThat(columnNames, hasItems("missing_1", "missing_2"));
 	}
-	
+
 	@Test
-	public void queryWithMissingTable() {
+	public void queryWithMissingTable() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_MISSING_TABLE, null);
 		DirectedGraph<IStructureElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
-		
+
 		SqlStatementExpectationValidationResult result = validator.computeGraphMatching(expectedSchema);
-		
-		assertFalse(result.isStatementValid());	
+
+		assertFalse(result.isStatementValid());
 		assertEquals(1, result.getMissingTables().size());
-		assertEquals("missing", result.getMissingTables().get(0).getSqlElementId());
+		assertEquals("missing", result.getMissingTables().get(0).getName());
 	}
-	
+
 	@Test
-	public void queryWithTwoMissingTables() {
+	public void queryWithTwoMissingTables() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_TWO_MISSING_TABLES, null);
 		DirectedGraph<IStructureElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
-		
+
 		SqlStatementExpectationValidationResult result = validator.computeGraphMatching(expectedSchema);
-		
-		assertFalse(result.isStatementValid());	
+
+		assertFalse(result.isStatementValid());
 		assertEquals(2, result.getMissingTables().size());
-		
+
 		List<String> tableNames = new ArrayList<>();
-		
+
 		for (ISqlElement element : result.getMissingTables()) {
-			tableNames.add(element.getSqlElementId());
+			tableNames.add(element.getName());
 		}
 
 		assertThat(tableNames, hasItems("missing_1", "missing_2"));
 	}
-	
+
 	@Test
-	public void queryWithForeignTableReference() {
+	public void queryWithForeignTableReference() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_FOREIGN_TABLE_REFERENCE, null);
 		DirectedGraph<IStructureElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
-		
+
 		SqlStatementExpectationValidationResult result = validator.computeGraphMatching(expectedSchema);
-		
+
 		ISqlElement key = result.getMissingButReachableColumns().keySet().iterator().next();
-		
-		assertFalse(result.isStatementValid());	
+
+		assertFalse(result.isStatementValid());
 		assertEquals(1, result.getMissingButReachableColumns().size());
 		assertEquals(2, result.getMissingButReachableColumns().get(key).size());
-		assertEquals("account", key.getSqlElementId());
+		assertEquals("account", key.getName());
 	}
-	
+
 	@Test
-	public void sourceElementIsNotEmptyForMissingColumn() {
+	public void sourceElementIsNotEmptyForMissingColumn() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_MISSING_COLUMN, null);
 		DirectedGraph<IStructureElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
-		
+
 		SqlStatementExpectationValidationResult result = validator.computeGraphMatching(expectedSchema);
-		
+
 		for (ISqlElement element : result.getMissingColumns()) {
-			assertTrue(element.getSourceElement() != null);
-			assertTrue(element.getSourceElement() instanceof ZSelectItem);
+			assertNotNull(element.getSourceElement());
+			assertSame(element.getSourceElement().getClass(), ZSelectItem.class);
 		}
 	}
-	
+
 	@Test
-	public void sourceElementIsNotEmptyForMissingTable() {
+	public void sourceElementIsNotEmptyForMissingTable() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_MISSING_TABLE, null);
 		DirectedGraph<IStructureElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
-		
+
 		SqlStatementExpectationValidationResult result = validator.computeGraphMatching(expectedSchema);
-		
+
 		for (ISqlElement element : result.getMissingTables()) {
-			assertTrue(element.getSourceElement() != null);
-			assertTrue(element.getSourceElement() instanceof ZFromItem);
+			assertNotNull(element.getSourceElement());
+			assertSame(element.getSourceElement().getClass(), ZFromItem.class);
 		}
 	}
-	
+
 	@Test
-	public void queryWithTablePrefixedColumnsAndMissingColumn() {
+	public void queryWithTablePrefixedColumnsAndMissingColumn() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_TABLE_PREFIXED_COLUMNS_AND_MISSING_COLUMN, null);
 		DirectedGraph<IStructureElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
 		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
@@ -200,8 +206,19 @@ public class SqlStatementExpectationValidatorTest {
 		SqlStatementExpectationValidationResult result = validator.computeGraphMatching(expectedSchema);
 
 		assertFalse(result.isStatementValid());
-		assertEquals(1, result.getMissingButReachableColumns().size());		
-		assertEquals("name", result.getMissingButReachableColumns().keySet().iterator().next().getSqlElementId());
+		assertEquals(1, result.getMissingButReachableColumns().size());
+		assertEquals("name", result.getMissingButReachableColumns().keySet().iterator().next().getName());
+	}
+
+	@Test
+	public void queryWithMissingNotNullColumn() throws UnsupportedEncodingException, ParseException {
+		ISqlQueryFrontend frontend = new SqlStatementFrontend(QUERY_WITH_MISSING_NOTNULL_COLUMN, null);
+		DirectedGraph<IStructureElement, DefaultEdge> expectedSchema = frontend.createSqlSchema();
+		SqlStatementExpectationValidator validator = new SqlStatementExpectationValidator(sqliteSchema);
+
+		SqlStatementExpectationValidationResult result = validator.computeGraphMatching(expectedSchema, frontend.getQueryType());
+
+		assertTrue(result.isStatementValid());
 	}
 
 	@After

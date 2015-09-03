@@ -23,12 +23,16 @@ package org.iti.sqlSchemaComparison.edge;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.UnsupportedEncodingException;
+
+import org.gibello.zql.ParseException;
 import org.iti.sqlSchemaComparison.frontends.ISqlSchemaFrontend;
 import org.iti.sqlSchemaComparison.frontends.SqlStatementFrontend;
 import org.iti.sqlSchemaComparison.frontends.database.SqliteSchemaFrontend;
 import org.iti.sqlSchemaComparison.frontends.database.SqliteSchemaFrontendTest;
+import org.iti.sqlSchemaComparison.vertex.SqlColumnVertex;
 import org.iti.sqlSchemaComparison.vertex.SqlElementFactory;
-import org.iti.sqlSchemaComparison.vertex.SqlElementType;
+import org.iti.sqlSchemaComparison.vertex.SqlTableVertex;
 import org.iti.structureGraph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -53,88 +57,88 @@ public class SqlStatementFrontendTest {
 	private static final String MULTIPLE_MATCHING_COLUMNS_QUERY = "SELECT account from managers, salespersons;";
 	private static final String QUERY_WITH_TABLE_PREFIXED_COLUMNS_AND_WRONG_TABLE = "SELECT customers.firstname, department.name FROM customers, departments;";
 	private static final String QUERY_WITH_TABLE_PREFIXED_COLUMNS_AND_AMBIGUOUS_TABLES = "SELECT firstname, name FROM customers, departments;";
-	
+
 	private static DirectedGraph<IStructureElement, DefaultEdge> sqliteSchema;
-	
+
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
-	
+
 	@BeforeClass
 	public static void init() {
 		ISqlSchemaFrontend sqliteFrontend = new SqliteSchemaFrontend(SqliteSchemaFrontendTest.DATABASE_FILE_PATH);
-		
+
 		sqliteSchema = sqliteFrontend.createSqlSchema();
 	}
-	
+
 	@Before
 	public void setUp() { }
-	
+
 	@Test
-	public void singleTableQuery() {
+	public void singleTableQuery() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(SINGLE_TABLE_QUERY, null);
 		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
-		
-		assertEquals(1, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
-		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
+
+		assertEquals(1, SqlElementFactory.getSqlElementsOfType(SqlTableVertex.class, schema.vertexSet()).size());
+		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema.vertexSet()).size());
 	}
-	
+
 	@Test
-	public void joinTablQuery() {
+	public void joinTablQuery() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(JOIN_TABLE_QUERY, sqliteSchema);
 		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
-		
-		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
-		assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
+
+		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlTableVertex.class, schema.vertexSet()).size());
+		assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema.vertexSet()).size());
 	}
-	
+
 	@Test
-	public void joinTablWithAliasQuery() {
+	public void joinTablWithAliasQuery() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(JOIN_TABLE_WITH_ALIAS_QUERY, sqliteSchema);
 		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
-		
-		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
-		assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
+
+		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlTableVertex.class, schema.vertexSet()).size());
+		assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema.vertexSet()).size());
 	}
-	
+
 	@Test
-	public void joinTablWithTableReferenceQuery() {
+	public void joinTablWithTableReferenceQuery() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(JOIN_TABLE_WITH_TABLE_REFERENCE_QUERY, sqliteSchema);
 		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
-		
-		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlElementType.Table, schema.vertexSet()).size());
-		assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet()).size());
+
+		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlTableVertex.class, schema.vertexSet()).size());
+		assertEquals(3, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema.vertexSet()).size());
 	}
-	
+
 	@Test(expected=IllegalArgumentException.class)
-	public void queryOnNonExistingTable() {
+	public void queryOnNonExistingTable() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(TABLE_DOES_NOT_EXIST_QUERY, sqliteSchema);
 
 		frontend.createSqlSchema();
 	}
-	
+
 	@Test(expected=IllegalArgumentException.class)
-	public void queryOnNonExistingColumn() {
+	public void queryOnNonExistingColumn() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(COLUMN_DOES_NOT_EXIST_QUERY, sqliteSchema);
 
 		frontend.createSqlSchema();
 	}
-	
+
 	@Test(expected=IllegalArgumentException.class)
-	public void queryWithMultipleMatchingColumns() {
+	public void queryWithMultipleMatchingColumns() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(MULTIPLE_MATCHING_COLUMNS_QUERY, sqliteSchema);
 
 		frontend.createSqlSchema();
 	}
-	
+
 	@Test(expected=IllegalArgumentException.class)
-	public void queryWithTablePrefixedColumnsAndWrongTable() {
+	public void queryWithTablePrefixedColumnsAndWrongTable() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_TABLE_PREFIXED_COLUMNS_AND_WRONG_TABLE, null);
 
 		frontend.createSqlSchema();
 	}
 
 	@Test(expected=IllegalArgumentException.class)
-	public void queryWithTablePrefixedColumnsAndAmbiguousTables() {
+	public void queryWithTablePrefixedColumnsAndAmbiguousTables() throws UnsupportedEncodingException, ParseException {
 		ISqlSchemaFrontend frontend = new SqlStatementFrontend(QUERY_WITH_TABLE_PREFIXED_COLUMNS_AND_AMBIGUOUS_TABLES, null);
 
 		frontend.createSqlSchema();

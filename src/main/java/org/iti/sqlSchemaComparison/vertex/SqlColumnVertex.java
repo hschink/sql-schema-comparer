@@ -31,25 +31,17 @@ public class SqlColumnVertex implements ISqlElement {
 	private static final long serialVersionUID = 2813536717531181481L;
 
 	private Object sourceElement = null;
-	
-	@Override
-	public SqlElementType getSqlElementType() {
-		return SqlElementType.Column;
-	}
-	
-	private String id = "";
 
-	@Override
-	public String getSqlElementId() {
-		return id;
-	}
-	
+	private String columnName = "";
+
 	private String type = "";
-	
+
+	private boolean mandatory = false;
+
 	public String getType() {
 		return type;
 	}
-	
+
 	private String table = "";
 
 	public String getTable() {
@@ -66,26 +58,21 @@ public class SqlColumnVertex implements ISqlElement {
 		return constraints;
 	}
 
-	public void setConstraints(List<IColumnConstraint> constraints) {
-		this.constraints = constraints;
-	}
-
-	public SqlColumnVertex(String id, String type, String table) {
-		this.id = id;
-		this.type = type;
+	public SqlColumnVertex(String id, String table) {
+		this.columnName = id;
 		this.table = table;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "[" + getSqlElementType() + "] " + table + "." + getSqlElementId();
+		return "[Column] " + table + "." + getName();
 	}
 
 	@Override
 	public boolean equals(Object o) {
 		return SqlElementFactory.equals(this, o);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return SqlElementFactory.hashCode(this);
@@ -102,7 +89,22 @@ public class SqlColumnVertex implements ISqlElement {
 	}
 
 	@Override
-	public String getIdentifier() {
-		return getSqlElementId();
+	public String getName() {
+		return columnName;
+	}
+
+	@Override
+	public boolean isMandatory() {
+		return mandatory;
+	}
+
+	public void setMandatory(boolean mandatory) {
+		this.mandatory = mandatory;
+	}
+
+	@Override
+	public boolean isOptionalList() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

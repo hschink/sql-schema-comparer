@@ -19,15 +19,8 @@
  *
  */
 
-package org.iti.sqlSchemaComparison.vertex;
+package org.iti.sqlSchemaComparison.edge;
 
-import java.io.Serializable;
+public interface IColumnHasConstraint {
 
-import org.iti.structureGraph.nodes.IStructureElement;
-
-
-public interface ISqlElement extends IStructureElement, Serializable {
-
-	Object getSourceElement();
-	void setSourceElement(Object sourceElement);
 }

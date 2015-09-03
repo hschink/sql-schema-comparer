@@ -27,8 +27,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.iti.sqlSchemaComparison.edge.IColumnHasConstraint;
 import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint;
-import org.iti.sqlSchemaComparison.vertex.sqlColumn.PrimaryKeyColumnConstraint;
+import org.iti.sqlSchemaComparison.vertex.sqlColumn.IColumnConstraint.ConstraintType;
 import org.iti.structureGraph.nodes.IStructureElement;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -39,7 +40,7 @@ public abstract class SqlElementFactory {
 		switch (type) {
 			case Column:
 				return null;
-		
+
 			default:
 				return new SqlTableVertex(id);
 		}
@@ -48,42 +49,42 @@ public abstract class SqlElementFactory {
 	public static boolean equals(ISqlElement t, Object o) {
 		if (o instanceof ISqlElement) {
 			ISqlElement e = (ISqlElement)o;
-			
-			return equals(t.getSqlElementId(), e.getSqlElementId(), t.getSqlElementType(), e.getSqlElementType());
+
+			return equals(t.getName(), e.getName(), t.getClass(), e.getClass());
 		}
-		
+
 		return false;
 	}
 
 	public static boolean equals(SqlColumnVertex t, Object o) {
 		if (o instanceof SqlColumnVertex) {
 			SqlColumnVertex e = (SqlColumnVertex)o;
-			
-			return equals(t.getSqlElementId(), e.getSqlElementId(), t.getSqlElementType(), e.getSqlElementType())
+
+			return equals(t.getName(), e.getName(), t.getClass(), e.getClass())
 					&& t.getTable().equals(e.getTable());
 		}
-		
+
 		return false;
 	}
 
-	private static boolean equals(String id, String otherId, SqlElementType type, SqlElementType otherType) {
-		return id.equals(otherId) && type.equals(otherType);
+	private static boolean equals(String id, String otherId, Class<? extends ISqlElement> class1, Class<? extends ISqlElement> class2) {
+		return id.equals(otherId) && class1.equals(class2);
 	}
-	
+
 	public static int hashCode(ISqlElement t) {
-		return t.getSqlElementId().hashCode() + t.getSqlElementType().hashCode();
+		return t.getName().hashCode() + t.getClass().hashCode();
 	}
-	
-	public static Set<ISqlElement> getSqlElementsOfType(SqlElementType type, Collection<IStructureElement> vertices) {
+
+	public static Set<ISqlElement> getSqlElementsOfType(Class<? extends ISqlElement> type, Collection<IStructureElement> vertices) {
 		Set<ISqlElement> verticesOfType = new HashSet<>();
-		
+
 		for (IStructureElement element : vertices) {
 			ISqlElement t = (ISqlElement)element;
 
-			if (t.getSqlElementType() == type)
+			if (t.getClass().equals(type))
 				verticesOfType.add(t);
 		}
-		
+
 		return verticesOfType;
 	}
 
@@ -95,58 +96,71 @@ public abstract class SqlElementFactory {
 			if (v.equals(vertex))
 				return v;
 		}
-		
+
 		return null;
 	}
-	
-	public static ISqlElement getMatchingSqlElement(SqlElementType type, String id, Collection<IStructureElement> vertices) {
-		
+
+	public static ISqlElement getMatchingSqlElement(Class<? extends ISqlElement> type, String id, Collection<IStructureElement> vertices) {
+
 		for (IStructureElement element : vertices) {
 			ISqlElement v = (ISqlElement)element;
-		
-			if (v.getSqlElementType().equals(type)) {
-				if (type == SqlElementType.Column) {
+
+			if (v.getClass().equals(type)) {
+				if (type.equals(SqlColumnVertex.class)) {
 					String otherTable = ((SqlColumnVertex) v).getTable();
-					String otherId = otherTable + "." + v.getSqlElementId();
-					
+					String otherId = otherTable + "." + v.getName();
+
 					if (otherId.equals(id))
 						return v;
-					
+
 					continue;
-				} else if (v.getSqlElementId().equals(id))
+				} else if (v.getName().equals(id))
 					return v;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	public static List<ISqlElement> getMatchingSqlColumns(String id, Collection<IStructureElement> vertices, boolean matchColumnTable) {
-		Set<ISqlElement> columns = SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, vertices);
+		Set<ISqlElement> columns = SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, vertices);
 		List<ISqlElement> matchingColumns = new ArrayList<>();
-		
+
 		for (ISqlElement column : columns) {
 			String otherTable =  (matchColumnTable) ? ((SqlColumnVertex) column).getTable() + "." : "";
-			String otherId = otherTable + column.getSqlElementId();
-			
+			String otherId = otherTable + column.getName();
+
 			if (otherId.equals(id))
 				matchingColumns.add(column);
 		}
-		
+
 		return matchingColumns;
 	}
 
 	public static ISqlElement getPrimaryKey(ISqlElement table, DirectedGraph<IStructureElement, DefaultEdge> schema) {
 		Set<ISqlElement> columns = ((SqlTableVertex) table).getColumns(schema);
-		
+
 		for (ISqlElement e : columns) {
 			if (e instanceof SqlColumnVertex)
-				for (IColumnConstraint c : ((SqlColumnVertex) e).getConstraints())
-					if (PrimaryKeyColumnConstraint.class.isAssignableFrom(c.getClass()))
+				for (IColumnConstraint c : getColumnConstraints(e, schema))
+					if (c.getConstraintType().equals(ConstraintType.PRIMARY_KEY))
 						return e;
 		}
-		
+
 		return null;
+	}
+
+	private static List<IColumnConstraint> getColumnConstraints(ISqlElement column, DirectedGraph<IStructureElement, DefaultEdge> schema) {
+		List<IColumnConstraint> columnConstraints = new ArrayList<>();
+		Set<DefaultEdge> outgoingEdges = schema.outgoingEdgesOf(column);
+
+		for (DefaultEdge outgoingEdge : outgoingEdges) {
+			if (outgoingEdge instanceof IColumnHasConstraint) {
+				columnConstraints.add((IColumnConstraint) schema.getEdgeTarget(outgoingEdge));
+			}
+		}
+
+		return columnConstraints;
 	}
 
 }

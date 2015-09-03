@@ -23,7 +23,7 @@ package org.iti.sqlSchemaComparison.vertex.sqlColumn;
 
 import org.iti.sqlSchemaComparison.vertex.ISqlElement;
 
-public interface IColumnConstraint {
+public interface IColumnConstraint extends ISqlElement {
 
 	enum ConstraintType {
 		PRIMARY_KEY,
@@ -34,10 +34,8 @@ public interface IColumnConstraint {
 		COLLATE,
 		FOREIGN_KEY
 	}
-	
+
 	ConstraintType getConstraintType();
-	
+
 	String getConstraintExpression();
-	
-	ISqlElement getColumnVertex();
 }

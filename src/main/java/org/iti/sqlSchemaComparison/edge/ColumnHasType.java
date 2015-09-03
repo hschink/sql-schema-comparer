@@ -19,15 +19,12 @@
  *
  */
 
-package org.iti.sqlSchemaComparison.vertex;
+package org.iti.sqlSchemaComparison.edge;
 
-import java.io.Serializable;
+import org.jgrapht.graph.DefaultEdge;
 
-import org.iti.structureGraph.nodes.IStructureElement;
+public class ColumnHasType extends DefaultEdge implements IColumnHasConstraint {
 
+	private static final long serialVersionUID = -4239274173188383592L;
 
-public interface ISqlElement extends IStructureElement, Serializable {
-
-	Object getSourceElement();
-	void setSourceElement(Object sourceElement);
 }

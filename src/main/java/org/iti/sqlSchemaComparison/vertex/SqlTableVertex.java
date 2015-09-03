@@ -34,34 +34,23 @@ public class SqlTableVertex implements ISqlElement {
 	private static final long serialVersionUID = 5594278073539735449L;
 
 	private Object sourceElement = null;
-	
-	@Override
-	public SqlElementType getSqlElementType() {
-		return SqlElementType.Table;
-	}
-	
-	private String id = "";
 
-	@Override
-	public String getSqlElementId() {
-		// TODO Auto-generated method stub
-		return id;
-	}
+	private String id = "";
 
 	public SqlTableVertex(String id) {
 		this.id = id;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "[" + getSqlElementType() + "] " + getSqlElementId();
+		return "[Table] " + getName();
 	}
 
 	@Override
 	public boolean equals(Object o) {
 		return SqlElementFactory.equals(this, o);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return SqlElementFactory.hashCode(this);
@@ -78,19 +67,31 @@ public class SqlTableVertex implements ISqlElement {
 	}
 
 	@Override
-	public String getIdentifier() {
-		return getSqlElementId();
+	public String getName() {
+		return id;
 	}
 
 	public Set<ISqlElement> getColumns(DirectedGraph<IStructureElement, DefaultEdge> schema) {
-		Set<ISqlElement> columns = SqlElementFactory.getSqlElementsOfType(SqlElementType.Column, schema.vertexSet());
+		Set<ISqlElement> columns = SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema.vertexSet());
 		Set<ISqlElement> columnsOfTable = new HashSet<>();
-		
+
 		for (ISqlElement column : columns) {
-			if (((SqlColumnVertex)column).getTable().equals(getSqlElementId()))
+			if (((SqlColumnVertex)column).getTable().equals(getName()))
 				columnsOfTable.add(column);
 		}
-		
+
 		return columnsOfTable;
+	}
+
+	@Override
+	public boolean isMandatory() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isOptionalList() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

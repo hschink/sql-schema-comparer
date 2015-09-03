@@ -19,15 +19,14 @@
  *
  */
 
-package org.iti.sqlSchemaComparison.vertex;
+package org.iti.sqlSchemaComparison.frontends;
 
-import java.io.Serializable;
+public interface ISqlQueryFrontend extends ISqlSchemaFrontend {
 
-import org.iti.structureGraph.nodes.IStructureElement;
+	enum QueryType {
+		DML,
+		DQL
+	}
 
-
-public interface ISqlElement extends IStructureElement, Serializable {
-
-	Object getSourceElement();
-	void setSourceElement(Object sourceElement);
+	QueryType getQueryType();
 }
