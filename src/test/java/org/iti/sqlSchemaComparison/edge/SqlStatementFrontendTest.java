@@ -49,6 +49,7 @@ import org.junit.runners.JUnit4;
 public class SqlStatementFrontendTest {
 
 	public static final String SINGLE_TABLE_QUERY = "SELECT firstname, surname FROM customers;";
+	private static final String SINGLE_TABLE_QUERY_WITH_ALL_COLUMNS = "SELECT * FROM customers;";
 	private static final String JOIN_TABLE_QUERY = "SELECT firstname, surname, name FROM employees, departments;";
 	private static final String JOIN_TABLE_WITH_ALIAS_QUERY = "SELECT e.firstname, e.surname, d.name FROM employees e, departments d;";
 	private static final String JOIN_TABLE_WITH_TABLE_REFERENCE_QUERY = "SELECT employees.firstname, employees.surname, departments.name FROM employees, departments;";
@@ -80,6 +81,15 @@ public class SqlStatementFrontendTest {
 
 		assertEquals(1, SqlElementFactory.getSqlElementsOfType(SqlTableVertex.class, schema.vertexSet()).size());
 		assertEquals(2, SqlElementFactory.getSqlElementsOfType(SqlColumnVertex.class, schema.vertexSet()).size());
+	}
+
+	@Test
+	public void singleTableQueryWithAllColumns() throws UnsupportedEncodingException, ParseException {
+		ISqlSchemaFrontend frontend = new SqlStatementFrontend(SINGLE_TABLE_QUERY_WITH_ALL_COLUMNS, null);
+		DirectedGraph<IStructureElement, DefaultEdge> schema = frontend.createSqlSchema();
+
+		assertEquals(1, schema.vertexSet().size());
+		assertEquals(1, SqlElementFactory.getSqlElementsOfType(SqlTableVertex.class, schema.vertexSet()).size());
 	}
 
 	@Test
