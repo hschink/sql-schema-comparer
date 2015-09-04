@@ -129,16 +129,18 @@ public class SqlStatementFrontend implements ISqlQueryFrontend {
 		for (Object item : query.getSelect()) {
 			ZSelectItem selectItem = (ZSelectItem) item;
 
-			ZFromItem tableItem = getColumnTable(query, selectItem);
+			if (!selectItem.getColumn().equals("*")) {
+				ZFromItem tableItem = getColumnTable(query, selectItem);
 
-			ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlTableVertex.class, tableItem.getTable(),
-					schema.vertexSet());
-			ISqlElement column = new SqlColumnVertex(selectItem.getColumn(), table.getName());
+				ISqlElement table = SqlElementFactory.getMatchingSqlElement(SqlTableVertex.class, tableItem.getTable(),
+						schema.vertexSet());
+				ISqlElement column = new SqlColumnVertex(selectItem.getColumn(), table.getName());
 
-			column.setSourceElement(selectItem);
+				column.setSourceElement(selectItem);
 
-			schema.addVertex(column);
-			schema.addEdge(table, column, new TableHasColumnEdge(table, column));
+				schema.addVertex(column);
+				schema.addEdge(table, column, new TableHasColumnEdge(table, column));
+			}
 		}
 	}
 
