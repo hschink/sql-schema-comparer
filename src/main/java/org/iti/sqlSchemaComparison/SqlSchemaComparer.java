@@ -120,8 +120,8 @@ public class SqlSchemaComparer {
 					ISqlElement original = (ISqlElement) graph1.getStructureElement(originalIdentifier);
 
 					if (original != null) {
-						ISqlElement currentColumnType = getColumnType(graph2, current);
-						ISqlElement originalColumnType = getColumnType(graph1, original);
+						ColumnTypeVertex currentColumnType = (ColumnTypeVertex)getColumnType(graph2, current);
+						ColumnTypeVertex originalColumnType = (ColumnTypeVertex)getColumnType(graph1, original);
 
 						if (currentColumnType != null && originalColumnType != null) {
 							SchemaModification currentModification = getModification(currentColumnType);
@@ -132,7 +132,10 @@ public class SqlSchemaComparer {
 
 								comparisonResult.removeModification(currentColumnType);
 								comparisonResult.removeModification(originalColumnType);
-								comparisonResult.addModification(currentColumnType, SchemaModification.CHANGE_COLUMN_TYPE);
+
+								if (!currentColumnType.getColumnType().equals(originalColumnType.getColumnType())) {
+									comparisonResult.addModification(currentColumnType, SchemaModification.CHANGE_COLUMN_TYPE);
+								}
 							}
 						}
 					}

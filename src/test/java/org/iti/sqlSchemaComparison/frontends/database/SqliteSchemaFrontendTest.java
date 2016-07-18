@@ -23,6 +23,7 @@ package org.iti.sqlSchemaComparison.frontends.database;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.nio.file.InvalidPathException;
 import java.util.ArrayList;
@@ -207,6 +208,10 @@ public class SqliteSchemaFrontendTest {
 		assertNotNull(entry);
 		assertEquals(SchemaModification.RENAME_COLUMN, entry.getValue());
 		assertEquals(RENAME_COLUMN_NAME, entry.getKey().getName());
+
+		entry = TestHelper.getModificationOfType(result, SchemaModification.CHANGE_COLUMN_TYPE);
+
+		assertNull(entry);
 	}
 
 	@Test

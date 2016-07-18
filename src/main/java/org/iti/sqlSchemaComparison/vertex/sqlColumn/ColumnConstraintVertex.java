@@ -67,6 +67,11 @@ public class ColumnConstraintVertex implements IColumnConstraint {
 	}
 
 	@Override
+	public String toString() {
+		return getName();
+	}
+
+	@Override
 	public void setSourceElement(Object sourceElement) {
 		// TODO Auto-generated method stub
 
