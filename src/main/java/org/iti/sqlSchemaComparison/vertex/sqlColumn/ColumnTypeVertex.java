@@ -55,4 +55,8 @@ public class ColumnTypeVertex implements ISqlElement {
 
 	}
 
+	@Override
+	public String toString() {
+		return getName();
+	}
 }
