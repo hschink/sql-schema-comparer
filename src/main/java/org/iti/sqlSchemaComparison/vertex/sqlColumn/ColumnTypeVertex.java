@@ -16,15 +16,7 @@ public class ColumnTypeVertex implements ISqlElement {
 
 	@Override
 	public String getName() {
-		StringBuilder builder = new StringBuilder();
-
-		builder.append("[ColumnType]");
-		builder.append(" ");
-		builder.append(columnName);
-		builder.append(".");
-		builder.append(columnType);
-
-		return builder.toString();
+		return columnType;
 	}
 
 	public String getColumnType() {
@@ -57,6 +49,14 @@ public class ColumnTypeVertex implements ISqlElement {
 
 	@Override
 	public String toString() {
-		return getName();
+		StringBuilder builder = new StringBuilder();
+
+		builder.append("[ColumnType]");
+		builder.append(" ");
+		builder.append(columnName);
+		builder.append(".");
+		builder.append(columnType);
+
+		return builder.toString();
 	}
 }

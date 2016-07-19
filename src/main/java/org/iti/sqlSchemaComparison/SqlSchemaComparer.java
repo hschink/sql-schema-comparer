@@ -127,13 +127,14 @@ public class SqlSchemaComparer {
 							SchemaModification currentModification = getModification(currentColumnType);
 							SchemaModification originalModification = getModification(originalColumnType);
 
-							if (currentModification.equals(SchemaModification.CREATE_COLUMN_TYPE)
-									&& originalModification.equals(SchemaModification.DELETE_COLUMN_TYPE)) {
+							if (currentModification.equals(SchemaModification.CHANGE_COLUMN_TYPE)
+									|| currentModification.equals(SchemaModification.CREATE_COLUMN_TYPE)) {
+								if (originalModification == null) {
+									comparisonResult.removeModification(currentColumnType);
+								} else if (originalModification.equals(SchemaModification.DELETE_COLUMN_TYPE)) {
+									comparisonResult.removeModification(currentColumnType);
+									comparisonResult.removeModification(originalColumnType);
 
-								comparisonResult.removeModification(currentColumnType);
-								comparisonResult.removeModification(originalColumnType);
-
-								if (!currentColumnType.getColumnType().equals(originalColumnType.getColumnType())) {
 									comparisonResult.addModification(currentColumnType, SchemaModification.CHANGE_COLUMN_TYPE);
 								}
 							}
@@ -153,7 +154,9 @@ public class SqlSchemaComparer {
 		List<IStructureElement> children = graph.getStructureElements(graph.getPath(column), false);
 
 		for (IStructureElement child : children) {
-			if (child instanceof ColumnTypeVertex && child.getName().contains(column.getName())) {
+			IStructureElement parent = graph.getParent(child);
+
+			if (child instanceof ColumnTypeVertex && parent == column) {
 				return (ISqlElement) child;
 			}
 		}
@@ -215,9 +218,11 @@ public class SqlSchemaComparer {
 			switch (modificationType) {
 			case NodeAdded:
 				return SchemaModification.CREATE_CONSTRAINT;
+			case NodeDeleted:
+				return SchemaModification.DELETE_CONSTRAINT;
 
 			default:
-				return SchemaModification.DELETE_CONSTRAINT;
+				return SchemaModification.NO_MODIFICATION;
 			}
 		} else {
 			switch (modificationType) {
