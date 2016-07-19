@@ -31,21 +31,7 @@ public class ColumnConstraintVertex implements IColumnConstraint {
 
 	@Override
 	public String getName() {
-		StringBuilder builder = new StringBuilder();
-
-		builder.append("[Constraint]");
-		builder.append(" ");
-		builder.append(columnName);
-		builder.append(".");
-		builder.append(constraintType.toString());
-
-		if (!expression.equals("")) {
-			builder.append("(");
-			builder.append(expression);
-			builder.append(")");
-		}
-
-		return builder.toString();
+		return constraintType.toString() + "(" + expression + ")";
 	}
 
 	@Override
@@ -68,7 +54,21 @@ public class ColumnConstraintVertex implements IColumnConstraint {
 
 	@Override
 	public String toString() {
-		return getName();
+		StringBuilder builder = new StringBuilder();
+
+		builder.append("[Constraint]");
+		builder.append(" ");
+		builder.append(columnName);
+		builder.append(".");
+		builder.append(constraintType.toString());
+
+		if (!expression.equals("")) {
+			builder.append("(");
+			builder.append(expression);
+			builder.append(")");
+		}
+
+		return builder.toString();
 	}
 
 	@Override
