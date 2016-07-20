@@ -222,7 +222,7 @@ public class SqlSchemaComparer {
 				return SchemaModification.DELETE_CONSTRAINT;
 
 			default:
-				return SchemaModification.NO_MODIFICATION;
+				return SchemaModification.CHANGE_CONSTRAINT;
 			}
 		} else {
 			switch (modificationType) {
